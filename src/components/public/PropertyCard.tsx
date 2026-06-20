@@ -74,21 +74,21 @@ export default function PropertyCard({ property, className = '' }: PropertyCardP
 
         {/* Features */}
         {property.property_type !== 'ที่ดิน' && (
-          <div className="flex items-center gap-3 text-sm text-gray-500 border-t border-gray-100 pt-3">
+          <div className="flex items-center gap-3 text-sm text-gray-500 border-t border-gray-100 pt-3 flex-wrap">
             {property.bedrooms !== undefined && property.bedrooms > 0 && (
-              <div className="feature-item">
+              <div className="feature-item whitespace-nowrap">
                 <Bed size={14} className="text-forest-500" />
                 <span>{property.bedrooms} ห้องนอน</span>
               </div>
             )}
             {property.bathrooms !== undefined && property.bathrooms > 0 && (
-              <div className="feature-item">
+              <div className="feature-item whitespace-nowrap">
                 <Bath size={14} className="text-forest-500" />
                 <span>{property.bathrooms} ห้องน้ำ</span>
               </div>
             )}
             {property.parking !== undefined && property.parking > 0 && (
-              <div className="feature-item">
+              <div className="feature-item whitespace-nowrap">
                 <Car size={14} className="text-forest-500" />
                 <span>{property.parking} คัน</span>
               </div>
@@ -97,15 +97,15 @@ export default function PropertyCard({ property, className = '' }: PropertyCardP
         )}
 
         {/* Land/Area */}
-        <div className="flex items-center gap-3 text-sm text-gray-500 mt-2">
+        <div className="flex items-center gap-3 text-sm text-gray-500 mt-2 flex-wrap">
           {property.land_size && property.land_size !== '-' && (
-            <div className="feature-item">
+            <div className="feature-item whitespace-nowrap">
               <Maximize size={13} className="text-forest-500" />
               <span>ที่ดิน {property.land_size}</span>
             </div>
           )}
           {property.usable_area && property.usable_area !== '-' && (
-            <div className="feature-item">
+            <div className="feature-item whitespace-nowrap">
               <span>พื้นที่ {property.usable_area}</span>
             </div>
           )}
