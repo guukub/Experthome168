@@ -4,7 +4,7 @@ import Image from 'next/image'
 import Navbar from '@/components/public/Navbar'
 import Footer from '@/components/public/Footer'
 import PropertyCard from '@/components/public/PropertyCard'
-import InquiryForm from '@/components/public/InquiryForm'
+
 import { getProperties } from '@/lib/sample-data'
 import { ArrowRight, Search, MapPin, Home, Wallet, ChevronDown, Calendar, Building, Landmark, CheckCircle2, Megaphone, CheckCircle, Shield, Users, TrendingUp } from 'lucide-react'
 import HeroSearch from '@/components/public/HeroSearch'

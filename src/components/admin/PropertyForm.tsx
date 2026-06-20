@@ -83,9 +83,17 @@ export default function PropertyForm({ initialData, isEdit = false }: PropertyFo
     e.preventDefault()
     setSaving(true)
 
+    const payload = {
+      ...form,
+      price: Number(form.price),
+      bedrooms: Number(form.bedrooms),
+      bathrooms: Number(form.bathrooms),
+      parking: Number(form.parking),
+    }
+
     // Use server action to save demo data
     try {
-      await import('@/app/actions').then(m => m.savePropertyAction(form as Property, isEdit))
+      await import('@/app/actions').then(m => m.savePropertyAction(payload as unknown as Property, isEdit))
     } catch (e) {
       console.error(e)
     }
