@@ -53,11 +53,17 @@ export default function PropertyCard({ property, className = '' }: PropertyCardP
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
         />
         
-        {/* Top Left Badge (Property Type) */}
+        {/* Top Left Badge (Discount % or Property Type) */}
         <div className="absolute top-0 left-0 z-10">
-          <span className={`${getTypeColor(property.property_type)} text-white px-3 py-1.5 rounded-br-lg font-bold text-sm tracking-wide`}>
-            {property.property_type}
-          </span>
+          {property.original_price && property.original_price > property.price ? (
+            <span className="bg-red-500 text-white px-3 py-1.5 rounded-br-lg font-bold text-sm tracking-wide shadow-md">
+              {Math.round(((property.original_price - property.price) / property.original_price) * 100)}% OFF
+            </span>
+          ) : (
+            <span className={`${getTypeColor(property.property_type)} text-white px-3 py-1.5 rounded-br-lg font-bold text-sm tracking-wide shadow-md`}>
+              {property.property_type}
+            </span>
+          )}
         </div>
 
         {/* Top Right Badge (Status) */}
