@@ -96,19 +96,27 @@ export async function getPropertiesAction() {
   
   let properties = await PropertyModel.find({}).sort({ created_at: -1 })
   
-  // Auto-seed if completely empty (first time running)
-  if (properties.length === 0) {
-    const { sampleProperties } = await import('@/lib/sample-data')
+    // Auto-seed if completely empty (first time running)
+    if (properties.length === 0) {
+      const { sampleProperties } = await import('@/lib/sample-data')
+      const { generateSlug } = await import('@/lib/utils')
+      
+      // Transform sample data for insertion
+      const docs = sampleProperties.map(p => {
+        const { id, ...rest } = p
+        return {
+          ...rest,
+          slug: generateSlug(rest.title) + '-' + Math.random().toString(36).substring(7)
+        }
+      })
+      
+      try {
+        await PropertyModel.insertMany(docs)
+        properties = await PropertyModel.find({}).sort({ created_at: -1 })
+      } catch (e) {
+        console.error("Error seeding sample data:", e)
+      }
+    }
     
-    // Transform sample data for insertion
-    const docs = sampleProperties.map(p => {
-      const { id, ...rest } = p
-      return rest
-    })
-    
-    await PropertyModel.insertMany(docs)
-    properties = await PropertyModel.find({}).sort({ created_at: -1 })
+    return properties.map(toPlainObject) as PropertyType[]
   }
-  
-  return properties.map(toPlainObject) as PropertyType[]
-}
