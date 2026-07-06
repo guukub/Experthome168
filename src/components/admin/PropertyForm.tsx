@@ -136,20 +136,30 @@ export default function PropertyForm({ initialData, isEdit = false }: PropertyFo
     setUploadingImage(true)
 
     try {
+      let errorMessage = ''
+      
       const uploadPromises = Array.from(files).map(async (file) => {
         const formData = new FormData()
         formData.append('file', file)
         
-        const res = await fetch('/api/upload', {
-          method: 'POST',
-          body: formData
-        })
-        
-        if (res.ok) {
-          const data = await res.json()
-          return data.url
+        try {
+          const res = await fetch('/api/upload', {
+            method: 'POST',
+            body: formData
+          })
+          
+          if (res.ok) {
+            const data = await res.json()
+            return data.url
+          } else {
+            const errorData = await res.json().catch(() => ({}))
+            errorMessage = errorData.error || `HTTP ${res.status}`
+            return null
+          }
+        } catch (e) {
+          errorMessage = 'Network error'
+          return null
         }
-        return null
       })
 
       const uploadedUrls = await Promise.all(uploadPromises)
@@ -160,7 +170,7 @@ export default function PropertyForm({ initialData, isEdit = false }: PropertyFo
       }
       
       if (validUrls.length !== files.length) {
-        alert('บางรูปภาพอัพโหลดไม่สำเร็จ')
+        alert(`อัพโหลดไม่สำเร็จ: ${errorMessage}`)
       }
     } catch (error) {
       console.error('Upload failed', error)

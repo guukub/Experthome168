@@ -9,6 +9,10 @@ cloudinary.config({
 
 export async function POST(request: Request) {
   try {
+    if (!process.env.CLOUDINARY_CLOUD_NAME || !process.env.CLOUDINARY_API_KEY || !process.env.CLOUDINARY_API_SECRET) {
+      return NextResponse.json({ success: false, error: 'Missing Cloudinary configuration' }, { status: 500 })
+    }
+
     const data = await request.formData()
     const file: File | null = data.get('file') as unknown as File
 
