@@ -201,16 +201,18 @@ export default function PropertyForm({ initialData, isEdit = false }: PropertyFo
     // Use server action to save demo data
     try {
       await import('@/app/actions').then(m => m.savePropertyAction(payload as unknown as Property, isEdit))
-    } catch (e) {
+      
+      await new Promise(r => setTimeout(r, 800)) // Simulate save
+      setSaved(true)
+      setSaving(false)
+      setTimeout(() => {
+        router.push('/admin/properties')
+      }, 1000)
+    } catch (e: any) {
       console.error(e)
+      alert('เกิดข้อผิดพลาดในการบันทึก: ' + (e.message || 'Unknown error'))
+      setSaving(false)
     }
-
-    await new Promise(r => setTimeout(r, 800)) // Simulate save
-    setSaved(true)
-    setSaving(false)
-    setTimeout(() => {
-      router.push('/admin/properties')
-    }, 1000)
   }
 
   return (
