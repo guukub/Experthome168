@@ -1,11 +1,14 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import { Property } from '@/types/property'
-import { PROPERTY_TYPES, PROPERTY_STATUSES, LOCATIONS, generateSlug } from '@/lib/utils'
+import { PROPERTY_TYPES, PROPERTY_STATUSES, generateSlug } from '@/lib/utils'
+import locationsData from '@/lib/locations.json'
 import { Plus, X, Upload, Save, ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
+import AutocompleteSelect from './AutocompleteSelect'
+import PostcodeAutocomplete from './PostcodeAutocomplete'
 
 interface PropertyFormProps {
   initialData?: Partial<Property>
@@ -17,9 +20,14 @@ const EMPTY_FORM = {
   slug: '',
   property_type: 'บ้านเดี่ยว' as Property['property_type'],
   project_name: '',
-  location: 'บางบอน',
+  location: '',
+  province: '',
+  district: '',
+  tambon: '',
+  postcode: '',
   address: '',
   price: '',
+  original_price: '',
   status: 'พร้อมขาย' as Property['status'],
   land_size: '',
   usable_area: '',
@@ -39,6 +47,7 @@ export default function PropertyForm({ initialData, isEdit = false }: PropertyFo
     ...EMPTY_FORM,
     ...initialData,
     price: initialData?.price?.toString() || '',
+    original_price: initialData?.original_price?.toString() || '',
     bedrooms: initialData?.bedrooms?.toString() || '',
     bathrooms: initialData?.bathrooms?.toString() || '',
     parking: initialData?.parking?.toString() || '',
@@ -49,12 +58,57 @@ export default function PropertyForm({ initialData, isEdit = false }: PropertyFo
   const [newImageUrl, setNewImageUrl] = useState('')
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
+  const [uploadingImage, setUploadingImage] = useState(false)
 
   const set = (key: string, value: any) => setForm(f => ({ ...f, [key]: value }))
 
   const handleTitleChange = (title: string) => {
     set('title', title)
     if (!isEdit) set('slug', generateSlug(title))
+  }
+
+  const provinces = useMemo(() => {
+    return Array.from(new Set(locationsData.map((l: any) => l.province))).filter(Boolean).sort()
+  }, [])
+
+  const availableDistricts = useMemo(() => {
+    const list = form.province ? locationsData.filter((l: any) => l.province === form.province) : locationsData
+    return Array.from(new Set(list.map((l: any) => l.district))).filter(Boolean).sort()
+  }, [form.province])
+
+  const availableTambons = useMemo(() => {
+    let list = locationsData
+    if (form.province) list = list.filter((l: any) => l.province === form.province)
+    if (form.district) list = list.filter((l: any) => l.district === form.district)
+    return Array.from(new Set(list.map((l: any) => l.tambon))).filter(Boolean).sort()
+  }, [form.province, form.district])
+
+  const handleProvinceChange = (val: string) => {
+    setForm(f => ({ ...f, province: val, district: '', tambon: '', postcode: '', location: '' }))
+  }
+
+  const handleDistrictChange = (val: string) => {
+    const loc = locationsData.find((l: any) => l.district === val && (!form.province || l.province === form.province))
+    setForm(f => ({ 
+      ...f, 
+      district: val, 
+      province: loc ? loc.province : f.province,
+      tambon: '', 
+      postcode: '', 
+      location: val 
+    }))
+  }
+
+  const handleTambonChange = (val: string) => {
+    const loc = locationsData.find((l: any) => l.tambon === val && (!form.district || l.district === form.district))
+    setForm(f => ({ 
+      ...f, 
+      tambon: val, 
+      district: loc ? loc.district : f.district,
+      province: loc ? loc.province : f.province,
+      postcode: loc ? loc.postCode || '' : '',
+      location: loc ? loc.district : f.location 
+    }))
   }
 
   const addHighlight = () => {
@@ -75,6 +129,48 @@ export default function PropertyForm({ initialData, isEdit = false }: PropertyFo
     }
   }
 
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files
+    if (!files || files.length === 0) return
+
+    setUploadingImage(true)
+
+    try {
+      const uploadPromises = Array.from(files).map(async (file) => {
+        const formData = new FormData()
+        formData.append('file', file)
+        
+        const res = await fetch('/api/upload', {
+          method: 'POST',
+          body: formData
+        })
+        
+        if (res.ok) {
+          const data = await res.json()
+          return data.url
+        }
+        return null
+      })
+
+      const uploadedUrls = await Promise.all(uploadPromises)
+      const validUrls = uploadedUrls.filter(Boolean)
+      
+      if (validUrls.length > 0) {
+        set('images', [...form.images, ...validUrls])
+      }
+      
+      if (validUrls.length !== files.length) {
+        alert('บางรูปภาพอัพโหลดไม่สำเร็จ')
+      }
+    } catch (error) {
+      console.error('Upload failed', error)
+      alert('เกิดข้อผิดพลาดในการอัพโหลด')
+    } finally {
+      setUploadingImage(false)
+      if (e.target) e.target.value = ''
+    }
+  }
+
   const removeImage = (i: number) => {
     set('images', form.images.filter((_: string, idx: number) => idx !== i))
   }
@@ -86,6 +182,7 @@ export default function PropertyForm({ initialData, isEdit = false }: PropertyFo
     const payload = {
       ...form,
       price: Number(form.price),
+      original_price: form.original_price ? Number(form.original_price) : undefined,
       bedrooms: Number(form.bedrooms),
       bathrooms: Number(form.bathrooms),
       parking: Number(form.parking),
@@ -192,15 +289,75 @@ export default function PropertyForm({ initialData, isEdit = false }: PropertyFo
         <div className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
           <h2 className="font-bold text-gray-900 mb-5 text-lg">ทำเลและราคา</h2>
           <div className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               <div>
-                <label className="label" htmlFor="prop-location">ทำเล *</label>
-                <select id="prop-location" value={form.location} onChange={e => set('location', e.target.value)} className="select" required>
-                  {LOCATIONS.map(l => <option key={l} value={l}>{l}</option>)}
-                </select>
+                <label className="label" htmlFor="prop-province">จังหวัด *</label>
+                <AutocompleteSelect
+                  id="prop-province"
+                  value={form.province}
+                  onChange={handleProvinceChange}
+                  options={provinces}
+                  placeholder="เลือกจังหวัด"
+                  required
+                />
               </div>
               <div>
-                <label className="label" htmlFor="prop-price">ราคาขาย (บาท) *</label>
+                <label className="label" htmlFor="prop-district">เขต/อำเภอ *</label>
+                <AutocompleteSelect
+                  id="prop-district"
+                  value={form.district}
+                  onChange={handleDistrictChange}
+                  options={availableDistricts}
+                  placeholder="เลือกอำเภอ"
+                  required
+                />
+              </div>
+              <div>
+                <label className="label" htmlFor="prop-tambon">แขวง/ตำบล *</label>
+                <AutocompleteSelect
+                  id="prop-tambon"
+                  value={form.tambon}
+                  onChange={handleTambonChange}
+                  options={availableTambons}
+                  placeholder="เลือกตำบล"
+                  required
+                />
+              </div>
+              <div>
+                <label className="label" htmlFor="prop-postcode">รหัสไปรษณีย์ *</label>
+                <PostcodeAutocomplete
+                  id="prop-postcode"
+                  value={form.postcode}
+                  onChange={(val: string) => set('postcode', val)}
+                  onSelectLocation={(loc) => setForm(f => ({
+                    ...f,
+                    postcode: loc.postCode,
+                    province: loc.province,
+                    district: loc.district,
+                    tambon: loc.tambon,
+                    location: loc.district
+                  }))}
+                  locations={locationsData}
+                  placeholder="กรอกรหัสไปรษณีย์เพื่อค้นหา"
+                  required
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="label" htmlFor="prop-original-price">ราคาเดิมก่อนลด (บาท)</label>
+                <input
+                  id="prop-original-price"
+                  type="number"
+                  value={form.original_price}
+                  onChange={e => set('original_price', e.target.value)}
+                  placeholder="เช่น 4000000 (ใส่หรือไม่ใส่ก็ได้)"
+                  className="input"
+                  min="0"
+                />
+              </div>
+              <div>
+                <label className="label" htmlFor="prop-price">ราคาขายปัจจุบัน (บาท) *</label>
                 <input
                   id="prop-price"
                   type="number"
@@ -303,20 +460,54 @@ export default function PropertyForm({ initialData, isEdit = false }: PropertyFo
         {/* Images */}
         <div className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
           <h2 className="font-bold text-gray-900 mb-5 text-lg">รูปภาพ</h2>
-          <p className="text-sm text-gray-500 mb-4">ใส่ URL รูปภาพ (Supabase Storage หรือ URL อื่นๆ)</p>
+          
+          <div className="flex flex-col gap-4 mb-5">
+            {/* File Upload Area */}
+            <div className="relative">
+              <input
+                type="file"
+                accept="image/*"
+                multiple
+                onChange={handleFileUpload}
+                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                disabled={uploadingImage}
+              />
+              <div className={`flex flex-col items-center justify-center gap-2 p-8 border-2 border-dashed rounded-xl transition-colors ${uploadingImage ? 'bg-gray-50 border-gray-300' : 'bg-gray-50 border-gray-300 hover:bg-gray-100 hover:border-forest-400'}`}>
+                {uploadingImage ? (
+                  <div className="flex items-center gap-3 text-forest-600 font-medium">
+                    <svg className="animate-spin w-5 h-5" viewBox="0 0 24 24" fill="none">
+                      <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" className="opacity-25" />
+                      <path fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" className="opacity-75" />
+                    </svg>
+                    กำลังอัพโหลด...
+                  </div>
+                ) : (
+                  <>
+                    <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-sm text-forest-600 mb-2">
+                      <Upload size={24} />
+                    </div>
+                    <div className="font-semibold text-gray-700">คลิกเพื่ออัพโหลดรูปภาพ</div>
+                    <div className="text-sm text-gray-500">รองรับไฟล์ JPG, PNG, WEBP (หรือลากไฟล์มาวาง)</div>
+                  </>
+                )}
+              </div>
+            </div>
 
-          <div className="flex gap-2 mb-4">
-            <input
-              type="url"
-              value={newImageUrl}
-              onChange={e => setNewImageUrl(e.target.value)}
-              onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); addImageUrl() } }}
-              placeholder="https://..."
-              className="input flex-1"
-            />
-            <button type="button" onClick={addImageUrl} className="btn-secondary py-2 px-4 shrink-0">
-              <Upload size={16} /> เพิ่ม
-            </button>
+            {/* URL Input */}
+            <div className="flex items-center gap-3">
+              <div className="text-sm text-gray-500 whitespace-nowrap">หรือใช้ URL:</div>
+              <input
+                type="url"
+                value={newImageUrl}
+                onChange={e => setNewImageUrl(e.target.value)}
+                onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); addImageUrl() } }}
+                placeholder="https://..."
+                className="input flex-1"
+              />
+              <button type="button" onClick={addImageUrl} className="btn-secondary py-2 px-4 shrink-0">
+                เพิ่ม URL
+              </button>
+            </div>
           </div>
 
           {form.images.length > 0 && (

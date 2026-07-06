@@ -1,8 +1,8 @@
 import Link from 'next/link'
 import Image from 'next/image'
-import { MapPin, Bed, Bath, Car, Maximize } from 'lucide-react'
+import { MapPin, Bed, Bath, Car, Maximize, Tag } from 'lucide-react'
 import { Property } from '@/types/property'
-import { formatPrice, getStatusColor, getStatusDotColor, getPropertyTypeIcon } from '@/lib/utils'
+import { formatPrice } from '@/lib/utils'
 
 interface PropertyCardProps {
   property: Property
@@ -12,115 +12,126 @@ interface PropertyCardProps {
 export default function PropertyCard({ property, className = '' }: PropertyCardProps) {
   const mainImage = property.images?.[0] || 'https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=600&q=80'
 
+  // Colors for property types or statuses
+  const getTypeColor = (type: string) => {
+    switch (type) {
+      case 'บ้านเดี่ยว': return 'bg-red-500'
+      case 'ทาวน์เฮ้าส์': return 'bg-orange-500'
+      case 'คอนโด': return 'bg-purple-500'
+      case 'ที่ดิน': return 'bg-green-500'
+      default: return 'bg-blue-500'
+    }
+  }
+
+  // Get a fake discount or highlight text for the bottom banner
+  const getHighlightBanner = () => {
+    if (property.highlights && property.highlights.length > 0) {
+      return property.highlights[0]
+    }
+    return property.is_featured ? 'ทรัพย์แนะนำพิเศษ!' : 'ลดราคาพิเศษ วันนี้เท่านั้น'
+  }
+
+  const getBannerColor = (type: string) => {
+    switch (type) {
+      case 'บ้านเดี่ยว': return 'bg-red-50 text-red-600'
+      case 'ทาวน์เฮ้าส์': return 'bg-orange-50 text-orange-600'
+      case 'คอนโด': return 'bg-purple-50 text-purple-600'
+      case 'ที่ดิน': return 'bg-green-50 text-green-600'
+      default: return 'bg-blue-50 text-blue-600'
+    }
+  }
+
   return (
-    <Link href={`/properties/${property.slug}`} className={`card card-hover group block ${className}`}>
-      {/* Image */}
-      <div className="relative overflow-hidden h-52">
+    <Link href={`/properties/${property.slug}`} className={`bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-all group block overflow-hidden ${className}`}>
+      {/* Image Section */}
+      <div className="relative h-[240px] w-full overflow-hidden">
         <Image
           src={mainImage}
           alt={property.title}
           fill
-          className="object-cover group-hover:scale-105 transition-transform duration-500"
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          className="object-cover group-hover:scale-105 transition-transform duration-700"
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
         />
-        {/* Overlay gradient */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
-
-        {/* Status badge */}
-        <div className="absolute top-3 left-3">
-          <span className={`badge text-xs font-bold ${getStatusColor(property.status)}`}>
-            <span className={`w-1.5 h-1.5 rounded-full ${getStatusDotColor(property.status)}`} />
-            {property.status}
+        
+        {/* Top Left Badge (Property Type) */}
+        <div className="absolute top-0 left-0 z-10">
+          <span className={`${getTypeColor(property.property_type)} text-white px-3 py-1.5 rounded-br-lg font-bold text-sm tracking-wide`}>
+            {property.property_type}
           </span>
         </div>
 
-        {/* Featured badge */}
-        {property.is_featured && (
-          <div className="absolute top-3 right-3">
-            <span className="badge bg-gold-500 text-white border-gold-500 text-xs font-bold">
-              ⭐ แนะนำ
-            </span>
-          </div>
-        )}
-
-        {/* Property type */}
-        <div className="absolute bottom-3 right-3">
-          <span className="bg-black/60 text-white text-xs px-2 py-1 rounded-lg backdrop-blur-sm font-medium">
-            {getPropertyTypeIcon(property.property_type)} {property.property_type}
+        {/* Top Right Badge (Status) */}
+        <div className="absolute top-3 right-3 z-10">
+          <span className="bg-[#0a192f] text-white px-3 py-1.5 rounded-md font-medium text-xs tracking-wide">
+            {property.status === 'พร้อมขาย' ? 'For Sale' : property.status}
           </span>
+        </div>
+
+        {/* Bottom Gradient for Price */}
+        <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-black/80 via-black/40 to-transparent pointer-events-none" />
+        
+        {/* Price Details */}
+        <div className="absolute bottom-4 left-4 right-4 flex items-end justify-between z-10">
+          <div>
+            {property.original_price && property.original_price > property.price && (
+              <div className="text-white/80 line-through text-xs mb-0.5">
+                {formatPrice(property.original_price)}
+              </div>
+            )}
+            <div className="text-2xl font-bold text-white leading-none">
+              {formatPrice(property.price)}
+            </div>
+          </div>
+          
+          {property.original_price && property.original_price > property.price && (
+            <div className={`text-white text-[10px] px-2 py-1 rounded font-bold ${getTypeColor(property.property_type)}`}>
+              Save {formatPrice(property.original_price - property.price)}
+            </div>
+          )}
         </div>
       </div>
 
-      {/* Content */}
-      <div className="p-5">
-        {/* Price */}
-        <div className="text-2xl font-bold text-forest-700 mb-1.5">
-          {formatPrice(property.price)}
-        </div>
-
-        {/* Title */}
-        <h3 className="font-semibold text-gray-900 text-base leading-snug line-clamp-2 mb-2 group-hover:text-forest-700 transition-colors">
+      {/* Content Section */}
+      <div className="p-5 flex flex-col h-full">
+        <h3 className="font-bold text-gray-900 text-lg leading-snug line-clamp-1 mb-1 group-hover:text-forest-700 transition-colors">
           {property.title}
         </h3>
-
-        {/* Location */}
+        
         <div className="flex items-center gap-1 text-gray-500 text-sm mb-4">
-          <MapPin size={13} className="shrink-0 text-forest-500" />
-          <span className="truncate">{property.location}</span>
-          {property.project_name && (
-            <span className="text-gray-400">· {property.project_name}</span>
-          )}
+          <MapPin size={14} className="shrink-0" />
+          <span className="truncate">{property.location}{property.project_name ? ` · ${property.project_name}` : ''}</span>
         </div>
 
-        {/* Features */}
-        {property.property_type !== 'ที่ดิน' && (
-          <div className="flex items-center gap-3 text-sm text-gray-500 border-t border-gray-100 pt-3 flex-wrap">
-            {property.bedrooms !== undefined && property.bedrooms > 0 && (
-              <div className="feature-item whitespace-nowrap">
-                <Bed size={14} className="text-forest-500" />
-                <span>{property.bedrooms} ห้องนอน</span>
-              </div>
-            )}
-            {property.bathrooms !== undefined && property.bathrooms > 0 && (
-              <div className="feature-item whitespace-nowrap">
-                <Bath size={14} className="text-forest-500" />
-                <span>{property.bathrooms} ห้องน้ำ</span>
-              </div>
-            )}
-            {property.parking !== undefined && property.parking > 0 && (
-              <div className="feature-item whitespace-nowrap">
-                <Car size={14} className="text-forest-500" />
-                <span>{property.parking} คัน</span>
-              </div>
-            )}
+        {/* Features Row */}
+        {property.property_type !== 'ที่ดิน' ? (
+          <div className="flex items-center justify-between text-sm text-gray-600 mb-4 px-1">
+            <div className="flex items-center gap-1.5">
+              <Bed size={16} />
+              <span className="font-medium">{property.bedrooms || 0} Beds</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <Bath size={16} />
+              <span className="font-medium">{property.bathrooms || 0} Baths</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <Maximize size={16} />
+              <span className="font-medium">{property.usable_area || '-'}</span>
+            </div>
+          </div>
+        ) : (
+          <div className="flex items-center text-sm text-gray-600 mb-4 px-1 gap-4">
+            <div className="flex items-center gap-1.5">
+              <Maximize size={16} />
+              <span className="font-medium">ที่ดิน {property.land_size || '-'}</span>
+            </div>
           </div>
         )}
+      </div>
 
-        {/* Land/Area */}
-        <div className="flex items-center gap-3 text-sm text-gray-500 mt-2 flex-wrap">
-          {property.land_size && property.land_size !== '-' && (
-            <div className="feature-item whitespace-nowrap">
-              <Maximize size={13} className="text-forest-500" />
-              <span>ที่ดิน {property.land_size}</span>
-            </div>
-          )}
-          {property.usable_area && property.usable_area !== '-' && (
-            <div className="feature-item whitespace-nowrap">
-              <span>พื้นที่ {property.usable_area}</span>
-            </div>
-          )}
-        </div>
-
-        {/* Highlights */}
-        {property.highlights && property.highlights.length > 0 && (
-          <div className="mt-3 flex flex-wrap gap-1.5">
-            {property.highlights.slice(0, 3).map((h, i) => (
-              <span key={i} className="px-2 py-0.5 bg-forest-50 text-forest-700 text-xs rounded-lg font-medium border border-forest-100">
-                {h}
-              </span>
-            ))}
-          </div>
-        )}
+      {/* Bottom Banner */}
+      <div className={`${getBannerColor(property.property_type)} py-2.5 px-4 text-center text-xs font-semibold flex items-center justify-center gap-1.5`}>
+        <Tag size={14} />
+        {getHighlightBanner()}
       </div>
     </Link>
   )

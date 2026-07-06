@@ -7,8 +7,15 @@ import { Menu, X, Phone, MessageCircle } from 'lucide-react'
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
+  const [settings, setSettings] = useState({
+    phone: '081-123-4567',
+    lineId: '@teebangbon',
+    lineUrl: 'https://line.me/ti/p/~@teebangbon'
+  })
 
   useEffect(() => {
+    fetch('/api/settings').then(res => res.json()).then(setSettings)
+    
     const handleScroll = () => {
       setScrolled(window.scrollY > 20)
     }
@@ -45,20 +52,20 @@ export default function Navbar() {
           {/* Contact Badges */}
           <div className="hidden md:flex items-center gap-3">
             <a
-              href="tel:+66812345678"
+              href={`tel:${settings.phone.replace(/\D/g, '')}`}
               className="flex items-center gap-2 px-4 py-2 bg-white text-forest-700 border border-gray-200 rounded-full hover:border-forest-500 hover:text-forest-800 transition-all text-sm font-semibold shadow-sm"
             >
               <Phone size={16} />
-              081-123-4567
+              {settings.phone}
             </a>
             <a
-              href="https://line.me/ti/p/~@teebangbon"
+              href={settings.lineUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-2 px-4 py-2 bg-white text-green-600 border border-gray-200 rounded-full hover:border-green-500 hover:text-green-700 transition-all text-sm font-semibold shadow-sm"
             >
               <MessageCircle size={16} />
-              @teebangbon
+              {settings.lineId}
             </a>
           </div>
 
@@ -100,11 +107,11 @@ export default function Navbar() {
             </Link>
             
             <div className="border-t border-gray-100 pt-4 mt-2 flex flex-col gap-3 px-4">
-              <a href="tel:+66812345678" className="flex items-center justify-center gap-2 py-3 bg-white text-forest-700 border border-gray-200 rounded-xl font-semibold shadow-sm">
-                <Phone size={18} /> โทรหาเรา 081-123-4567
+              <a href={`tel:${settings.phone.replace(/\D/g, '')}`} className="flex items-center justify-center gap-2 py-3 bg-white text-forest-700 border border-gray-200 rounded-xl font-semibold shadow-sm">
+                <Phone size={18} /> โทรหาเรา {settings.phone}
               </a>
-              <a href="https://line.me/ti/p/~@teebangbon" target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2 py-3 bg-green-50 text-green-700 border border-green-200 rounded-xl font-semibold shadow-sm">
-                <MessageCircle size={18} /> Line: @teebangbon
+              <a href={settings.lineUrl} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2 py-3 bg-green-50 text-green-700 border border-green-200 rounded-xl font-semibold shadow-sm">
+                <MessageCircle size={18} /> Line: {settings.lineId}
               </a>
             </div>
           </div>

@@ -8,8 +8,13 @@ export interface Property {
   property_type: PropertyType
   project_name?: string
   location: string
+  province?: string
+  district?: string
+  tambon?: string
+  postcode?: string
   address?: string
   price: number
+  original_price?: number
   status: PropertyStatus
   land_size?: string
   usable_area?: string

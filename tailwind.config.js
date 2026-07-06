@@ -9,7 +9,7 @@ module.exports = {
     extend: {
       fontFamily: {
         sarabun: ['Sarabun', 'sans-serif'],
-        thai: ['Sarabun', 'sans-serif'],
+        thai: ['var(--font-noto)', 'sans-serif'],
       },
       colors: {
         primary: {
