@@ -73,7 +73,7 @@ export default async function PropertiesPage({ searchParams }: PropertiesPagePro
           <div className="flex items-center justify-between mb-6">
             <div>
               <p className="text-gray-700 font-semibold text-lg">
-                {filtered.length === 0 ? 'ไม่พบทรัพย์' : `พบ ${filtered.length} รายการ`}
+                {filtered.length === 0 ? 'ไม่พบทรัพย์' : `พบ ${filtered.length} รายการ (v2)`}
               </p>
               {hasFilters && (
                 <p className="text-sm text-gray-500 mt-0.5">ผลการกรอง</p>
