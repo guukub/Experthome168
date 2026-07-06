@@ -27,9 +27,13 @@ export async function middleware(request: NextRequest) {
     }
   )
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  let user = null
+  try {
+    const { data } = await supabase.auth.getUser()
+    user = data.user
+  } catch (error) {
+    // Silently handle error if Supabase is not configured yet
+  }
 
   // Protect /admin routes (except /admin/login)
   const isDemoAdmin = request.cookies.get('demo_admin')?.value === 'true'
