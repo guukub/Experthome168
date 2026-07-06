@@ -24,9 +24,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export async function generateStaticParams() {
-  // Can't statically generate everything when using DB easily, or just fetch them all
-  const allProps = await getPropertiesAction()
-  return allProps.map(p => ({ slug: p.slug }))
+  try {
+    const allProps = await getPropertiesAction()
+    return allProps.map(p => ({ slug: p.slug }))
+  } catch (error) {
+    console.error("Build-time DB connection failed, falling back to dynamic rendering:", error)
+    return []
+  }
 }
 
 export default async function PropertyDetailPage({ params }: Props) {
