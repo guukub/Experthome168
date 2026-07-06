@@ -9,6 +9,8 @@ import { getPropertiesAction } from '@/app/actions'
 import { ArrowRight, Search, MapPin, Home, Wallet, ChevronDown, Calendar, Building, Landmark, CheckCircle2, Megaphone, CheckCircle, Shield, Users, TrendingUp } from 'lucide-react'
 import HeroSearch from '@/components/public/HeroSearch'
 
+export const dynamic = 'force-dynamic'
+
 export const metadata: Metadata = {
   title: 'หน้าแรก | ตี๋บางบอน อสังหาริมทรัพย์',
   description: 'ตี๋บางบอน — ผู้เชี่ยวชาญอสังหาริมทรัพย์ย่านบางบอน หนองแขม พุทธบูชา บ้านเดี่ยว ทาวน์เฮ้าส์ ที่ดิน ราคาดี พร้อมให้บริการ',

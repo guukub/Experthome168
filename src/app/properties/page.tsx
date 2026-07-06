@@ -7,6 +7,8 @@ import SearchFilter from '@/components/public/SearchFilter'
 import { getPropertiesAction } from '@/app/actions'
 import { SearchFilters } from '@/types/property'
 
+export const dynamic = 'force-dynamic'
+
 export const metadata: Metadata = {
   title: 'ทรัพย์ทั้งหมด',
   description: 'ค้นหาบ้านเดี่ยว ทาวน์เฮ้าส์ คอนโด ที่ดิน ในย่านบางบอนและพื้นที่ใกล้เคียง',

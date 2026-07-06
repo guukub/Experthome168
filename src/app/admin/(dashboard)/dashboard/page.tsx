@@ -3,6 +3,8 @@ import { Plus, Eye, TrendingUp, CheckCircle, Clock, XCircle, Building2 } from 'l
 import { getPropertiesAction } from '@/app/actions'
 import { formatPrice } from '@/lib/utils'
 
+export const dynamic = 'force-dynamic'
+
 export default async function AdminDashboardPage() {
   const allProps = await getPropertiesAction()
   const visibleProperties = allProps.filter(p => p.is_visible)

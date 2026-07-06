@@ -8,6 +8,8 @@ import ImageGallery from '@/components/public/ImageGallery'
 import { getPropertiesAction } from '@/app/actions'
 import { formatPriceRaw, getStatusColor, getStatusDotColor, getPropertyTypeIcon, formatDate, formatPrice } from '@/lib/utils'
 
+export const dynamic = 'force-dynamic'
+
 interface Props {
   params: { slug: string }
 }
