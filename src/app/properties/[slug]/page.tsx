@@ -5,7 +5,7 @@ import { MapPin, Bed, Bath, Car, Maximize, ArrowLeft, Phone, MessageCircle, Face
 import Navbar from '@/components/public/Navbar'
 import Footer from '@/components/public/Footer'
 import ImageGallery from '@/components/public/ImageGallery'
-import { visibleProperties } from '@/lib/sample-data'
+import { getPropertiesAction } from '@/app/actions'
 import { formatPriceRaw, getStatusColor, getStatusDotColor, getPropertyTypeIcon, formatDate, formatPrice } from '@/lib/utils'
 
 interface Props {
@@ -14,7 +14,8 @@ interface Props {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const decodedSlug = decodeURIComponent(params.slug)
-  const property = visibleProperties.find(p => p.slug === decodedSlug)
+  const allProps = await getPropertiesAction()
+  const property = allProps.find(p => p.slug === decodedSlug)
   if (!property) return { title: 'ไม่พบทรัพย์' }
   return {
     title: property.title,
@@ -23,11 +24,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export async function generateStaticParams() {
-  return visibleProperties.map(p => ({ slug: p.slug }))
+  // Can't statically generate everything when using DB easily, or just fetch them all
+  const allProps = await getPropertiesAction()
+  return allProps.map(p => ({ slug: p.slug }))
 }
 
-export default function PropertyDetailPage({ params }: Props) {
+export default async function PropertyDetailPage({ params }: Props) {
   const decodedSlug = decodeURIComponent(params.slug)
+  const allProps = await getPropertiesAction()
+  const visibleProperties = allProps.filter(p => p.is_visible)
   const property = visibleProperties.find(p => p.slug === decodedSlug)
 
   if (!property) notFound()

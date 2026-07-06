@@ -4,7 +4,7 @@ import Navbar from '@/components/public/Navbar'
 import Footer from '@/components/public/Footer'
 import PropertyCard from '@/components/public/PropertyCard'
 import SearchFilter from '@/components/public/SearchFilter'
-import { visibleProperties } from '@/lib/sample-data'
+import { getPropertiesAction } from '@/app/actions'
 import { SearchFilters } from '@/types/property'
 
 export const metadata: Metadata = {
@@ -22,7 +22,10 @@ interface PropertiesPageProps {
   }
 }
 
-export default function PropertiesPage({ searchParams }: PropertiesPageProps) {
+export default async function PropertiesPage({ searchParams }: PropertiesPageProps) {
+  const allProps = await getPropertiesAction()
+  const visibleProperties = allProps.filter(p => p.is_visible)
+  
   // Filter properties based on search params
   let filtered = visibleProperties
 

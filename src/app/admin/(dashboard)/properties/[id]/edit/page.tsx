@@ -1,9 +1,10 @@
 import PropertyForm from '@/components/admin/PropertyForm'
-import { sampleProperties } from '@/lib/sample-data'
+import { getPropertiesAction } from '@/app/actions'
 import { notFound } from 'next/navigation'
 
-export default function EditPropertyPage({ params }: { params: { id: string } }) {
-  const property = sampleProperties.find(p => p.id === params.id)
+export default async function EditPropertyPage({ params }: { params: { id: string } }) {
+  const allProps = await getPropertiesAction()
+  const property = allProps.find(p => p.id === params.id)
   
   if (!property) {
     notFound()

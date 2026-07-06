@@ -1,10 +1,10 @@
 import Link from 'next/link'
 import { Plus, Eye, TrendingUp, CheckCircle, Clock, XCircle, Building2 } from 'lucide-react'
-import { getProperties } from '@/lib/sample-data'
+import { getPropertiesAction } from '@/app/actions'
 import { formatPrice } from '@/lib/utils'
 
-export default function AdminDashboardPage() {
-  const allProps = getProperties()
+export default async function AdminDashboardPage() {
+  const allProps = await getPropertiesAction()
   const visibleProperties = allProps.filter(p => p.is_visible)
   const available = allProps.filter(p => p.status === 'พร้อมขาย')
   const reserved = allProps.filter(p => p.status === 'จองแล้ว')
