@@ -3,9 +3,9 @@ import crypto from 'crypto'
 
 export async function POST(request: Request) {
   try {
-    const cloudName = process.env.CLOUDINARY_CLOUD_NAME
-    const apiKey = process.env.CLOUDINARY_API_KEY
-    const apiSecret = process.env.CLOUDINARY_API_SECRET
+    const cloudName = process.env.CLOUDINARY_CLOUD_NAME || 'zvm2hdmd'
+    const apiKey = process.env.CLOUDINARY_API_KEY || '388417448313342'
+    const apiSecret = process.env.CLOUDINARY_API_SECRET || 'sN3p7GQC9SzZv1rOqBf59DERW-U'
 
     if (!cloudName || !apiKey || !apiSecret) {
       return NextResponse.json({ success: false, error: 'Missing Cloudinary configuration' }, { status: 500 })
