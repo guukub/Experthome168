@@ -1,48 +1,17 @@
-import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
 export async function middleware(request: NextRequest) {
-  let supabaseResponse = NextResponse.next({
-    request,
-  })
-
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co',
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder',
-    {
-      cookies: {
-        getAll() {
-          return request.cookies.getAll()
-        },
-        setAll(cookiesToSet: any[]) {
-          cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value))
-          supabaseResponse = NextResponse.next({
-            request,
-          })
-          cookiesToSet.forEach(({ name, value, options }) =>
-            supabaseResponse.cookies.set(name, value, options)
-          )
-        },
-      },
-    }
-  )
-
-  let user = null
-  try {
-    const { data } = await supabase.auth.getUser()
-    user = data.user
-  } catch (error) {
-    // Silently handle error if Supabase is not configured yet
-  }
-
   // Protect /admin routes (except /admin/login)
+  const isAuthAdmin = request.cookies.get('auth_admin')?.value === 'true'
+  // Also support the old demo_admin cookie during transition
   const isDemoAdmin = request.cookies.get('demo_admin')?.value === 'true'
+  const isLoggedIn = isAuthAdmin || isDemoAdmin
 
   if (
     request.nextUrl.pathname.startsWith('/admin') &&
     !request.nextUrl.pathname.startsWith('/admin/login')
   ) {
-    if (!user && !isDemoAdmin) {
+    if (!isLoggedIn) {
       const url = request.nextUrl.clone()
       url.pathname = '/admin/login'
       return NextResponse.redirect(url)
@@ -50,13 +19,13 @@ export async function middleware(request: NextRequest) {
   }
 
   // Redirect logged-in admin away from login page
-  if (request.nextUrl.pathname === '/admin/login' && (user || isDemoAdmin)) {
+  if (request.nextUrl.pathname === '/admin/login' && isLoggedIn) {
     const url = request.nextUrl.clone()
     url.pathname = '/admin/dashboard'
     return NextResponse.redirect(url)
   }
 
-  return supabaseResponse
+  return NextResponse.next()
 }
 
 export const config = {

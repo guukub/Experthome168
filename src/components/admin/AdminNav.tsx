@@ -12,9 +12,10 @@ import { useRouter } from 'next/navigation'
 
 const navItems = [
   { href: '/admin/dashboard', label: 'ภาพรวม', icon: LayoutDashboard },
-  { href: '/admin/properties', label: 'จัดการทรัพย์', icon: Building2 },
-  { href: '/admin/inquiries', label: 'ข้อความสอบถาม', icon: MessageSquare },
+  { href: '/admin/properties', label: 'จัดการทรัพย์', icon: Home },
+  { href: '/admin/inquiries', label: 'ลูกค้าติดต่อ', icon: MessageSquare },
   { href: '/admin/settings', label: 'ตั้งค่าเว็บไซต์', icon: Settings },
+  { href: '/admin/admins', label: 'ผู้ดูแลระบบ', icon: Users },
 ]
 
 export default function AdminNav() {

@@ -2,7 +2,6 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { createClient } from '@/lib/supabase/client'
 import { Eye, EyeOff, Lock, Mail, AlertCircle } from 'lucide-react'
 
 export default function AdminLoginPage() {
@@ -19,26 +18,24 @@ export default function AdminLoginPage() {
     setLoading(true)
 
     try {
-      // Demo bypass for local testing without Supabase
-      if (email === 'admin@teebangbon.com' && password === 'password123') {
-        document.cookie = "demo_admin=true; path=/; max-age=86400"
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      })
+
+      const data = await res.json()
+
+      if (res.ok && data.success) {
+        // Set an auth cookie
+        document.cookie = "auth_admin=true; path=/; max-age=86400"
         router.push('/admin/dashboard')
         router.refresh()
-        return
-      }
-
-      // Real Supabase Auth
-      const supabase = createClient()
-      const { error } = await supabase.auth.signInWithPassword({ email, password })
-
-      if (error) {
-        setError('อีเมลหรือรหัสผ่านไม่ถูกต้อง (หากยังไม่ได้เชื่อมต่อ Supabase ให้ใช้รหัสผ่าน Demo)')
       } else {
-        router.push('/admin/dashboard')
-        router.refresh()
+        setError(data.error || 'อีเมลหรือรหัสผ่านไม่ถูกต้อง')
       }
-    } catch {
-      setError('เกิดข้อผิดพลาด กรุณาลองใหม่')
+    } catch (err) {
+      setError('เกิดข้อผิดพลาดในการเชื่อมต่อ กรุณาลองใหม่')
     } finally {
       setLoading(false)
     }
@@ -46,14 +43,12 @@ export default function AdminLoginPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-forest-900 via-forest-800 to-forest-950 flex items-center justify-center p-4">
-      {/* Background decoration */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-20 left-20 w-72 h-72 bg-forest-600/20 rounded-full blur-3xl" />
         <div className="absolute bottom-20 right-20 w-64 h-64 bg-gold-500/10 rounded-full blur-3xl" />
       </div>
 
       <div className="relative w-full max-w-md">
-        {/* Logo */}
         <div className="text-center mb-8">
           <div className="w-16 h-16 bg-gradient-to-br from-forest-400 to-forest-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
             <span className="text-white text-2xl font-bold">ตี๋</span>
@@ -62,7 +57,6 @@ export default function AdminLoginPage() {
           <p className="text-forest-300 mt-1">ตี๋บางบอน อสังหาริมทรัพย์</p>
         </div>
 
-        {/* Login Card */}
         <div className="bg-white rounded-3xl shadow-2xl p-8">
           <h2 className="text-xl font-bold text-gray-900 mb-1">เข้าสู่ระบบผู้ดูแล</h2>
           <p className="text-gray-500 text-sm mb-6">กรุณาใส่อีเมลและรหัสผ่านของคุณ</p>
@@ -130,11 +124,6 @@ export default function AdminLoginPage() {
               ) : 'เข้าสู่ระบบ'}
             </button>
           </form>
-
-          <div className="mt-6 p-4 bg-amber-50 border border-amber-100 rounded-xl text-xs text-amber-700">
-            <strong>Demo:</strong> สร้างผู้ใช้ผ่าน Supabase Dashboard → Authentication → Users
-            <br />แล้วใส่อีเมลและรหัสผ่านที่ตั้งไว้
-          </div>
         </div>
 
         <p className="text-center text-forest-400 text-sm mt-6">
