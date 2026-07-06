@@ -25,15 +25,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 }
 
-export async function generateStaticParams() {
-  try {
-    const allProps = await getPropertiesAction()
-    return allProps.map(p => ({ slug: p.slug }))
-  } catch (error) {
-    console.error("Build-time DB connection failed, falling back to dynamic rendering:", error)
-    return []
-  }
-}
+// Removed generateStaticParams because force-dynamic is used
 
 export default async function PropertyDetailPage({ params }: Props) {
   const decodedSlug = decodeURIComponent(params.slug)

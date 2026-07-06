@@ -52,27 +52,21 @@ export async function savePropertyAction(data: PropertyType, isEdit: boolean) {
     await newProperty.save()
   }
   
-  revalidatePath('/admin/dashboard')
-  revalidatePath('/admin/properties')
-  revalidatePath('/')
+  revalidatePath('/', 'layout')
 }
 
 export async function deletePropertyAction(id: string) {
   await connectToDatabase()
   await PropertyModel.findByIdAndDelete(id)
   
-  revalidatePath('/admin/dashboard')
-  revalidatePath('/admin/properties')
-  revalidatePath('/')
+  revalidatePath('/', 'layout')
 }
 
 export async function updatePropertyStatusAction(id: string, status: PropertyType['status']) {
   await connectToDatabase()
   await PropertyModel.findByIdAndUpdate(id, { status })
   
-  revalidatePath('/admin/dashboard')
-  revalidatePath('/admin/properties')
-  revalidatePath('/')
+  revalidatePath('/', 'layout')
 }
 
 export async function togglePropertyVisibleAction(id: string) {
@@ -83,9 +77,7 @@ export async function togglePropertyVisibleAction(id: string) {
     await prop.save()
   }
   
-  revalidatePath('/admin/dashboard')
-  revalidatePath('/admin/properties')
-  revalidatePath('/')
+  revalidatePath('/', 'layout')
 }
 
 export async function togglePropertyFeaturedAction(id: string) {
@@ -96,9 +88,7 @@ export async function togglePropertyFeaturedAction(id: string) {
     await prop.save()
   }
   
-  revalidatePath('/admin/dashboard')
-  revalidatePath('/admin/properties')
-  revalidatePath('/')
+  revalidatePath('/', 'layout')
 }
 
 export async function getPropertiesAction() {
