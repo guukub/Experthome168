@@ -199,7 +199,7 @@ export default async function PropertyDetailPage({ params }: Props) {
                   <p className="font-semibold text-forest-700">{property.location}</p>
                   <p className="text-sm text-gray-500">{property.address}</p>
                   <a
-                    href={`https://maps.google.com/?q=${encodeURIComponent(property.address || property.location)}`}
+                    href={property.map_url || `https://maps.google.com/?q=${encodeURIComponent(property.address || property.location)}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="mt-2 text-sm text-forest-600 font-medium hover:underline"

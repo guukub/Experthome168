@@ -23,6 +23,7 @@ export interface Property {
   parking?: number
   description?: string
   video_url?: string
+  map_url?: string
   highlights?: string[]
   is_featured: boolean
   is_visible: boolean

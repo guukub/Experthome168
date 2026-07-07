@@ -36,6 +36,7 @@ const EMPTY_FORM = {
   parking: '',
   description: '',
   video_url: '',
+  map_url: '',
   highlights: [] as string[],
   is_featured: false,
   is_visible: true,
@@ -53,6 +54,7 @@ export default function PropertyForm({ initialData, isEdit = false }: PropertyFo
     bathrooms: initialData?.bathrooms?.toString() || '',
     parking: initialData?.parking?.toString() || '',
     video_url: initialData?.video_url || '',
+    map_url: initialData?.map_url || '',
     highlights: initialData?.highlights || [],
     images: initialData?.images || [],
   })
@@ -449,6 +451,19 @@ export default function PropertyForm({ initialData, isEdit = false }: PropertyFo
               value={form.video_url}
               onChange={e => set('video_url', e.target.value)}
               placeholder="https://www.youtube.com/watch?v=..."
+              className="input"
+            />
+          </div>
+
+          {/* Map URL */}
+          <div className="mt-4">
+            <label className="label" htmlFor="prop-map">ลิงก์ Google Maps (ปักหมุดตำแหน่งที่ตั้ง)</label>
+            <input
+              id="prop-map"
+              type="url"
+              value={form.map_url}
+              onChange={e => set('map_url', e.target.value)}
+              placeholder="https://maps.app.goo.gl/..."
               className="input"
             />
           </div>
