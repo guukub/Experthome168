@@ -279,19 +279,12 @@ export default async function PropertyDetailPage({ params }: Props) {
                     src={`https://maps.google.com/maps?q=${encodeURIComponent(finalMapQuery)}&t=&z=15&ie=UTF8&iwloc=&output=embed`}
                   ></iframe>
                 </div>
-                <div className="mt-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                  <div>
-                    <p className="font-semibold text-gray-900 flex items-center gap-1.5">
-                      <MapPin size={16} className="text-forest-600" />
-                      {property.location}
-                    </p>
-                    {property.address && <p className="text-sm text-gray-500 mt-1 pl-5">{property.address}</p>}
-                  </div>
+                <div className="mt-4 flex justify-end">
                   <a
                     href={property.map_url || `https://maps.google.com/?q=${encodeURIComponent(property.address || property.location)}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="shrink-0 inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-forest-50 hover:bg-forest-100 text-forest-700 font-medium rounded-xl text-sm transition-colors border border-forest-100"
+                    className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-forest-50 hover:bg-forest-100 text-forest-700 font-medium rounded-xl text-sm transition-colors border border-forest-100"
                   >
                     เปิดในแอป Google Maps
                   </a>
