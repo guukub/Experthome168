@@ -132,7 +132,8 @@ export async function getSettingsAction() {
       lineUrl: 'https://line.me/ti/p/~@teebangbon',
       facebook: 'facebook.com/teebangbon',
       facebookUrl: 'https://facebook.com/teebangbon',
-      logoUrl: ''
+      logoUrl: '',
+      portfolioImages: []
     }
   }
   return toPlainObject(settings)

@@ -7,6 +7,7 @@ const SettingsSchema = new mongoose.Schema({
   facebook: { type: String, default: 'facebook.com/teebangbon' },
   facebookUrl: { type: String, default: 'https://facebook.com/teebangbon' },
   logoUrl: { type: String, default: '' },
+  portfolioImages: [{ type: String }],
 }, { timestamps: true })
 
 export default mongoose.models.Settings || mongoose.model('Settings', SettingsSchema)

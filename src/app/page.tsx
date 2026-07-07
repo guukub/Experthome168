@@ -5,7 +5,7 @@ import Navbar from '@/components/public/Navbar'
 import Footer from '@/components/public/Footer'
 import PropertyCard from '@/components/public/PropertyCard'
 
-import { getPropertiesAction } from '@/app/actions'
+import { getPropertiesAction, getSettingsAction } from '@/app/actions'
 import { ArrowRight, Search, MapPin, Home, Wallet, ChevronDown, Calendar, Building, Landmark, CheckCircle2, Megaphone, CheckCircle, Shield, Users, TrendingUp } from 'lucide-react'
 import HeroSearch from '@/components/public/HeroSearch'
 
@@ -29,6 +29,8 @@ interface HomePageProps {
 
 export default async function HomePage({ searchParams }: HomePageProps) {
   const allProps = await getPropertiesAction()
+  const settings = await getSettingsAction()
+  const portfolioImages = settings?.portfolioImages || []
   let filtered = allProps.filter(p => p.is_visible)
 
   if (searchParams.type) {
@@ -216,6 +218,28 @@ export default async function HomePage({ searchParams }: HomePageProps) {
             </div>
           </div>
         </section>
+
+        {/* ─── PORTFOLIO / TRUSTED BY ─── */}
+        {portfolioImages.length > 0 && (
+          <section className="py-12 bg-warm-50/50">
+            <div className="container-main">
+              <div className="flex items-center justify-center gap-4 mb-8">
+                <div className="h-px bg-gray-300 w-12 sm:w-24"></div>
+                <div className="text-gray-500 font-bold tracking-[0.2em] text-[10px] sm:text-xs uppercase">
+                  TRUSTED BY GLOBAL VISIONARIES
+                </div>
+                <div className="h-px bg-gray-300 w-12 sm:w-24"></div>
+              </div>
+              <div className="flex flex-wrap justify-center items-center gap-4 md:gap-6">
+                {portfolioImages.map((img: string, i: number) => (
+                  <div key={i} className="w-28 h-16 md:w-40 md:h-20 bg-white rounded-xl shadow-sm border border-gray-100 flex items-center justify-center p-3 hover:shadow-md transition-shadow">
+                    <img src={img} alt={`portfolio ${i+1}`} className="max-w-full max-h-full object-contain" />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
       </main>
       <Footer />
     </>
