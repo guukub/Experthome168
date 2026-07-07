@@ -106,37 +106,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
               </Link>
             </div>
 
-            {/* Trust & Features Bar */}
-            <div className="bg-[#113123]/90 backdrop-blur-md border border-[#d4af37]/20 rounded-3xl xl:rounded-full px-8 py-5 w-full max-w-5xl shadow-xl flex flex-col md:flex-row justify-between gap-6 md:gap-4 ring-1 ring-[#d4af37]/10">
-              <div className="flex items-center gap-4 border-b md:border-b-0 md:border-r border-[#d4af37]/20 pb-4 md:pb-0 md:pr-4 flex-1">
-                <Shield className="text-[#d4af37] shrink-0" size={28} />
-                <div className="text-left">
-                  <div className="font-bold text-white text-sm mb-0.5">เชื่อถือได้</div>
-                  <div className="text-xs text-white/70">ประกาศจริง ตรวจสอบแล้ว</div>
-                </div>
-              </div>
-              <div className="flex items-center gap-4 border-b md:border-b-0 md:border-r border-[#d4af37]/20 pb-4 md:pb-0 md:pr-4 flex-1">
-                <Users className="text-[#d4af37] shrink-0" size={28} />
-                <div className="text-left">
-                  <div className="font-bold text-white text-sm mb-0.5">ครบทุกประเภท</div>
-                  <div className="text-xs text-white/70">บ้าน คอนโด ที่ดิน และอื่นๆ</div>
-                </div>
-              </div>
-              <div className="flex items-center gap-4 border-b md:border-b-0 md:border-r border-[#d4af37]/20 pb-4 md:pb-0 md:pr-4 flex-1">
-                <TrendingUp className="text-[#d4af37] shrink-0" size={28} />
-                <div className="text-left">
-                  <div className="font-bold text-white text-sm mb-0.5">บริการมืออาชีพ</div>
-                  <div className="text-xs text-white/70">ดูแลครบ จบทุกขั้นตอน</div>
-                </div>
-              </div>
-              <div className="flex items-center gap-4 flex-1">
-                <CheckCircle className="text-[#d4af37] shrink-0" size={28} />
-                <div className="text-left">
-                  <div className="font-bold text-white text-sm mb-0.5">ช่วยเหลือทุกขั้นตอน</div>
-                  <div className="text-xs text-white/70">ให้คำปรึกษาโดยผู้เชี่ยวชาญ</div>
-                </div>
-              </div>
-            </div>
+
           </div>
         </section>
 
