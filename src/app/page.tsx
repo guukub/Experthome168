@@ -6,7 +6,7 @@ import Footer from '@/components/public/Footer'
 import PropertyCard from '@/components/public/PropertyCard'
 
 import { getPropertiesAction, getSettingsAction } from '@/app/actions'
-import { ArrowRight, Search, MapPin, Home, Wallet, ChevronDown, Calendar, Building, Landmark, CheckCircle2, Megaphone, CheckCircle, Shield, Users, TrendingUp } from 'lucide-react'
+import { ArrowRight, Search, MapPin, Home, Wallet, ChevronDown, Calendar, Building, Landmark, CheckCircle2, Megaphone, CheckCircle, Shield, Users, TrendingUp, Clock } from 'lucide-react'
 import HeroSearch from '@/components/public/HeroSearch'
 
 export const dynamic = 'force-dynamic'
@@ -150,70 +150,104 @@ export default async function HomePage({ searchParams }: HomePageProps) {
         </section>
 
         {/* ─── INFO SECTION ─── */}
-        <section className="py-12">
+        <section className="py-16">
           <div className="container-main">
             {/* Top row */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
-              <div className="bg-[#e8ece8] rounded-tl-3xl rounded-tr-sm rounded-bl-sm rounded-br-sm p-6 flex flex-col items-center text-center">
-                <div className="w-16 h-16 bg-forest-700 rounded-full flex items-center justify-center text-white mb-4">
-                  <TrendingUp size={28} />
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+              {/* Card 1 */}
+              <div className="bg-white rounded-[2rem] p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] relative overflow-hidden group hover:-translate-y-1 transition-transform duration-300">
+                <TrendingUp size={140} className="absolute -bottom-8 -right-8 text-forest-50 opacity-60 group-hover:scale-110 transition-transform duration-500" />
+                <div className="w-14 h-14 bg-forest-800 rounded-full flex items-center justify-center text-white mb-8 relative z-10 shadow-md">
+                  <TrendingUp size={24} />
                 </div>
-                <h3 className="font-bold text-gray-900 mb-1">วิเคราะห์ราคา</h3>
-                <p className="text-sm text-gray-600">ประเมินราคาฟรี<br/>ด้วยข้อมูลจริงในพื้นที่</p>
+                <h3 className="text-xl font-bold text-gray-900 mb-3 relative z-10">วิเคราะห์ราคา</h3>
+                <p className="text-sm text-gray-500 leading-relaxed relative z-10">ประเมินราคาฟรี<br/>ด้วยข้อมูลจริงในพื้นที่</p>
               </div>
-              <div className="bg-[#e8ece8] rounded-sm p-6 flex flex-col items-center text-center">
-                <div className="w-16 h-16 bg-forest-700 rounded-full flex items-center justify-center text-white mb-4">
-                  <Megaphone size={28} />
+              {/* Card 2 */}
+              <div className="bg-white rounded-[2rem] p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] relative overflow-hidden group hover:-translate-y-1 transition-transform duration-300">
+                <Megaphone size={140} className="absolute -bottom-8 -right-8 text-forest-50 opacity-60 group-hover:scale-110 transition-transform duration-500" />
+                <div className="w-14 h-14 bg-forest-800 rounded-full flex items-center justify-center text-white mb-8 relative z-10 shadow-md">
+                  <Megaphone size={24} />
                 </div>
-                <h3 className="font-bold text-gray-900 mb-1">การตลาดมืออาชีพ</h3>
-                <p className="text-sm text-gray-600">โปรโมททรัพย์ตรงกลุ่มเป้าหมาย<br/>ทั้งออนไลน์และออฟไลน์</p>
+                <h3 className="text-xl font-bold text-gray-900 mb-3 relative z-10">การตลาดมืออาชีพ</h3>
+                <p className="text-sm text-gray-500 leading-relaxed relative z-10">โปรโมททรัพย์ตรงกลุ่มเป้าหมาย<br/>ทั้งออนไลน์และออฟไลน์</p>
               </div>
-              <div className="bg-[#e8ece8] rounded-sm p-6 flex flex-col items-center text-center">
-                <div className="w-16 h-16 bg-forest-700 rounded-full flex items-center justify-center text-white mb-4">
-                  <Landmark size={28} />
+              {/* Card 3 */}
+              <div className="bg-white rounded-[2rem] p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] relative overflow-hidden group hover:-translate-y-1 transition-transform duration-300">
+                <Shield size={140} className="absolute -bottom-8 -right-8 text-forest-50 opacity-60 group-hover:scale-110 transition-transform duration-500" />
+                <div className="w-14 h-14 bg-forest-800 rounded-full flex items-center justify-center text-white mb-8 relative z-10 shadow-md">
+                  <Landmark size={24} />
                 </div>
-                <h3 className="font-bold text-gray-900 mb-1">ดูแลสินเชื่อ</h3>
-                <p className="text-sm text-gray-600">แนะนำสินเชื่อที่ดีที่สุด<br/>ให้ฟรี ไม่มีค่าใช้จ่าย</p>
+                <h3 className="text-xl font-bold text-gray-900 mb-3 relative z-10">ดูแลสินเชื่อ</h3>
+                <p className="text-sm text-gray-500 leading-relaxed relative z-10">แนะนำสินเชื่อที่ดีที่สุด<br/>ให้ฟรี ไม่มีค่าใช้จ่าย</p>
               </div>
-              <div className="bg-[#e8ece8] rounded-tr-3xl rounded-tl-sm rounded-bl-sm rounded-br-sm p-6 flex flex-col items-center text-center">
-                <div className="w-16 h-16 bg-forest-700 rounded-full flex items-center justify-center text-white mb-4">
-                  <Calendar size={28} />
+              {/* Card 4 */}
+              <div className="bg-white rounded-[2rem] p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] relative overflow-hidden group hover:-translate-y-1 transition-transform duration-300">
+                <Calendar size={140} className="absolute -bottom-8 -right-8 text-forest-50 opacity-60 group-hover:scale-110 transition-transform duration-500" />
+                <div className="w-14 h-14 bg-forest-800 rounded-full flex items-center justify-center text-white mb-8 relative z-10 shadow-md">
+                  <Calendar size={24} />
                 </div>
-                <h3 className="font-bold text-gray-900 mb-1">นัดชมทรัพย์</h3>
-                <p className="text-sm text-gray-600">นัดชมง่าย รวดเร็ว<br/>พร้อมดูแลทุกขั้นตอน</p>
+                <h3 className="text-xl font-bold text-gray-900 mb-3 relative z-10">นัดชมทรัพย์</h3>
+                <p className="text-sm text-gray-500 leading-relaxed relative z-10">นัดชมง่าย รวดเร็ว<br/>พร้อมดูแลทุกขั้นตอน</p>
               </div>
             </div>
 
             {/* Bottom row */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="bg-forest-800 rounded-bl-3xl rounded-tl-sm rounded-tr-sm rounded-br-sm p-8 flex items-center justify-between">
-                <div className="flex items-center gap-6">
-                  <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center text-forest-700 shrink-0">
-                    <Home size={32} />
-                  </div>
-                  <div className="text-white">
-                    <h3 className="text-xl font-bold mb-1">ฝากขายกับเรา</h3>
-                    <p className="text-forest-100 text-sm">ให้เราช่วยขายบ้านของคุณได้เร็ว ในราคาที่คุ้มค่า</p>
-                  </div>
-                </div>
-                <Link href="/contact" className="hidden sm:flex items-center justify-between gap-4 bg-white text-forest-800 font-bold px-6 py-3 rounded-full hover:bg-forest-50 transition-colors shrink-0">
-                  ฝากขายกับเรา <ArrowRight size={18} />
-                </Link>
-              </div>
-
-              <div className="bg-[#e8ece8] rounded-br-3xl rounded-tl-sm rounded-tr-sm rounded-bl-sm p-8 flex items-center justify-between">
-                <div className="flex items-center gap-6">
-                  <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center text-forest-700 shrink-0">
-                    <Calendar size={32} />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Sell Card */}
+              <div className="relative rounded-[2rem] overflow-hidden shadow-lg group flex flex-col justify-center p-8 sm:p-10 min-h-[300px]">
+                <div className="absolute inset-0 bg-[#163a2c] z-0"></div>
+                <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&q=80')] bg-cover bg-center opacity-30 mix-blend-overlay group-hover:scale-105 transition-transform duration-700 z-0"></div>
+                <div className="absolute inset-0 bg-gradient-to-r from-[#163a2c] via-[#163a2c]/80 to-transparent z-0"></div>
+                
+                <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center gap-6 sm:gap-8">
+                  <div className="w-24 h-24 sm:w-28 sm:h-28 bg-white rounded-full flex items-center justify-center shrink-0 shadow-xl border-4 border-white/10">
+                    <Home size={40} className="text-forest-800" />
                   </div>
                   <div>
-                    <h3 className="text-xl font-bold text-gray-900 mb-1">นัดชมทรัพย์</h3>
-                    <p className="text-gray-600 text-sm">นัดชมบ้านที่คุณสนใจได้ง่าย ๆ สะดวก รวดเร็ว</p>
+                    <h3 className="text-2xl sm:text-3xl font-bold text-white mb-3 drop-shadow-sm">ฝากขายกับเรา</h3>
+                    <p className="text-forest-50/90 text-sm sm:text-base max-w-sm mb-6 leading-relaxed">ให้เราช่วยขายบ้านของคุณได้เร็ว<br/>ในราคาที่คุ้มค่า</p>
+                    <Link href="/contact" className="inline-flex items-center gap-3 bg-white text-forest-900 font-bold px-6 py-3 rounded-full hover:bg-gray-50 transition-colors shadow-md">
+                      ฝากขายกับเรา <ArrowRight size={18} />
+                    </Link>
                   </div>
                 </div>
-                <Link href="/contact" className="hidden sm:flex items-center justify-between gap-4 bg-forest-700 text-white font-bold px-6 py-3 rounded-full hover:bg-forest-800 transition-colors shrink-0">
-                  นัดชมทรัพย์ <ArrowRight size={18} />
-                </Link>
+              </div>
+
+              {/* View Card */}
+              <div className="relative rounded-[2rem] overflow-hidden shadow-[0_8px_30px_rgb(0,0,0,0.04)] bg-white border border-gray-100 group flex flex-col justify-center p-8 sm:p-10 min-h-[300px]">
+                <div className="absolute right-0 top-0 bottom-0 w-3/4 bg-[url('https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=800&q=80')] bg-cover bg-center opacity-20 sm:opacity-40 group-hover:scale-105 transition-transform duration-700 z-0"></div>
+                <div className="absolute inset-0 bg-gradient-to-r from-white via-white/95 to-transparent sm:to-white/10 z-0"></div>
+                
+                <div className="relative z-10 h-full flex flex-col justify-between">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 sm:gap-8 mb-6">
+                    <div className="w-20 h-20 sm:w-24 sm:h-24 bg-white border-2 border-forest-50 rounded-full flex items-center justify-center shrink-0 shadow-sm">
+                      <Calendar size={36} className="text-forest-800" />
+                    </div>
+                    <div>
+                      <h3 className="text-2xl font-bold text-gray-900 mb-2">นัดชมทรัพย์</h3>
+                      <p className="text-gray-500 text-sm leading-relaxed mb-5">นัดชมบ้านที่คุณสนใจได้ง่าย ๆ<br/>สะดวก รวดเร็ว</p>
+                      <Link href="/contact" className="inline-flex items-center gap-3 bg-[#163a2c] text-white font-bold px-6 py-3 rounded-full hover:bg-forest-900 transition-colors shadow-md">
+                        นัดชมทรัพย์ <ArrowRight size={18} />
+                      </Link>
+                    </div>
+                  </div>
+                  
+                  {/* Features bottom row */}
+                  <div className="flex flex-wrap items-center gap-3 sm:gap-6 text-xs sm:text-sm font-medium text-gray-500 pt-5 border-t border-gray-100 mt-auto">
+                    <div className="flex items-center gap-1.5 sm:gap-2">
+                      <Clock size={16} className="text-forest-700" /> นัดหมายง่าย
+                    </div>
+                    <div className="w-px h-4 bg-gray-200 hidden sm:block"></div>
+                    <div className="flex items-center gap-1.5 sm:gap-2">
+                      <MapPin size={16} className="text-forest-700" /> เลือกเวลาได้
+                    </div>
+                    <div className="w-px h-4 bg-gray-200 hidden sm:block"></div>
+                    <div className="flex items-center gap-1.5 sm:gap-2">
+                      <CheckCircle2 size={16} className="text-forest-700" /> ปลอดภัย 100%
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
