@@ -52,7 +52,6 @@ export default function Navbar() {
             <Link href="/properties?type=บ้านเดี่ยว" className="text-gray-600 hover:text-forest-700 font-medium transition-colors">บ้านขาย</Link>
             <Link href="/properties?type=คอนโด" className="text-gray-600 hover:text-forest-700 font-medium transition-colors">คอนโด</Link>
             <Link href="/properties?type=ที่ดิน" className="text-gray-600 hover:text-forest-700 font-medium transition-colors">ที่ดิน</Link>
-            <Link href="/contact" className="text-gray-600 hover:text-forest-700 font-medium transition-colors">ฝากขายกับเรา</Link>
             <Link href="/contact" className="text-gray-600 hover:text-forest-700 font-medium transition-colors">ติดต่อเรา</Link>
           </div>
 
@@ -105,9 +104,6 @@ export default function Navbar() {
             </Link>
             <Link href="/properties?type=ที่ดิน" className="px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-xl font-medium transition-colors" onClick={() => setIsOpen(false)}>
               ที่ดิน
-            </Link>
-            <Link href="/contact" className="px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-xl font-medium transition-colors" onClick={() => setIsOpen(false)}>
-              ฝากขายกับเรา
             </Link>
             <Link href="/contact" className="px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-xl font-medium transition-colors" onClick={() => setIsOpen(false)}>
               ติดต่อเรา
