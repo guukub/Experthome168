@@ -63,6 +63,8 @@ export default function SettingsPage() {
       setUploading(false)
       if (e.target) e.target.value = ''
     }
+  }
+
   const handlePortfolioUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files
     if (!files || files.length === 0) return
