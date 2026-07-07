@@ -104,7 +104,7 @@ export default async function PropertyDetailPage({ params }: Props) {
       const ttId = await resolveTikTokVideoId(property.video_url);
       if (ttId) {
         videoEmbedType = 'tiktok';
-        videoEmbedUrl = `https://www.tiktok.com/embed/v2/${ttId}`;
+        videoEmbedUrl = `https://www.tiktok.com/player/v1/${ttId}?music_info=0&description=0`;
       }
     }
   }
