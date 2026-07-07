@@ -1,10 +1,11 @@
 'use client'
 
 import Link from 'next/link'
-import { useState, useEffect } from 'react'
+import { usePathname, useSearchParams } from 'next/navigation'
+import { useState, useEffect, Suspense } from 'react'
 import { Menu, X, Phone, MessageCircle } from 'lucide-react'
 
-export default function Navbar() {
+function NavbarContent() {
   const [isOpen, setIsOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const [settings, setSettings] = useState({
@@ -23,6 +24,29 @@ export default function Navbar() {
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
+
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
+
+  const isActive = (path: string, queryKey?: string, queryValue?: string) => {
+    if (pathname !== path) return false
+    if (queryKey && queryValue) {
+      return searchParams?.get(queryKey) === queryValue
+    }
+    return true
+  }
+
+  const getLinkClass = (path: string, queryKey?: string, queryValue?: string) => {
+    return isActive(path, queryKey, queryValue)
+      ? "text-forest-700 font-bold border-b-2 border-forest-700 pb-1"
+      : "text-gray-600 hover:text-forest-700 font-medium transition-colors"
+  }
+
+  const getMobileLinkClass = (path: string, queryKey?: string, queryValue?: string) => {
+    return isActive(path, queryKey, queryValue)
+      ? "px-4 py-3 text-forest-700 font-bold bg-forest-50 rounded-xl"
+      : "px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-xl font-medium transition-colors"
+  }
 
   return (
     <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? 'bg-white shadow-md py-2' : 'bg-white/95 backdrop-blur-sm py-4 border-b border-gray-100'}`}>
@@ -47,12 +71,12 @@ export default function Navbar() {
 
           {/* Desktop Nav */}
           <div className="hidden lg:flex items-center gap-6">
-            <Link href="/" className="text-forest-700 font-bold border-b-2 border-forest-700 pb-1">หน้าแรก</Link>
-            <Link href="/properties?featured=true" className="text-gray-600 hover:text-forest-700 font-medium transition-colors">ทรัพย์แนะนำ</Link>
-            <Link href="/properties?type=บ้านเดี่ยว" className="text-gray-600 hover:text-forest-700 font-medium transition-colors">บ้านขาย</Link>
-            <Link href="/properties?type=คอนโด" className="text-gray-600 hover:text-forest-700 font-medium transition-colors">คอนโด</Link>
-            <Link href="/properties?type=ที่ดิน" className="text-gray-600 hover:text-forest-700 font-medium transition-colors">ที่ดิน</Link>
-            <Link href="/contact" className="text-gray-600 hover:text-forest-700 font-medium transition-colors">ติดต่อเรา</Link>
+            <Link href="/" className={getLinkClass('/')}>หน้าแรก</Link>
+            <Link href="/properties?featured=true" className={getLinkClass('/properties', 'featured', 'true')}>ทรัพย์แนะนำ</Link>
+            <Link href="/properties?type=บ้านเดี่ยว" className={getLinkClass('/properties', 'type', 'บ้านเดี่ยว')}>บ้านขาย</Link>
+            <Link href="/properties?type=คอนโด" className={getLinkClass('/properties', 'type', 'คอนโด')}>คอนโด</Link>
+            <Link href="/properties?type=ที่ดิน" className={getLinkClass('/properties', 'type', 'ที่ดิน')}>ที่ดิน</Link>
+            <Link href="/contact" className={getLinkClass('/contact')}>ติดต่อเรา</Link>
           </div>
 
           {/* Contact Badges */}
@@ -90,22 +114,22 @@ export default function Navbar() {
       {isOpen && (
         <div className="lg:hidden absolute top-full left-0 right-0 bg-white border-t border-gray-100 shadow-xl animate-fade-in">
           <div className="container-main py-4 flex flex-col gap-2">
-            <Link href="/" className="px-4 py-3 text-forest-700 font-bold bg-forest-50 rounded-xl" onClick={() => setIsOpen(false)}>
+            <Link href="/" className={getMobileLinkClass('/')} onClick={() => setIsOpen(false)}>
               หน้าแรก
             </Link>
-            <Link href="/properties?featured=true" className="px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-xl font-medium transition-colors" onClick={() => setIsOpen(false)}>
+            <Link href="/properties?featured=true" className={getMobileLinkClass('/properties', 'featured', 'true')} onClick={() => setIsOpen(false)}>
               ทรัพย์แนะนำ
             </Link>
-            <Link href="/properties?type=บ้านเดี่ยว" className="px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-xl font-medium transition-colors" onClick={() => setIsOpen(false)}>
+            <Link href="/properties?type=บ้านเดี่ยว" className={getMobileLinkClass('/properties', 'type', 'บ้านเดี่ยว')} onClick={() => setIsOpen(false)}>
               บ้านขาย
             </Link>
-            <Link href="/properties?type=คอนโด" className="px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-xl font-medium transition-colors" onClick={() => setIsOpen(false)}>
+            <Link href="/properties?type=คอนโด" className={getMobileLinkClass('/properties', 'type', 'คอนโด')} onClick={() => setIsOpen(false)}>
               คอนโด
             </Link>
-            <Link href="/properties?type=ที่ดิน" className="px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-xl font-medium transition-colors" onClick={() => setIsOpen(false)}>
+            <Link href="/properties?type=ที่ดิน" className={getMobileLinkClass('/properties', 'type', 'ที่ดิน')} onClick={() => setIsOpen(false)}>
               ที่ดิน
             </Link>
-            <Link href="/contact" className="px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-xl font-medium transition-colors" onClick={() => setIsOpen(false)}>
+            <Link href="/contact" className={getMobileLinkClass('/contact')} onClick={() => setIsOpen(false)}>
               ติดต่อเรา
             </Link>
             
@@ -121,6 +145,14 @@ export default function Navbar() {
         </div>
       )}
     </nav>
+  )
+}
+
+export default function Navbar() {
+  return (
+    <Suspense fallback={<div className="h-[72px] bg-white border-b border-gray-100"></div>}>
+      <NavbarContent />
+    </Suspense>
   )
 }
 
