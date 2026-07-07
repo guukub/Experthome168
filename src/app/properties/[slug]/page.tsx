@@ -163,8 +163,37 @@ export default async function PropertyDetailPage({ params }: Props) {
                   <span>{property.address || property.location}</span>
                 </div>
 
-                <div className="text-3xl md:text-4xl font-bold text-forest-700 mb-8">
-                  {formatPriceRaw(property.price)}
+                <div className="flex flex-col gap-2 mb-8">
+                  {/* Sale Price */}
+                  {(property.price || 0) > 0 && (
+                    <div className="flex flex-wrap items-baseline gap-3">
+                      <div className="text-3xl md:text-4xl font-bold text-forest-700">
+                        {formatPriceRaw(property.price)}
+                      </div>
+                      {property.original_price && property.original_price > property.price && (
+                        <div className="text-lg text-gray-400 line-through font-medium">
+                          {formatPriceRaw(property.original_price)}
+                        </div>
+                      )}
+                      {property.original_price && property.original_price > property.price && (
+                        <div className="bg-red-100 text-red-600 px-2.5 py-1 rounded-md text-sm font-bold">
+                          ลด {formatPriceRaw(property.original_price - property.price)}
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Rent Price */}
+                  {(property.rent_price || 0) > 0 && (
+                    <div className="flex items-center gap-3">
+                      <div className="bg-forest-50 text-forest-600 px-3 py-1.5 rounded-lg text-sm font-bold border border-forest-100">
+                        ให้เช่า
+                      </div>
+                      <div className="text-2xl md:text-3xl font-bold text-gray-900">
+                        {formatPriceRaw(property.rent_price || 0)} <span className="text-lg font-normal text-gray-500">/ เดือน</span>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
 

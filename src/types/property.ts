@@ -16,6 +16,7 @@ export interface Property {
   address?: string
   price: number
   original_price?: number
+  rent_price?: number
   status: PropertyStatus
   land_size?: string
   usable_area?: string

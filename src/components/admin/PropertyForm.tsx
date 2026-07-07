@@ -30,6 +30,7 @@ const EMPTY_FORM = {
   address: '',
   price: '',
   original_price: '',
+  rent_price: '',
   status: 'พร้อมขาย' as Property['status'],
   land_size: '',
   usable_area: '',
@@ -52,6 +53,7 @@ export default function PropertyForm({ initialData, isEdit = false, propertyType
     ...initialData,
     price: initialData?.price?.toString() || '',
     original_price: initialData?.original_price?.toString() || '',
+    rent_price: initialData?.rent_price?.toString() || '',
     bedrooms: initialData?.bedrooms?.toString() || '',
     bathrooms: initialData?.bathrooms?.toString() || '',
     parking: initialData?.parking?.toString() || '',
@@ -197,8 +199,9 @@ export default function PropertyForm({ initialData, isEdit = false, propertyType
 
     const payload = {
       ...form,
-      price: Number(form.price),
+      price: form.price ? Number(form.price) : 0,
       original_price: form.original_price ? Number(form.original_price) : undefined,
+      rent_price: form.rent_price ? Number(form.rent_price) : undefined,
       bedrooms: Number(form.bedrooms),
       bathrooms: Number(form.bathrooms),
       parking: Number(form.parking),
@@ -388,15 +391,29 @@ export default function PropertyForm({ initialData, isEdit = false, propertyType
                 />
               </div>
               <div>
-                <label className="label" htmlFor="prop-price">ราคาขายปัจจุบัน (บาท) *</label>
+                <label className="label" htmlFor="prop-price">ราคาขาย (บาท) *</label>
                 <input
                   id="prop-price"
                   type="number"
                   value={form.price}
                   onChange={e => set('price', e.target.value)}
-                  required
-                  placeholder="3500000"
+                  placeholder="3500000 (ใส่ 0 ถ้าเช่าอย่างเดียว)"
                   className="input"
+                  min="0"
+                  required={!form.rent_price}
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="label" htmlFor="prop-rent-price">ค่าเช่าต่อเดือน (บาท)</label>
+                <input
+                  id="prop-rent-price"
+                  type="number"
+                  value={form.rent_price || ''}
+                  onChange={e => set('rent_price', e.target.value)}
+                  placeholder="เช่น 12000 (สำหรับปล่อยเช่า)"
+                  className="input border-green-200 focus:border-green-500 focus:ring-green-200"
                   min="0"
                 />
               </div>
