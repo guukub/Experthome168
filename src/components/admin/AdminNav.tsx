@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation'
 import { useState } from 'react'
 import {
   LayoutDashboard, Building2, MessageSquare, LogOut,
-  Menu, X, ExternalLink, ChevronRight, Settings, Home, Users
+  Menu, X, ExternalLink, ChevronRight, Settings, Home, Users, Image as ImageIcon
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
@@ -13,6 +13,7 @@ import { useRouter } from 'next/navigation'
 const navItems = [
   { href: '/admin/dashboard', label: 'ภาพรวม', icon: LayoutDashboard },
   { href: '/admin/properties', label: 'จัดการทรัพย์', icon: Home },
+  { href: '/admin/portfolio', label: 'จัดการผลงาน', icon: ImageIcon },
   { href: '/admin/inquiries', label: 'ลูกค้าติดต่อ', icon: MessageSquare },
   { href: '/admin/settings', label: 'ตั้งค่าเว็บไซต์', icon: Settings },
   { href: '/admin/admins', label: 'ผู้ดูแลระบบ', icon: Users },
