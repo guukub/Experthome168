@@ -10,6 +10,9 @@ export default function SettingsPage() {
     lineUrl: '',
     facebook: '',
     facebookUrl: '',
+    email: '',
+    address: '',
+    workingHours: '',
     logoUrl: '',
     portfolioImages: [] as string[]
   })
@@ -180,6 +183,46 @@ export default function SettingsPage() {
                 value={form.facebookUrl}
                 onChange={e => set('facebookUrl', e.target.value)}
                 placeholder="เช่น https://facebook.com/..."
+                className="input"
+                required
+              />
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            <h2 className="text-lg font-bold text-gray-800 flex items-center gap-2">
+              <MessageCircle size={20} className="text-red-500" />
+              ข้อมูลติดต่ออื่นๆ
+            </h2>
+            <div>
+              <label className="label">อีเมล</label>
+              <input
+                type="email"
+                value={form.email}
+                onChange={e => set('email', e.target.value)}
+                placeholder="เช่น info@teebangbon.com"
+                className="input"
+                required
+              />
+            </div>
+            <div>
+              <label className="label">ที่อยู่สำนักงาน</label>
+              <input
+                type="text"
+                value={form.address}
+                onChange={e => set('address', e.target.value)}
+                placeholder="เช่น บางบอน กรุงเทพมหานคร..."
+                className="input"
+                required
+              />
+            </div>
+            <div>
+              <label className="label">เวลาทำการ</label>
+              <input
+                type="text"
+                value={form.workingHours}
+                onChange={e => set('workingHours', e.target.value)}
+                placeholder="เช่น เปิดทุกวัน จันทร์–อาทิตย์ 8:00–20:00 น."
                 className="input"
                 required
               />

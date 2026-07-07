@@ -1,4 +1,5 @@
 import { Metadata } from 'next'
+import { getSettingsAction } from '@/app/actions'
 import Navbar from '@/components/public/Navbar'
 import Footer from '@/components/public/Footer'
 import { Phone, MessageCircle, Facebook, MapPin, Clock, Mail, Send } from 'lucide-react'
@@ -8,7 +9,9 @@ export const metadata: Metadata = {
   description: 'ติดต่อตี๋บางบอน นายหน้าอสังหาริมทรัพย์ โทร ไลน์ เฟซบุ๊ก หรือกรอกฟอร์ม',
 }
 
-export default function ContactPage() {
+export default async function ContactPage() {
+  const settings = await getSettingsAction()
+
   return (
     <>
       <Navbar />
@@ -30,16 +33,16 @@ export default function ContactPage() {
               <div className="space-y-4 mb-8">
                 {[
                   {
-                    icon: Phone, label: 'โทรศัพท์', value: '081-234-5678',
-                    href: 'tel:+66812345678', color: 'bg-forest-600', desc: 'โทรได้ตลอด ไม่ต้องรอนาน'
+                    icon: Phone, label: 'โทรศัพท์', value: settings.phone,
+                    href: `tel:${(settings.phone || '').replace(/\D/g, '')}`, color: 'bg-forest-600', desc: 'โทรได้ตลอด ไม่ต้องรอนาน'
                   },
                   {
-                    icon: MessageCircle, label: 'Line', value: '@teebangbon',
-                    href: 'https://line.me/ti/p/~teebangbon', color: 'bg-green-500', desc: 'แชทได้เลย ตอบเร็ว'
+                    icon: MessageCircle, label: 'Line', value: settings.lineId,
+                    href: settings.lineUrl || '#', color: 'bg-green-500', desc: 'แชทได้เลย ตอบเร็ว'
                   },
                   {
-                    icon: Facebook, label: 'Facebook', value: 'ตี๋บางบอน อสังหาฯ',
-                    href: 'https://facebook.com/teebangbon', color: 'bg-blue-600', desc: 'ดูรูปและข้อมูลทรัพย์'
+                    icon: Facebook, label: 'Facebook', value: settings.facebook || 'ตี๋บางบอน อสังหาฯ',
+                    href: settings.facebookUrl || '#', color: 'bg-blue-600', desc: 'ดูรูปและข้อมูลทรัพย์'
                   },
                   {
                     icon: Mail, label: 'อีเมล', value: 'info@teebangbon.com',
@@ -73,11 +76,11 @@ export default function ContactPage() {
                 <ul className="space-y-3">
                   <li className="flex items-start gap-3 text-forest-700">
                     <MapPin size={18} className="mt-0.5 shrink-0 text-forest-500" />
-                    <span>บางบอน กรุงเทพมหานคร และพื้นที่ใกล้เคียง (หนองแขม · พุทธบูชา · บางแค · อ้อมน้อย)</span>
+                    <span>{settings.address}</span>
                   </li>
                   <li className="flex items-center gap-3 text-forest-700">
                     <Clock size={18} className="shrink-0 text-forest-500" />
-                    <span>เปิดทุกวัน จันทร์–อาทิตย์ 8:00–20:00 น.</span>
+                    <span>{settings.workingHours}</span>
                   </li>
                 </ul>
               </div>
@@ -87,7 +90,7 @@ export default function ContactPage() {
             <div>
               <h2 className="text-2xl font-bold text-gray-900 mb-6">ส่งข้อความถึงเรา</h2>
               <div className="card p-6">
-                <ContactForm />
+                <ContactForm lineId={settings.lineId} />
               </div>
 
               {/* CTA Cards */}
@@ -112,7 +115,7 @@ export default function ContactPage() {
   )
 }
 
-function ContactForm() {
+function ContactForm({ lineId }: { lineId: string }) {
   return (
     <form action="/api/inquiries" method="POST" className="space-y-4">
       <div>
@@ -147,7 +150,7 @@ function ContactForm() {
         <Send size={18} /> ส่งข้อความ
       </button>
       <p className="text-xs text-gray-400 text-center">
-        หรือติดต่อโดยตรงทาง Line: @teebangbon เพื่อรับการตอบกลับที่รวดเร็วกว่า
+        หรือติดต่อโดยตรงทาง Line: {lineId} เพื่อรับการตอบกลับที่รวดเร็วกว่า
       </p>
     </form>
   )

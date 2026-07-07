@@ -133,7 +133,10 @@ export async function getSettingsAction() {
       facebook: 'facebook.com/teebangbon',
       facebookUrl: 'https://facebook.com/teebangbon',
       logoUrl: '',
-      portfolioImages: []
+      portfolioImages: [],
+      email: 'info@teebangbon.com',
+      address: 'บางบอน กรุงเทพมหานคร และพื้นที่ใกล้เคียง (หนองแขม · พุทธบูชา · บางแค · อ้อมน้อย)',
+      workingHours: 'เปิดทุกวัน จันทร์–อาทิตย์ 8:00–20:00 น.'
     }
   }
   return toPlainObject(settings)

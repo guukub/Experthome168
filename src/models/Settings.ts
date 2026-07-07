@@ -8,6 +8,9 @@ const SettingsSchema = new mongoose.Schema({
   facebookUrl: { type: String, default: 'https://facebook.com/teebangbon' },
   logoUrl: { type: String, default: '' },
   portfolioImages: [{ type: String }],
+  email: { type: String, default: 'info@teebangbon.com' },
+  address: { type: String, default: 'บางบอน กรุงเทพมหานคร และพื้นที่ใกล้เคียง (หนองแขม · พุทธบูชา · บางแค · อ้อมน้อย)' },
+  workingHours: { type: String, default: 'เปิดทุกวัน จันทร์–อาทิตย์ 8:00–20:00 น.' },
 }, { timestamps: true })
 
 export default mongoose.models.Settings || mongoose.model('Settings', SettingsSchema)
