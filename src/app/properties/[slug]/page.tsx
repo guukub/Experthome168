@@ -8,6 +8,15 @@ import ImageGallery from '@/components/public/ImageGallery'
 import { getPropertiesAction } from '@/app/actions'
 import { formatPriceRaw, getStatusColor, getStatusDotColor, getPropertyTypeIcon, formatDate, formatPrice } from '@/lib/utils'
 
+function getYouTubeEmbedUrl(url: string) {
+  if (!url) return null;
+  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+  const match = url.match(regExp);
+  return (match && match[2].length === 11)
+    ? `https://www.youtube.com/embed/${match[2]}`
+    : null;
+}
+
 export const dynamic = 'force-dynamic'
 
 interface Props {
@@ -87,21 +96,9 @@ export default async function PropertyDetailPage({ params }: Props) {
                   <span>{property.address || property.location}</span>
                 </div>
 
-                <div className="text-3xl md:text-4xl font-bold text-forest-700 mb-6">
+                <div className="text-3xl md:text-4xl font-bold text-forest-700 mb-8">
                   {formatPriceRaw(property.price)}
                 </div>
-
-                {property.video_url && (
-                  <a 
-                    href={property.video_url} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 px-5 py-2.5 bg-red-600 hover:bg-red-700 text-white font-medium rounded-xl transition-colors mb-6"
-                  >
-                    <Play size={18} fill="currentColor" />
-                    ดูวิดีโอทรัพย์นี้
-                  </a>
-                )}
               </div>
 
               <div className="bg-white rounded-2xl border border-gray-100 p-6">
@@ -147,6 +144,37 @@ export default async function PropertyDetailPage({ params }: Props) {
                 <div className="bg-white rounded-2xl border border-gray-100 p-6">
                   <h2 className="font-bold text-gray-900 text-lg mb-4">รายละเอียดเพิ่มเติม</h2>
                   <p className="text-gray-600 leading-relaxed whitespace-pre-line">{property.description}</p>
+                </div>
+              )}
+
+              {property.video_url && (
+                <div className="bg-white rounded-2xl border border-gray-100 p-6">
+                  <h2 className="font-bold text-gray-900 text-lg mb-4">วิดีโอแนะนำทรัพย์</h2>
+                  {getYouTubeEmbedUrl(property.video_url) ? (
+                    <div className="relative w-full aspect-video rounded-xl overflow-hidden bg-gray-100 border border-gray-100">
+                      <iframe
+                        src={getYouTubeEmbedUrl(property.video_url)!}
+                        className="absolute top-0 left-0 w-full h-full"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                      />
+                    </div>
+                  ) : (
+                    <div className="p-4 bg-gray-50 rounded-xl flex items-center justify-between border border-gray-100">
+                      <div className="text-gray-600 text-sm truncate pr-4">
+                        คลิกเพื่อรับชมวิดีโอจากลิงก์ภายนอก
+                      </div>
+                      <a 
+                        href={property.video_url} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="shrink-0 inline-flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg text-sm transition-colors"
+                      >
+                        <Play size={16} fill="currentColor" />
+                        เปิดวิดีโอ
+                      </a>
+                    </div>
+                  )}
                 </div>
               )}
 
