@@ -45,8 +45,8 @@ export default async function ContactPage() {
                     href: settings.facebookUrl || '#', color: 'bg-blue-600', desc: 'ดูรูปและข้อมูลทรัพย์'
                   },
                   {
-                    icon: Mail, label: 'อีเมล', value: 'info@teebangbon.com',
-                    href: 'mailto:info@teebangbon.com', color: 'bg-red-500', desc: 'สำหรับเอกสารและสัญญา'
+                    icon: Mail, label: 'อีเมล', value: settings.email || 'info@teebangbon.com',
+                    href: `mailto:${settings.email || 'info@teebangbon.com'}`, color: 'bg-red-500', desc: 'สำหรับเอกสารและสัญญา'
                   },
                 ].map(channel => {
                   const Icon = channel.icon
