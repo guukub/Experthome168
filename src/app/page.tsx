@@ -16,9 +16,39 @@ export const metadata: Metadata = {
   description: 'ตี๋บางบอน — ผู้เชี่ยวชาญอสังหาริมทรัพย์ย่านบางบอน หนองแขม พุทธบูชา บ้านเดี่ยว ทาวน์เฮ้าส์ ที่ดิน ราคาดี พร้อมให้บริการ',
 }
 
-export default async function HomePage() {
+interface HomePageProps {
+  searchParams: {
+    type?: string
+    province?: string
+    district?: string
+    tambon?: string
+    min_price?: string
+    max_price?: string
+  }
+}
+
+export default async function HomePage({ searchParams }: HomePageProps) {
   const allProps = await getPropertiesAction()
-  const featuredProperties = allProps.filter(p => p.is_featured && p.is_visible)
+  let filtered = allProps.filter(p => p.is_visible)
+
+  if (searchParams.type) {
+    filtered = filtered.filter(p => p.property_type === searchParams.type)
+  }
+  if (searchParams.province) {
+    filtered = filtered.filter(p => p.province === searchParams.province)
+  }
+  if (searchParams.district) {
+    filtered = filtered.filter(p => p.district === searchParams.district)
+  }
+  if (searchParams.tambon) {
+    filtered = filtered.filter(p => p.tambon === searchParams.tambon)
+  }
+  if (searchParams.min_price) {
+    filtered = filtered.filter(p => p.price >= Number(searchParams.min_price))
+  }
+  if (searchParams.max_price) {
+    filtered = filtered.filter(p => p.price <= Number(searchParams.max_price))
+  }
 
   return (
     <>
@@ -89,8 +119,8 @@ export default async function HomePage() {
 
         <div className="h-24"></div> {/* Spacer for search bar */}
 
-        {/* ─── FEATURED PROPERTIES ─── */}
-        <section className="py-12">
+        {/* ─── PROPERTIES SECTION ─── */}
+        <section id="properties" className="py-12">
           <div className="container-main">
             <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between mb-8 gap-4">
               <div>
@@ -104,9 +134,15 @@ export default async function HomePage() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {allProps.filter(p => p.is_visible).map(property => (
-                <PropertyCard key={property.id} property={property} />
-              ))}
+              {filtered.length > 0 ? (
+                filtered.map(property => (
+                  <PropertyCard key={property.id} property={property} />
+                ))
+              ) : (
+                <div className="col-span-full py-12 text-center text-gray-500">
+                  ไม่พบทรัพย์ที่ตรงกับเงื่อนไขการค้นหา
+                </div>
+              )}
             </div>
           </div>
         </section>

@@ -55,7 +55,7 @@ export default function HeroSearch() {
       }
       if (price === 'over_5m') params.set('min_price', '5000000')
     }
-    router.push(`/properties?${params.toString()}`)
+    router.push(`/?${params.toString()}#properties`)
   }
 
   return (
