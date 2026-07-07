@@ -95,19 +95,16 @@ export default async function HomePage() {
             <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between mb-8 gap-4">
               <div>
                 <div className="text-gold-500 font-bold tracking-widest text-sm uppercase mb-2">
-                  Featured Properties
+                  All Properties
                 </div>
                 <h2 className="text-3xl font-extrabold text-[#0a192f]">
-                  ทรัพย์แนะนำที่น่าสนใจ
+                  ทรัพย์ทั้งหมดของเรา
                 </h2>
               </div>
-              <Link href="/properties" className="border border-gray-300 bg-white text-gray-800 px-5 py-2.5 rounded-lg font-medium hover:bg-gray-50 transition-colors flex items-center gap-2 shadow-sm">
-                ดูทรัพย์ทั้งหมด <ArrowRight size={18} />
-              </Link>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {featuredProperties.slice(0, 5).map(property => (
+              {allProps.filter(p => p.is_visible).map(property => (
                 <PropertyCard key={property.id} property={property} />
               ))}
             </div>
