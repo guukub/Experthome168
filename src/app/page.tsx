@@ -239,8 +239,8 @@ export default async function HomePage({ searchParams }: HomePageProps) {
                   {[1, 2].map((groupIdx) => (
                     <div key={groupIdx} className="flex gap-6 md:gap-10 pr-6 md:pr-10">
                       {portfolioImages.map((img: string, i: number) => (
-                        <div key={`${groupIdx}-${i}`} className="w-48 h-28 md:w-72 md:h-40 lg:w-80 lg:h-48 bg-white rounded-2xl shadow-sm border border-gray-100 flex items-center justify-center p-4 md:p-6 hover:shadow-md transition-shadow shrink-0">
-                          <img src={img} alt={`portfolio ${i+1}`} className="max-w-full max-h-full object-contain" />
+                        <div key={`${groupIdx}-${i}`} className="w-48 h-28 md:w-72 md:h-40 lg:w-80 lg:h-48 flex items-center justify-center shrink-0">
+                          <img src={img} alt={`portfolio ${i+1}`} className="max-w-full max-h-full object-contain mix-blend-multiply" />
                         </div>
                       ))}
                     </div>
