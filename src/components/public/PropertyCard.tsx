@@ -89,28 +89,28 @@ export default function PropertyCard({ property, className = '' }: PropertyCardP
         <div className={`absolute inset-x-0 bottom-0 h-32 pointer-events-none ${!isSale && isRent ? 'bg-gradient-to-t from-forest-800/90 via-forest-800/40 to-transparent' : 'bg-gradient-to-t from-black/90 via-black/40 to-transparent'}`} />
         
         {/* Price Details on Image */}
-        <div className="absolute bottom-4 left-4 right-4 flex items-end justify-between z-10">
+        <div className="absolute bottom-2 sm:bottom-4 left-3 sm:left-4 right-3 sm:right-4 flex items-end justify-between z-10">
           {isSale ? (
             <div>
               {property.original_price && property.original_price > property.price && (
-                <div className="text-white/80 line-through text-xs mb-0.5">
+                <div className="text-white/80 line-through text-[10px] sm:text-xs mb-0.5">
                   {formatPrice(property.original_price)}
                 </div>
               )}
-              <div className="text-2xl font-bold text-white leading-none">
+              <div className="text-base sm:text-2xl font-bold text-white leading-none">
                 {formatPrice(property.price)}
               </div>
             </div>
           ) : isRent ? (
             <div>
-              <div className="text-2xl font-bold text-white leading-none">
-                {formatPrice(property.rent_price || 0)} <span className="text-sm font-normal opacity-90">/ เดือน</span>
+              <div className="text-base sm:text-2xl font-bold text-white leading-none">
+                {formatPrice(property.rent_price || 0)} <span className="text-[10px] sm:text-sm font-normal opacity-90">/ เดือน</span>
               </div>
             </div>
           ) : null}
           
           {isSale && property.original_price && property.original_price > property.price && (
-            <div className={`text-white text-[10px] px-2 py-1 rounded font-bold bg-red-500`}>
+            <div className={`text-white text-[9px] sm:text-[10px] px-1.5 sm:px-2 py-0.5 sm:py-1 rounded font-bold bg-red-500`}>
               Save {formatPrice(property.original_price - property.price)}
             </div>
           )}
@@ -131,25 +131,25 @@ export default function PropertyCard({ property, className = '' }: PropertyCardP
       )}
 
       {/* Content Section */}
-      <div className="p-4 flex flex-col flex-1">
-        <h3 className="font-bold text-gray-900 text-lg leading-snug line-clamp-1 mb-1 group-hover:text-forest-700 transition-colors">
+      <div className="p-3 sm:p-4 flex flex-col flex-1">
+        <h3 className="font-bold text-gray-900 text-sm sm:text-lg leading-snug line-clamp-1 sm:mb-1 group-hover:text-forest-700 transition-colors">
           {property.title}
         </h3>
         
-        <div className="flex items-center gap-1 text-gray-500 text-sm mb-3">
-          <MapPin size={14} className="shrink-0" />
+        <div className="flex items-center gap-1 text-gray-500 text-xs sm:text-sm mb-2 sm:mb-3 mt-1 sm:mt-0">
+          <MapPin size={12} className="shrink-0 sm:w-3.5 sm:h-3.5" />
           <span className="truncate">{property.location}{property.project_name ? ` · ${property.project_name}` : ''}</span>
         </div>
 
         {/* Rent Only Highlight Box */}
         {!isSale && isRent && (
-          <div className="bg-forest-50 border border-forest-100 rounded-lg p-2.5 flex items-center justify-between mb-4">
-            <div className="flex items-center gap-1.5 text-forest-700 font-medium text-sm">
-              <Home size={16} />
+          <div className="bg-forest-50 border border-forest-100 rounded-lg p-2 sm:p-2.5 flex items-center justify-between mb-3 sm:mb-4">
+            <div className="flex items-center gap-1.5 text-forest-700 font-medium text-[11px] sm:text-sm">
+              <Home size={14} className="sm:w-4 sm:h-4" />
               ค่าเช่า
             </div>
-            <div className="font-bold text-forest-700">
-              {formatPrice(property.rent_price || 0)} <span className="text-xs font-normal">/ เดือน</span>
+            <div className="font-bold text-forest-700 text-xs sm:text-base">
+              {formatPrice(property.rent_price || 0)} <span className="text-[9px] sm:text-xs font-normal">/ ด.</span>
             </div>
           </div>
         )}
@@ -157,24 +157,24 @@ export default function PropertyCard({ property, className = '' }: PropertyCardP
         <div className="mt-auto">
           {/* Features Row */}
           {property.property_type !== 'ที่ดิน' ? (
-            <div className="flex items-center justify-between text-sm text-gray-600 px-1 pt-1 border-t border-gray-50">
-              <div className="flex items-center gap-1.5">
-                <Bed size={16} />
-                <span className="font-medium">{property.bedrooms || 0} Beds</span>
+            <div className="flex items-center justify-between text-[10px] sm:text-sm text-gray-600 px-0.5 sm:px-1 pt-2 sm:pt-1 border-t border-gray-50 mt-1">
+              <div className="flex items-center gap-1 sm:gap-1.5">
+                <Bed size={12} className="sm:w-4 sm:h-4" />
+                <span className="font-medium truncate">{property.bedrooms || 0} <span className="hidden sm:inline">Beds</span><span className="sm:hidden">นอน</span></span>
               </div>
-              <div className="flex items-center gap-1.5">
-                <Bath size={16} />
-                <span className="font-medium">{property.bathrooms || 0} Baths</span>
+              <div className="flex items-center gap-1 sm:gap-1.5">
+                <Bath size={12} className="sm:w-4 sm:h-4" />
+                <span className="font-medium truncate">{property.bathrooms || 0} <span className="hidden sm:inline">Baths</span><span className="sm:hidden">น้ำ</span></span>
               </div>
-              <div className="flex items-center gap-1.5">
-                <Maximize size={16} />
-                <span className="font-medium">{property.usable_area || '-'}</span>
+              <div className="flex items-center gap-1 sm:gap-1.5">
+                <Maximize size={12} className="sm:w-4 sm:h-4" />
+                <span className="font-medium truncate">{property.usable_area || '-'}</span>
               </div>
             </div>
           ) : (
-            <div className="flex items-center text-sm text-gray-600 px-1 pt-1 border-t border-gray-50 gap-4">
-              <div className="flex items-center gap-1.5">
-                <Maximize size={16} />
+            <div className="flex items-center text-[10px] sm:text-sm text-gray-600 px-0.5 sm:px-1 pt-2 sm:pt-1 border-t border-gray-50 gap-4 mt-1">
+              <div className="flex items-center gap-1 sm:gap-1.5">
+                <Maximize size={12} className="sm:w-4 sm:h-4" />
                 <span className="font-medium">ที่ดิน {property.land_size || '-'}</span>
               </div>
             </div>
