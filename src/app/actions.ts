@@ -120,3 +120,19 @@ export async function getPropertiesAction() {
     
     return properties.map(toPlainObject) as PropertyType[]
   }
+
+export async function getSettingsAction() {
+  await connectToDatabase()
+  const { default: Settings } = await import('@/models/Settings')
+  const settings = await Settings.findOne()
+  if (!settings) {
+    return {
+      phone: '081-123-4567',
+      lineId: '@teebangbon',
+      lineUrl: 'https://line.me/ti/p/~@teebangbon',
+      facebook: 'facebook.com/teebangbon',
+      facebookUrl: 'https://facebook.com/teebangbon'
+    }
+  }
+  return toPlainObject(settings)
+}

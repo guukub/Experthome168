@@ -5,7 +5,7 @@ import { MapPin, Bed, Bath, Car, Maximize, ArrowLeft, Phone, MessageCircle, Face
 import Navbar from '@/components/public/Navbar'
 import Footer from '@/components/public/Footer'
 import ImageGallery from '@/components/public/ImageGallery'
-import { getPropertiesAction } from '@/app/actions'
+import { getPropertiesAction, getSettingsAction } from '@/app/actions'
 import { formatPriceRaw, getStatusColor, getStatusDotColor, getPropertyTypeIcon, formatDate, formatPrice } from '@/lib/utils'
 
 function getYouTubeEmbedUrl(url: string) {
@@ -86,6 +86,8 @@ export default async function PropertyDetailPage({ params }: Props) {
   const property = visibleProperties.find(p => p.slug === decodedSlug)
 
   if (!property) notFound()
+
+  const settings = await getSettingsAction()
   
   const mapQuery = property.map_url 
     ? await resolveMapCoordinates(property.map_url) 
@@ -318,13 +320,13 @@ export default async function PropertyDetailPage({ params }: Props) {
 
                   <div className="space-y-3">
                     <a
-                      href="tel:+66812345678"
+                      href={`tel:${settings.phone.replace(/[^0-9]/g, '')}`}
                       className="btn-primary w-full justify-center text-base py-3.5"
                     >
-                      <Phone size={18} /> โทร 081-234-5678
+                      <Phone size={18} /> โทร {settings.phone}
                     </a>
                     <a
-                      href={`https://line.me/ti/p/~teebangbon`}
+                      href={settings.lineUrl}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex items-center justify-center gap-2 w-full py-3.5 bg-green-500 text-white font-semibold rounded-xl hover:bg-green-600 transition-colors"
@@ -332,7 +334,7 @@ export default async function PropertyDetailPage({ params }: Props) {
                       <MessageCircle size={18} /> Line สอบถาม
                     </a>
                     <a
-                      href="https://facebook.com/teebangbon"
+                      href={settings.facebookUrl}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex items-center justify-center gap-2 w-full py-3.5 bg-blue-600 text-white font-semibold rounded-xl hover:bg-blue-700 transition-colors"

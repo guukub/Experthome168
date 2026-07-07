@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
-import { promises as fs } from 'fs'
-import { join } from 'path'
+import connectDB from '@/lib/db'
+import Settings from '@/models/Settings'
 
 const DEFAULT_SETTINGS = {
   phone: '081-123-4567',
@@ -11,18 +11,31 @@ const DEFAULT_SETTINGS = {
 }
 
 export async function GET() {
-  const path = join(process.cwd(), 'src', 'lib', 'settings.json')
   try {
-    const data = await fs.readFile(path, 'utf8')
-    return NextResponse.json(JSON.parse(data))
+    await connectDB()
+    const settings = await Settings.findOne()
+    if (!settings) {
+      return NextResponse.json(DEFAULT_SETTINGS)
+    }
+    return NextResponse.json(settings)
   } catch (e) {
     return NextResponse.json(DEFAULT_SETTINGS)
   }
 }
 
 export async function POST(req: Request) {
-  const path = join(process.cwd(), 'src', 'lib', 'settings.json')
-  const body = await req.json()
-  await fs.writeFile(path, JSON.stringify(body, null, 2))
-  return NextResponse.json({ success: true })
+  try {
+    await connectDB()
+    const body = await req.json()
+    let settings = await Settings.findOne()
+    if (!settings) {
+      settings = new Settings(body)
+    } else {
+      Object.assign(settings, body)
+    }
+    await settings.save()
+    return NextResponse.json({ success: true })
+  } catch (e) {
+    return NextResponse.json({ success: false }, { status: 500 })
+  }
 }
