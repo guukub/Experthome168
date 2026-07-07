@@ -57,7 +57,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
       <Navbar />
       <main className="bg-warm-50 min-h-screen">
         {/* ─── HERO SECTION ─── */}
-        <section className="relative pt-32 pb-48">
+        <section className="relative pt-24 pb-32">
           {/* Background */}
           <div
             className="absolute inset-0 bg-cover bg-center bg-no-repeat"
@@ -68,7 +68,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
           <div className="absolute inset-0 bg-gradient-to-r from-white/95 via-white/80 to-transparent" />
 
           <div className="relative z-10 container-main">
-            <div className="max-w-2xl pt-10 pb-16">
+            <div className="max-w-2xl pt-4 pb-8">
               <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-forest-800 leading-tight mb-5">
                 บ้านสวย <span className="text-gray-400 font-light">|</span> พร้อมอยู่
                 <br />
