@@ -230,12 +230,22 @@ export default async function HomePage({ searchParams }: HomePageProps) {
                 </div>
                 <div className="h-px bg-gray-300 w-12 sm:w-24"></div>
               </div>
-              <div className="flex flex-wrap justify-center items-center gap-4 md:gap-6">
-                {portfolioImages.map((img: string, i: number) => (
-                  <div key={i} className="w-28 h-16 md:w-40 md:h-20 bg-white rounded-xl shadow-sm border border-gray-100 flex items-center justify-center p-3 hover:shadow-md transition-shadow">
-                    <img src={img} alt={`portfolio ${i+1}`} className="max-w-full max-h-full object-contain" />
-                  </div>
-                ))}
+              <div className="overflow-hidden w-full relative pb-4">
+                {/* Fade edges */}
+                <div className="absolute top-0 left-0 w-12 sm:w-24 h-full bg-gradient-to-r from-warm-50/50 to-transparent z-10 pointer-events-none"></div>
+                <div className="absolute top-0 right-0 w-12 sm:w-24 h-full bg-gradient-to-l from-warm-50/50 to-transparent z-10 pointer-events-none"></div>
+                
+                <div className="flex w-max animate-marquee hover:[animation-play-state:paused]">
+                  {[1, 2].map((groupIdx) => (
+                    <div key={groupIdx} className="flex gap-4 md:gap-8 pr-4 md:pr-8">
+                      {portfolioImages.map((img: string, i: number) => (
+                        <div key={`${groupIdx}-${i}`} className="w-40 h-24 md:w-56 md:h-32 bg-white rounded-2xl shadow-sm border border-gray-100 flex items-center justify-center p-4 hover:shadow-md transition-shadow shrink-0">
+                          <img src={img} alt={`portfolio ${i+1}`} className="max-w-full max-h-full object-contain" />
+                        </div>
+                      ))}
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           </section>
