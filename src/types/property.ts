@@ -22,6 +22,7 @@ export interface Property {
   bathrooms?: number
   parking?: number
   description?: string
+  video_url?: string
   highlights?: string[]
   is_featured: boolean
   is_visible: boolean

@@ -1,7 +1,7 @@
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import { MapPin, Bed, Bath, Car, Maximize, ArrowLeft, Phone, MessageCircle, Facebook, CheckCircle, Calendar } from 'lucide-react'
+import { MapPin, Bed, Bath, Car, Maximize, ArrowLeft, Phone, MessageCircle, Facebook, CheckCircle, Calendar, Play } from 'lucide-react'
 import Navbar from '@/components/public/Navbar'
 import Footer from '@/components/public/Footer'
 import ImageGallery from '@/components/public/ImageGallery'
@@ -87,9 +87,21 @@ export default async function PropertyDetailPage({ params }: Props) {
                   <span>{property.address || property.location}</span>
                 </div>
 
-                <div className="text-3xl md:text-4xl font-bold text-forest-700">
+                <div className="text-3xl md:text-4xl font-bold text-forest-700 mb-6">
                   {formatPriceRaw(property.price)}
                 </div>
+
+                {property.video_url && (
+                  <a 
+                    href={property.video_url} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 px-5 py-2.5 bg-red-600 hover:bg-red-700 text-white font-medium rounded-xl transition-colors mb-6"
+                  >
+                    <Play size={18} fill="currentColor" />
+                    ดูวิดีโอทรัพย์นี้
+                  </a>
+                )}
               </div>
 
               <div className="bg-white rounded-2xl border border-gray-100 p-6">

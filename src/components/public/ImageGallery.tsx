@@ -14,7 +14,7 @@ export default function ImageGallery({ images, title }: ImageGalleryProps) {
 
   if (!images || images.length === 0) {
     return (
-      <div className="aspect-[4/3] bg-gray-200 rounded-2xl flex items-center justify-center">
+      <div className="aspect-video bg-gray-200 rounded-2xl flex items-center justify-center">
         <span className="text-gray-400 text-lg">ไม่มีรูปภาพ</span>
       </div>
     )
@@ -27,7 +27,7 @@ export default function ImageGallery({ images, title }: ImageGalleryProps) {
   return (
     <div>
       {/* Main Image */}
-      <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-gray-200 mb-3 group">
+      <div className="relative aspect-video rounded-2xl overflow-hidden bg-gray-200 mb-3 group">
         <Image
           src={images[currentIndex]}
           alt={`${title} - รูปที่ ${currentIndex + 1}`}

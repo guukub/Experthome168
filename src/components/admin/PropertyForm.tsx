@@ -35,6 +35,7 @@ const EMPTY_FORM = {
   bathrooms: '',
   parking: '',
   description: '',
+  video_url: '',
   highlights: [] as string[],
   is_featured: false,
   is_visible: true,
@@ -51,6 +52,7 @@ export default function PropertyForm({ initialData, isEdit = false }: PropertyFo
     bedrooms: initialData?.bedrooms?.toString() || '',
     bathrooms: initialData?.bathrooms?.toString() || '',
     parking: initialData?.parking?.toString() || '',
+    video_url: initialData?.video_url || '',
     highlights: initialData?.highlights || [],
     images: initialData?.images || [],
   })
@@ -435,6 +437,19 @@ export default function PropertyForm({ initialData, isEdit = false }: PropertyFo
               rows={5}
               placeholder="บรรยายทรัพย์ จุดเด่น ทำเล สิ่งอำนวยความสะดวกใกล้เคียง..."
               className="input resize-none"
+            />
+          </div>
+
+          {/* Video URL */}
+          <div className="mt-4">
+            <label className="label" htmlFor="prop-video">ลิงก์วิดีโอ (YouTube, Facebook, TikTok ฯลฯ)</label>
+            <input
+              id="prop-video"
+              type="url"
+              value={form.video_url}
+              onChange={e => set('video_url', e.target.value)}
+              placeholder="https://www.youtube.com/watch?v=..."
+              className="input"
             />
           </div>
 

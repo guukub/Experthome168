@@ -44,7 +44,7 @@ export default function PropertyCard({ property, className = '' }: PropertyCardP
   return (
     <Link href={`/properties/${property.slug}`} className={`bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-all group block overflow-hidden ${className}`}>
       {/* Image Section */}
-      <div className="relative h-[240px] w-full overflow-hidden">
+      <div className="relative aspect-video w-full overflow-hidden">
         <Image
           src={mainImage}
           alt={property.title}
