@@ -20,6 +20,7 @@ const propertySchema = new mongoose.Schema({
   bathrooms: { type: Number },
   parking: { type: Number },
   description: { type: String },
+  video_url: { type: String },
   highlights: [{ type: String }],
   is_featured: { type: Boolean, default: false },
   is_visible: { type: Boolean, default: true },
