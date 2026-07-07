@@ -69,13 +69,13 @@ export default async function HomePage({ searchParams }: HomePageProps) {
 
           <div className="relative z-10 container-main">
             <div className="max-w-2xl pt-10 pb-16">
-              <h1 className="text-4xl sm:text-5xl md:text-[3.5rem] font-bold text-forest-800 leading-tight mb-6">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-forest-800 leading-tight mb-5">
                 บ้านสวย <span className="text-gray-400 font-light">|</span> พร้อมอยู่
                 <br />
                 คัดคุณภาพ <span className="text-gray-400 font-light">|</span> เพื่อคนหาบ้านจริง
               </h1>
 
-              <p className="text-xl text-gray-700 leading-relaxed mb-10 max-w-xl font-medium">
+              <p className="text-lg md:text-xl text-gray-700 leading-relaxed mb-8 max-w-xl font-medium">
                 เราช่วยคุณค้นหาบ้านที่ใช่ ในทำเลที่ชอบ<br/>
                 พร้อมบริการครบ จบทุกขั้นตอน
               </p>
