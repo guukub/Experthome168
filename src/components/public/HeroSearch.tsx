@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { MapPin, Home, Wallet, ChevronDown, Search, Building2, Map } from 'lucide-react'
 import { PROPERTY_TYPES } from '@/lib/utils'
@@ -16,6 +16,19 @@ export default function HeroSearch({ propertyTypes = PROPERTY_TYPES }: { propert
   const [type, setType] = useState('')
   const [price, setPrice] = useState('')
 
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null)
+  const containerRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+        setOpenDropdown(null)
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside)
+    return () => document.removeEventListener("mousedown", handleClickOutside)
+  }, [])
+
   const provinces = useMemo(() => {
     return Array.from(new Set(locationsData.map(l => l.province))).filter(Boolean).sort()
   }, [])
@@ -30,15 +43,17 @@ export default function HeroSearch({ propertyTypes = PROPERTY_TYPES }: { propert
     return Array.from(new Set(locationsData.filter(l => l.province === province && l.district === district).map(l => l.tambon))).filter(Boolean).sort()
   }, [province, district])
 
-  const handleProvinceChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setProvince(e.target.value)
+  const handleProvinceChange = (val: string) => {
+    setProvince(val)
     setDistrict('')
     setTambon('')
+    setOpenDropdown(null)
   }
 
-  const handleDistrictChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setDistrict(e.target.value)
+  const handleDistrictChange = (val: string) => {
+    setDistrict(val)
     setTambon('')
+    setOpenDropdown(null)
   }
 
   const handleSearch = () => {
@@ -59,10 +74,13 @@ export default function HeroSearch({ propertyTypes = PROPERTY_TYPES }: { propert
   }
 
   return (
-    <div className="bg-[#113123]/95 backdrop-blur-md rounded-3xl xl:rounded-full shadow-2xl border border-[#d4af37]/40 p-2 xl:p-2.5 flex flex-col xl:flex-row items-center gap-2 max-w-6xl mx-auto ring-1 ring-[#d4af37]/20">
+    <div ref={containerRef} className="bg-[#113123]/95 backdrop-blur-md rounded-3xl xl:rounded-full shadow-2xl border border-[#d4af37]/40 p-2 xl:p-2.5 flex flex-col xl:flex-row items-center gap-2 max-w-6xl mx-auto ring-1 ring-[#d4af37]/20 relative z-30">
       
       {/* Province */}
-      <div className="relative flex-1 flex items-center gap-3 px-4 py-3 w-full border-b xl:border-b-0 xl:border-r border-[#d4af37]/20 group hover:bg-white/5 rounded-2xl xl:rounded-none xl:rounded-l-full transition-colors cursor-pointer">
+      <div 
+        className="relative flex-1 flex items-center gap-3 px-4 py-3 w-full border-b xl:border-b-0 xl:border-r border-[#d4af37]/20 group hover:bg-white/5 rounded-2xl xl:rounded-none xl:rounded-l-full transition-colors cursor-pointer"
+        onClick={() => setOpenDropdown(openDropdown === 'province' ? null : 'province')}
+      >
         <div className="w-8 h-8 rounded-full bg-[#d4af37]/10 flex items-center justify-center shrink-0">
           <MapPin className="text-[#d4af37]" size={16} />
         </div>
@@ -72,23 +90,28 @@ export default function HeroSearch({ propertyTypes = PROPERTY_TYPES }: { propert
             <span className={`truncate pr-2 ${province ? "text-white font-medium" : ""}`}>
               {province || 'เลือกจังหวัด'}
             </span>
-            <ChevronDown size={14} className="text-[#d4af37]/60 shrink-0" />
+            <ChevronDown size={14} className={`text-[#d4af37]/60 shrink-0 transition-transform ${openDropdown === 'province' ? 'rotate-180' : ''}`} />
           </div>
-          <select 
-            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-            value={province}
-            onChange={handleProvinceChange}
-          >
-            <option value="">ทุกจังหวัด</option>
-            {provinces.map(p => (
-              <option key={p} value={p}>{p}</option>
-            ))}
-          </select>
         </div>
+        
+        {openDropdown === 'province' && (
+          <div className="absolute top-full left-0 mt-3 w-full min-w-[220px] max-h-64 overflow-y-auto bg-[#0a1d15] border border-[#d4af37]/40 rounded-2xl shadow-2xl z-50 py-2 custom-scrollbar">
+            <div className="px-4 py-2.5 hover:bg-[#d4af37]/20 text-white/90 text-sm cursor-pointer transition-colors" onClick={() => handleProvinceChange('')}>ทุกจังหวัด</div>
+            {provinces.map(p => (
+              <div key={p} className={`px-4 py-2.5 hover:bg-[#d4af37]/20 text-sm cursor-pointer transition-colors ${province === p ? 'text-[#d4af37] font-medium' : 'text-white/90'}`} onClick={(e) => { e.stopPropagation(); handleProvinceChange(p); }}>{p}</div>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* District */}
-      <div className="relative flex-1 flex items-center gap-3 px-4 py-3 w-full border-b xl:border-b-0 xl:border-r border-[#d4af37]/20 group hover:bg-white/5 rounded-2xl xl:rounded-none transition-colors cursor-pointer">
+      <div 
+        className={`relative flex-1 flex items-center gap-3 px-4 py-3 w-full border-b xl:border-b-0 xl:border-r border-[#d4af37]/20 group hover:bg-white/5 rounded-2xl xl:rounded-none transition-colors ${!province ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+        onClick={() => {
+          if (!province) return;
+          setOpenDropdown(openDropdown === 'district' ? null : 'district')
+        }}
+      >
         <div className="w-8 h-8 rounded-full bg-[#d4af37]/10 flex items-center justify-center shrink-0">
           <Building2 className="text-[#d4af37]" size={16} />
         </div>
@@ -98,24 +121,28 @@ export default function HeroSearch({ propertyTypes = PROPERTY_TYPES }: { propert
             <span className={`truncate pr-2 ${district ? "text-white font-medium" : ""}`}>
               {district || 'เลือกอำเภอ'}
             </span>
-            <ChevronDown size={14} className="text-[#d4af37]/60 shrink-0" />
+            <ChevronDown size={14} className={`text-[#d4af37]/60 shrink-0 transition-transform ${openDropdown === 'district' ? 'rotate-180' : ''}`} />
           </div>
-          <select 
-            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-            value={district}
-            onChange={handleDistrictChange}
-            disabled={!province}
-          >
-            <option value="">ทุกอำเภอ</option>
-            {availableDistricts.map(d => (
-              <option key={d} value={d}>{d}</option>
-            ))}
-          </select>
         </div>
+
+        {openDropdown === 'district' && province && (
+          <div className="absolute top-full left-0 mt-3 w-full min-w-[220px] max-h-64 overflow-y-auto bg-[#0a1d15] border border-[#d4af37]/40 rounded-2xl shadow-2xl z-50 py-2 custom-scrollbar">
+            <div className="px-4 py-2.5 hover:bg-[#d4af37]/20 text-white/90 text-sm cursor-pointer transition-colors" onClick={() => handleDistrictChange('')}>ทุกอำเภอ</div>
+            {availableDistricts.map(d => (
+              <div key={d} className={`px-4 py-2.5 hover:bg-[#d4af37]/20 text-sm cursor-pointer transition-colors ${district === d ? 'text-[#d4af37] font-medium' : 'text-white/90'}`} onClick={(e) => { e.stopPropagation(); handleDistrictChange(d); }}>{d}</div>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Tambon */}
-      <div className="relative flex-1 flex items-center gap-3 px-4 py-3 w-full border-b xl:border-b-0 xl:border-r border-[#d4af37]/20 group hover:bg-white/5 rounded-2xl xl:rounded-none transition-colors cursor-pointer">
+      <div 
+        className={`relative flex-1 flex items-center gap-3 px-4 py-3 w-full border-b xl:border-b-0 xl:border-r border-[#d4af37]/20 group hover:bg-white/5 rounded-2xl xl:rounded-none transition-colors ${!district ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+        onClick={() => {
+          if (!district) return;
+          setOpenDropdown(openDropdown === 'tambon' ? null : 'tambon')
+        }}
+      >
         <div className="w-8 h-8 rounded-full bg-[#d4af37]/10 flex items-center justify-center shrink-0">
           <Map className="text-[#d4af37]" size={16} />
         </div>
@@ -125,24 +152,25 @@ export default function HeroSearch({ propertyTypes = PROPERTY_TYPES }: { propert
             <span className={`truncate pr-2 ${tambon ? "text-white font-medium" : ""}`}>
               {tambon || 'เลือกตำบล'}
             </span>
-            <ChevronDown size={14} className="text-[#d4af37]/60 shrink-0" />
+            <ChevronDown size={14} className={`text-[#d4af37]/60 shrink-0 transition-transform ${openDropdown === 'tambon' ? 'rotate-180' : ''}`} />
           </div>
-          <select 
-            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-            value={tambon}
-            onChange={(e) => setTambon(e.target.value)}
-            disabled={!district}
-          >
-            <option value="">ทุกตำบล</option>
-            {availableTambons.map(t => (
-              <option key={t} value={t}>{t}</option>
-            ))}
-          </select>
         </div>
+
+        {openDropdown === 'tambon' && district && (
+          <div className="absolute top-full left-0 mt-3 w-full min-w-[220px] max-h-64 overflow-y-auto bg-[#0a1d15] border border-[#d4af37]/40 rounded-2xl shadow-2xl z-50 py-2 custom-scrollbar">
+            <div className="px-4 py-2.5 hover:bg-[#d4af37]/20 text-white/90 text-sm cursor-pointer transition-colors" onClick={(e) => { e.stopPropagation(); setTambon(''); setOpenDropdown(null); }}>ทุกตำบล</div>
+            {availableTambons.map(t => (
+              <div key={t} className={`px-4 py-2.5 hover:bg-[#d4af37]/20 text-sm cursor-pointer transition-colors ${tambon === t ? 'text-[#d4af37] font-medium' : 'text-white/90'}`} onClick={(e) => { e.stopPropagation(); setTambon(t); setOpenDropdown(null); }}>{t}</div>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Property Type */}
-      <div className="relative flex-1 flex items-center gap-3 px-4 py-3 w-full border-b xl:border-b-0 xl:border-r border-[#d4af37]/20 group hover:bg-white/5 rounded-2xl xl:rounded-none transition-colors cursor-pointer">
+      <div 
+        className="relative flex-1 flex items-center gap-3 px-4 py-3 w-full border-b xl:border-b-0 xl:border-r border-[#d4af37]/20 group hover:bg-white/5 rounded-2xl xl:rounded-none transition-colors cursor-pointer"
+        onClick={() => setOpenDropdown(openDropdown === 'type' ? null : 'type')}
+      >
         <div className="w-8 h-8 rounded-full bg-[#d4af37]/10 flex items-center justify-center shrink-0">
           <Home className="text-[#d4af37]" size={16} />
         </div>
@@ -152,23 +180,25 @@ export default function HeroSearch({ propertyTypes = PROPERTY_TYPES }: { propert
             <span className={`truncate pr-2 ${type ? "text-white font-medium" : ""}`}>
               {type || 'เลือกประเภททรัพย์'}
             </span>
-            <ChevronDown size={14} className="text-[#d4af37]/60 shrink-0" />
+            <ChevronDown size={14} className={`text-[#d4af37]/60 shrink-0 transition-transform ${openDropdown === 'type' ? 'rotate-180' : ''}`} />
           </div>
-          <select 
-            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-            value={type}
-            onChange={(e) => setType(e.target.value)}
-          >
-            <option value="">ทุกประเภท</option>
-            {propertyTypes.map(t => (
-              <option key={t} value={t}>{t}</option>
-            ))}
-          </select>
         </div>
+
+        {openDropdown === 'type' && (
+          <div className="absolute top-full left-0 mt-3 w-full min-w-[220px] max-h-64 overflow-y-auto bg-[#0a1d15] border border-[#d4af37]/40 rounded-2xl shadow-2xl z-50 py-2 custom-scrollbar">
+            <div className="px-4 py-2.5 hover:bg-[#d4af37]/20 text-white/90 text-sm cursor-pointer transition-colors" onClick={(e) => { e.stopPropagation(); setType(''); setOpenDropdown(null); }}>ทุกประเภท</div>
+            {propertyTypes.map(t => (
+              <div key={t} className={`px-4 py-2.5 hover:bg-[#d4af37]/20 text-sm cursor-pointer transition-colors ${type === t ? 'text-[#d4af37] font-medium' : 'text-white/90'}`} onClick={(e) => { e.stopPropagation(); setType(t); setOpenDropdown(null); }}>{t}</div>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Price Range */}
-      <div className="relative flex-1 flex items-center gap-3 px-4 py-3 w-full group hover:bg-white/5 rounded-2xl xl:rounded-none transition-colors cursor-pointer">
+      <div 
+        className="relative flex-1 flex items-center gap-3 px-4 py-3 w-full group hover:bg-white/5 rounded-2xl xl:rounded-none transition-colors cursor-pointer"
+        onClick={() => setOpenDropdown(openDropdown === 'price' ? null : 'price')}
+      >
         <div className="w-8 h-8 rounded-full bg-[#d4af37]/10 flex items-center justify-center shrink-0">
           <Wallet className="text-[#d4af37]" size={16} />
         </div>
@@ -181,28 +211,44 @@ export default function HeroSearch({ propertyTypes = PROPERTY_TYPES }: { propert
                price === 'over_5m' ? 'มากกว่า 5 ล้าน' : 
                'ไม่จำกัดช่วงราคา'}
             </span>
-            <ChevronDown size={14} className="text-[#d4af37]/60 shrink-0" />
+            <ChevronDown size={14} className={`text-[#d4af37]/60 shrink-0 transition-transform ${openDropdown === 'price' ? 'rotate-180' : ''}`} />
           </div>
-          <select 
-            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-            value={price}
-            onChange={(e) => setPrice(e.target.value)}
-          >
-            <option value="">ไม่จำกัดช่วงราคา</option>
-            <option value="under_3m">ต่ำกว่า 3 ล้านบาท</option>
-            <option value="3m_to_5m">3 ล้าน - 5 ล้านบาท</option>
-            <option value="over_5m">มากกว่า 5 ล้านบาท</option>
-          </select>
         </div>
+
+        {openDropdown === 'price' && (
+          <div className="absolute top-full left-0 xl:-left-10 mt-3 w-full min-w-[220px] max-h-64 overflow-y-auto bg-[#0a1d15] border border-[#d4af37]/40 rounded-2xl shadow-2xl z-50 py-2 custom-scrollbar">
+            <div className="px-4 py-2.5 hover:bg-[#d4af37]/20 text-white/90 text-sm cursor-pointer transition-colors" onClick={(e) => { e.stopPropagation(); setPrice(''); setOpenDropdown(null); }}>ไม่จำกัดช่วงราคา</div>
+            <div className={`px-4 py-2.5 hover:bg-[#d4af37]/20 text-sm cursor-pointer transition-colors ${price === 'under_3m' ? 'text-[#d4af37] font-medium' : 'text-white/90'}`} onClick={(e) => { e.stopPropagation(); setPrice('under_3m'); setOpenDropdown(null); }}>ต่ำกว่า 3 ล้านบาท</div>
+            <div className={`px-4 py-2.5 hover:bg-[#d4af37]/20 text-sm cursor-pointer transition-colors ${price === '3m_to_5m' ? 'text-[#d4af37] font-medium' : 'text-white/90'}`} onClick={(e) => { e.stopPropagation(); setPrice('3m_to_5m'); setOpenDropdown(null); }}>3 ล้าน - 5 ล้านบาท</div>
+            <div className={`px-4 py-2.5 hover:bg-[#d4af37]/20 text-sm cursor-pointer transition-colors ${price === 'over_5m' ? 'text-[#d4af37] font-medium' : 'text-white/90'}`} onClick={(e) => { e.stopPropagation(); setPrice('over_5m'); setOpenDropdown(null); }}>มากกว่า 5 ล้านบาท</div>
+          </div>
+        )}
       </div>
 
       {/* Search Button */}
       <button 
-        onClick={handleSearch}
+        onClick={(e) => { e.stopPropagation(); handleSearch(); }}
         className="w-full xl:w-auto bg-gradient-to-r from-[#e3c47a] to-[#d4af37] hover:from-[#d4af37] hover:to-[#b8880f] text-[#0f2a1c] font-bold py-4 xl:py-5 px-8 rounded-2xl xl:rounded-full flex items-center justify-center gap-2 transition-all shadow-lg shrink-0 text-sm transform hover:scale-[1.02]"
       >
         <Search size={18} /> ค้นหาทรัพย์
       </button>
+
+      <style jsx global>{`
+        .custom-scrollbar::-webkit-scrollbar {
+          width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+          background: rgba(0,0,0,0.1);
+          border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+          background: rgba(212, 175, 55, 0.3);
+          border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+          background: rgba(212, 175, 55, 0.5);
+        }
+      `}</style>
     </div>
   )
 }
