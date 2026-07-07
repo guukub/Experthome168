@@ -237,9 +237,9 @@ export default async function HomePage({ searchParams }: HomePageProps) {
                 
                 <div className="flex w-max animate-marquee hover:[animation-play-state:paused]">
                   {[1, 2].map((groupIdx) => (
-                    <div key={groupIdx} className="flex gap-4 md:gap-8 pr-4 md:pr-8">
+                    <div key={groupIdx} className="flex gap-6 md:gap-10 pr-6 md:pr-10">
                       {portfolioImages.map((img: string, i: number) => (
-                        <div key={`${groupIdx}-${i}`} className="w-40 h-24 md:w-56 md:h-32 bg-white rounded-2xl shadow-sm border border-gray-100 flex items-center justify-center p-4 hover:shadow-md transition-shadow shrink-0">
+                        <div key={`${groupIdx}-${i}`} className="w-48 h-28 md:w-72 md:h-40 lg:w-80 lg:h-48 bg-white rounded-2xl shadow-sm border border-gray-100 flex items-center justify-center p-4 md:p-6 hover:shadow-md transition-shadow shrink-0">
                           <img src={img} alt={`portfolio ${i+1}`} className="max-w-full max-h-full object-contain" />
                         </div>
                       ))}
