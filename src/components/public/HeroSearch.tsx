@@ -17,6 +17,7 @@ export default function HeroSearch({ propertyTypes = PROPERTY_TYPES }: { propert
   const [price, setPrice] = useState('')
 
   const [openDropdown, setOpenDropdown] = useState<string | null>(null)
+  const [searchTerm, setSearchTerm] = useState('')
   const containerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -43,6 +44,10 @@ export default function HeroSearch({ propertyTypes = PROPERTY_TYPES }: { propert
     return Array.from(new Set(locationsData.filter(l => l.province === province && l.district === district).map(l => l.tambon))).filter(Boolean).sort()
   }, [province, district])
 
+  const filteredProvinces = useMemo(() => provinces.filter(p => p.toLowerCase().includes(searchTerm.toLowerCase())), [provinces, searchTerm])
+  const filteredDistricts = useMemo(() => availableDistricts.filter(d => d.toLowerCase().includes(searchTerm.toLowerCase())), [availableDistricts, searchTerm])
+  const filteredTambons = useMemo(() => availableTambons.filter(t => t.toLowerCase().includes(searchTerm.toLowerCase())), [availableTambons, searchTerm])
+
   const handleProvinceChange = (val: string) => {
     setProvince(val)
     setDistrict('')
@@ -54,6 +59,11 @@ export default function HeroSearch({ propertyTypes = PROPERTY_TYPES }: { propert
     setDistrict(val)
     setTambon('')
     setOpenDropdown(null)
+  }
+
+  const toggleDropdown = (name: string | null) => {
+    setOpenDropdown(openDropdown === name ? null : name)
+    setSearchTerm('')
   }
 
   const handleSearch = () => {
@@ -79,7 +89,7 @@ export default function HeroSearch({ propertyTypes = PROPERTY_TYPES }: { propert
       {/* Province */}
       <div 
         className="relative flex-1 flex items-center gap-3 px-4 py-3 w-full border-b xl:border-b-0 xl:border-r border-[#d4af37]/20 group hover:bg-white/5 rounded-2xl xl:rounded-none xl:rounded-l-full transition-colors cursor-pointer"
-        onClick={() => setOpenDropdown(openDropdown === 'province' ? null : 'province')}
+        onClick={() => toggleDropdown('province')}
       >
         <div className="w-8 h-8 rounded-full bg-[#d4af37]/10 flex items-center justify-center shrink-0">
           <MapPin className="text-[#d4af37]" size={16} />
@@ -95,11 +105,27 @@ export default function HeroSearch({ propertyTypes = PROPERTY_TYPES }: { propert
         </div>
         
         {openDropdown === 'province' && (
-          <div className="absolute top-full left-0 mt-3 w-full min-w-[220px] max-h-64 overflow-y-auto bg-[#0a1d15] border border-[#d4af37]/40 rounded-2xl shadow-2xl z-50 py-2 custom-scrollbar">
-            <div className="px-4 py-2.5 hover:bg-[#d4af37]/20 text-white/90 text-sm cursor-pointer transition-colors" onClick={() => handleProvinceChange('')}>ทุกจังหวัด</div>
-            {provinces.map(p => (
-              <div key={p} className={`px-4 py-2.5 hover:bg-[#d4af37]/20 text-sm cursor-pointer transition-colors ${province === p ? 'text-[#d4af37] font-medium' : 'text-white/90'}`} onClick={(e) => { e.stopPropagation(); handleProvinceChange(p); }}>{p}</div>
-            ))}
+          <div className="absolute top-full left-0 mt-3 w-full min-w-[220px] max-h-72 overflow-y-auto bg-[#0a1d15] border border-[#d4af37]/40 rounded-2xl shadow-2xl z-50 custom-scrollbar">
+            <div className="p-2 border-b border-[#d4af37]/20 sticky top-0 bg-[#0a1d15] z-10">
+              <input 
+                type="text" 
+                placeholder="ค้นหาจังหวัด..." 
+                className="w-full bg-white/5 text-white placeholder-white/40 border border-[#d4af37]/30 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#d4af37] focus:bg-white/10 transition-colors"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                onClick={(e) => e.stopPropagation()}
+                autoFocus
+              />
+            </div>
+            <div className="py-2">
+              <div className="px-4 py-2.5 hover:bg-[#d4af37]/20 text-white/90 text-sm cursor-pointer transition-colors" onClick={() => handleProvinceChange('')}>ทุกจังหวัด</div>
+              {filteredProvinces.map(p => (
+                <div key={p} className={`px-4 py-2.5 hover:bg-[#d4af37]/20 text-sm cursor-pointer transition-colors ${province === p ? 'text-[#d4af37] font-medium' : 'text-white/90'}`} onClick={(e) => { e.stopPropagation(); handleProvinceChange(p); }}>{p}</div>
+              ))}
+              {filteredProvinces.length === 0 && (
+                <div className="px-4 py-3 text-sm text-white/50 text-center">ไม่พบข้อมูล</div>
+              )}
+            </div>
           </div>
         )}
       </div>
@@ -109,7 +135,7 @@ export default function HeroSearch({ propertyTypes = PROPERTY_TYPES }: { propert
         className={`relative flex-1 flex items-center gap-3 px-4 py-3 w-full border-b xl:border-b-0 xl:border-r border-[#d4af37]/20 group hover:bg-white/5 rounded-2xl xl:rounded-none transition-colors ${!province ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
         onClick={() => {
           if (!province) return;
-          setOpenDropdown(openDropdown === 'district' ? null : 'district')
+          toggleDropdown('district')
         }}
       >
         <div className="w-8 h-8 rounded-full bg-[#d4af37]/10 flex items-center justify-center shrink-0">
@@ -126,11 +152,27 @@ export default function HeroSearch({ propertyTypes = PROPERTY_TYPES }: { propert
         </div>
 
         {openDropdown === 'district' && province && (
-          <div className="absolute top-full left-0 mt-3 w-full min-w-[220px] max-h-64 overflow-y-auto bg-[#0a1d15] border border-[#d4af37]/40 rounded-2xl shadow-2xl z-50 py-2 custom-scrollbar">
-            <div className="px-4 py-2.5 hover:bg-[#d4af37]/20 text-white/90 text-sm cursor-pointer transition-colors" onClick={() => handleDistrictChange('')}>ทุกอำเภอ</div>
-            {availableDistricts.map(d => (
-              <div key={d} className={`px-4 py-2.5 hover:bg-[#d4af37]/20 text-sm cursor-pointer transition-colors ${district === d ? 'text-[#d4af37] font-medium' : 'text-white/90'}`} onClick={(e) => { e.stopPropagation(); handleDistrictChange(d); }}>{d}</div>
-            ))}
+          <div className="absolute top-full left-0 mt-3 w-full min-w-[220px] max-h-72 overflow-y-auto bg-[#0a1d15] border border-[#d4af37]/40 rounded-2xl shadow-2xl z-50 custom-scrollbar">
+            <div className="p-2 border-b border-[#d4af37]/20 sticky top-0 bg-[#0a1d15] z-10">
+              <input 
+                type="text" 
+                placeholder="ค้นหาอำเภอ..." 
+                className="w-full bg-white/5 text-white placeholder-white/40 border border-[#d4af37]/30 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#d4af37] focus:bg-white/10 transition-colors"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                onClick={(e) => e.stopPropagation()}
+                autoFocus
+              />
+            </div>
+            <div className="py-2">
+              <div className="px-4 py-2.5 hover:bg-[#d4af37]/20 text-white/90 text-sm cursor-pointer transition-colors" onClick={() => handleDistrictChange('')}>ทุกอำเภอ</div>
+              {filteredDistricts.map(d => (
+                <div key={d} className={`px-4 py-2.5 hover:bg-[#d4af37]/20 text-sm cursor-pointer transition-colors ${district === d ? 'text-[#d4af37] font-medium' : 'text-white/90'}`} onClick={(e) => { e.stopPropagation(); handleDistrictChange(d); }}>{d}</div>
+              ))}
+              {filteredDistricts.length === 0 && (
+                <div className="px-4 py-3 text-sm text-white/50 text-center">ไม่พบข้อมูล</div>
+              )}
+            </div>
           </div>
         )}
       </div>
@@ -140,7 +182,7 @@ export default function HeroSearch({ propertyTypes = PROPERTY_TYPES }: { propert
         className={`relative flex-1 flex items-center gap-3 px-4 py-3 w-full border-b xl:border-b-0 xl:border-r border-[#d4af37]/20 group hover:bg-white/5 rounded-2xl xl:rounded-none transition-colors ${!district ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
         onClick={() => {
           if (!district) return;
-          setOpenDropdown(openDropdown === 'tambon' ? null : 'tambon')
+          toggleDropdown('tambon')
         }}
       >
         <div className="w-8 h-8 rounded-full bg-[#d4af37]/10 flex items-center justify-center shrink-0">
@@ -157,11 +199,27 @@ export default function HeroSearch({ propertyTypes = PROPERTY_TYPES }: { propert
         </div>
 
         {openDropdown === 'tambon' && district && (
-          <div className="absolute top-full left-0 mt-3 w-full min-w-[220px] max-h-64 overflow-y-auto bg-[#0a1d15] border border-[#d4af37]/40 rounded-2xl shadow-2xl z-50 py-2 custom-scrollbar">
-            <div className="px-4 py-2.5 hover:bg-[#d4af37]/20 text-white/90 text-sm cursor-pointer transition-colors" onClick={(e) => { e.stopPropagation(); setTambon(''); setOpenDropdown(null); }}>ทุกตำบล</div>
-            {availableTambons.map(t => (
-              <div key={t} className={`px-4 py-2.5 hover:bg-[#d4af37]/20 text-sm cursor-pointer transition-colors ${tambon === t ? 'text-[#d4af37] font-medium' : 'text-white/90'}`} onClick={(e) => { e.stopPropagation(); setTambon(t); setOpenDropdown(null); }}>{t}</div>
-            ))}
+          <div className="absolute top-full left-0 mt-3 w-full min-w-[220px] max-h-72 overflow-y-auto bg-[#0a1d15] border border-[#d4af37]/40 rounded-2xl shadow-2xl z-50 custom-scrollbar">
+            <div className="p-2 border-b border-[#d4af37]/20 sticky top-0 bg-[#0a1d15] z-10">
+              <input 
+                type="text" 
+                placeholder="ค้นหาตำบล..." 
+                className="w-full bg-white/5 text-white placeholder-white/40 border border-[#d4af37]/30 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#d4af37] focus:bg-white/10 transition-colors"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                onClick={(e) => e.stopPropagation()}
+                autoFocus
+              />
+            </div>
+            <div className="py-2">
+              <div className="px-4 py-2.5 hover:bg-[#d4af37]/20 text-white/90 text-sm cursor-pointer transition-colors" onClick={(e) => { e.stopPropagation(); setTambon(''); toggleDropdown(null); }}>ทุกตำบล</div>
+              {filteredTambons.map(t => (
+                <div key={t} className={`px-4 py-2.5 hover:bg-[#d4af37]/20 text-sm cursor-pointer transition-colors ${tambon === t ? 'text-[#d4af37] font-medium' : 'text-white/90'}`} onClick={(e) => { e.stopPropagation(); setTambon(t); toggleDropdown(null); }}>{t}</div>
+              ))}
+              {filteredTambons.length === 0 && (
+                <div className="px-4 py-3 text-sm text-white/50 text-center">ไม่พบข้อมูล</div>
+              )}
+            </div>
           </div>
         )}
       </div>
@@ -169,7 +227,7 @@ export default function HeroSearch({ propertyTypes = PROPERTY_TYPES }: { propert
       {/* Property Type */}
       <div 
         className="relative flex-1 flex items-center gap-3 px-4 py-3 w-full border-b xl:border-b-0 xl:border-r border-[#d4af37]/20 group hover:bg-white/5 rounded-2xl xl:rounded-none transition-colors cursor-pointer"
-        onClick={() => setOpenDropdown(openDropdown === 'type' ? null : 'type')}
+        onClick={() => toggleDropdown('type')}
       >
         <div className="w-8 h-8 rounded-full bg-[#d4af37]/10 flex items-center justify-center shrink-0">
           <Home className="text-[#d4af37]" size={16} />
@@ -186,9 +244,9 @@ export default function HeroSearch({ propertyTypes = PROPERTY_TYPES }: { propert
 
         {openDropdown === 'type' && (
           <div className="absolute top-full left-0 mt-3 w-full min-w-[220px] max-h-64 overflow-y-auto bg-[#0a1d15] border border-[#d4af37]/40 rounded-2xl shadow-2xl z-50 py-2 custom-scrollbar">
-            <div className="px-4 py-2.5 hover:bg-[#d4af37]/20 text-white/90 text-sm cursor-pointer transition-colors" onClick={(e) => { e.stopPropagation(); setType(''); setOpenDropdown(null); }}>ทุกประเภท</div>
+            <div className="px-4 py-2.5 hover:bg-[#d4af37]/20 text-white/90 text-sm cursor-pointer transition-colors" onClick={(e) => { e.stopPropagation(); setType(''); toggleDropdown(null); }}>ทุกประเภท</div>
             {propertyTypes.map(t => (
-              <div key={t} className={`px-4 py-2.5 hover:bg-[#d4af37]/20 text-sm cursor-pointer transition-colors ${type === t ? 'text-[#d4af37] font-medium' : 'text-white/90'}`} onClick={(e) => { e.stopPropagation(); setType(t); setOpenDropdown(null); }}>{t}</div>
+              <div key={t} className={`px-4 py-2.5 hover:bg-[#d4af37]/20 text-sm cursor-pointer transition-colors ${type === t ? 'text-[#d4af37] font-medium' : 'text-white/90'}`} onClick={(e) => { e.stopPropagation(); setType(t); toggleDropdown(null); }}>{t}</div>
             ))}
           </div>
         )}
@@ -197,7 +255,7 @@ export default function HeroSearch({ propertyTypes = PROPERTY_TYPES }: { propert
       {/* Price Range */}
       <div 
         className="relative flex-1 flex items-center gap-3 px-4 py-3 w-full group hover:bg-white/5 rounded-2xl xl:rounded-none transition-colors cursor-pointer"
-        onClick={() => setOpenDropdown(openDropdown === 'price' ? null : 'price')}
+        onClick={() => toggleDropdown('price')}
       >
         <div className="w-8 h-8 rounded-full bg-[#d4af37]/10 flex items-center justify-center shrink-0">
           <Wallet className="text-[#d4af37]" size={16} />
@@ -217,10 +275,10 @@ export default function HeroSearch({ propertyTypes = PROPERTY_TYPES }: { propert
 
         {openDropdown === 'price' && (
           <div className="absolute top-full left-0 xl:-left-10 mt-3 w-full min-w-[220px] max-h-64 overflow-y-auto bg-[#0a1d15] border border-[#d4af37]/40 rounded-2xl shadow-2xl z-50 py-2 custom-scrollbar">
-            <div className="px-4 py-2.5 hover:bg-[#d4af37]/20 text-white/90 text-sm cursor-pointer transition-colors" onClick={(e) => { e.stopPropagation(); setPrice(''); setOpenDropdown(null); }}>ไม่จำกัดช่วงราคา</div>
-            <div className={`px-4 py-2.5 hover:bg-[#d4af37]/20 text-sm cursor-pointer transition-colors ${price === 'under_3m' ? 'text-[#d4af37] font-medium' : 'text-white/90'}`} onClick={(e) => { e.stopPropagation(); setPrice('under_3m'); setOpenDropdown(null); }}>ต่ำกว่า 3 ล้านบาท</div>
-            <div className={`px-4 py-2.5 hover:bg-[#d4af37]/20 text-sm cursor-pointer transition-colors ${price === '3m_to_5m' ? 'text-[#d4af37] font-medium' : 'text-white/90'}`} onClick={(e) => { e.stopPropagation(); setPrice('3m_to_5m'); setOpenDropdown(null); }}>3 ล้าน - 5 ล้านบาท</div>
-            <div className={`px-4 py-2.5 hover:bg-[#d4af37]/20 text-sm cursor-pointer transition-colors ${price === 'over_5m' ? 'text-[#d4af37] font-medium' : 'text-white/90'}`} onClick={(e) => { e.stopPropagation(); setPrice('over_5m'); setOpenDropdown(null); }}>มากกว่า 5 ล้านบาท</div>
+            <div className="px-4 py-2.5 hover:bg-[#d4af37]/20 text-white/90 text-sm cursor-pointer transition-colors" onClick={(e) => { e.stopPropagation(); setPrice(''); toggleDropdown(null); }}>ไม่จำกัดช่วงราคา</div>
+            <div className={`px-4 py-2.5 hover:bg-[#d4af37]/20 text-sm cursor-pointer transition-colors ${price === 'under_3m' ? 'text-[#d4af37] font-medium' : 'text-white/90'}`} onClick={(e) => { e.stopPropagation(); setPrice('under_3m'); toggleDropdown(null); }}>ต่ำกว่า 3 ล้านบาท</div>
+            <div className={`px-4 py-2.5 hover:bg-[#d4af37]/20 text-sm cursor-pointer transition-colors ${price === '3m_to_5m' ? 'text-[#d4af37] font-medium' : 'text-white/90'}`} onClick={(e) => { e.stopPropagation(); setPrice('3m_to_5m'); toggleDropdown(null); }}>3 ล้าน - 5 ล้านบาท</div>
+            <div className={`px-4 py-2.5 hover:bg-[#d4af37]/20 text-sm cursor-pointer transition-colors ${price === 'over_5m' ? 'text-[#d4af37] font-medium' : 'text-white/90'}`} onClick={(e) => { e.stopPropagation(); setPrice('over_5m'); toggleDropdown(null); }}>มากกว่า 5 ล้านบาท</div>
           </div>
         )}
       </div>
