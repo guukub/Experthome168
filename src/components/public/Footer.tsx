@@ -26,8 +26,8 @@ export default function Footer() {
           <div className="flex flex-col sm:flex-row items-center sm:items-start lg:items-center gap-4 text-center sm:text-left">
             <div className="flex items-center gap-3">
               {settings.logoUrl ? (
-                <div className="flex items-center justify-center shrink-0">
-                  <img src={settings.logoUrl} alt="Logo" className="max-h-12 w-auto object-contain brightness-0 invert" />
+                <div className="flex items-center justify-center shrink-0 bg-white rounded-2xl overflow-hidden h-12 px-2">
+                  <img src={settings.logoUrl} alt="Logo" className="max-h-full w-auto object-contain" />
                 </div>
               ) : (
                 <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center shrink-0">
