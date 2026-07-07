@@ -9,6 +9,8 @@ export const metadata: Metadata = {
   description: 'ติดต่อตี๋บางบอน นายหน้าอสังหาริมทรัพย์ โทร ไลน์ เฟซบุ๊ก หรือกรอกฟอร์ม',
 }
 
+export const dynamic = 'force-dynamic'
+
 export default async function ContactPage() {
   const settings = await getSettingsAction()
 
