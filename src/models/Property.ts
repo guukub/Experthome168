@@ -4,6 +4,7 @@ const propertySchema = new mongoose.Schema({
   title: { type: String, required: true },
   slug: { type: String, required: true, unique: true },
   property_type: { type: String, required: true },
+  property_code: { type: String },
   project_name: { type: String },
   location: { type: String, required: true },
   province: { type: String },

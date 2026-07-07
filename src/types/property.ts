@@ -6,6 +6,7 @@ export interface Property {
   title: string
   slug: string
   property_type: PropertyType
+  property_code?: string
   project_name?: string
   location: string
   province?: string

@@ -19,6 +19,7 @@ const EMPTY_FORM = {
   title: '',
   slug: '',
   property_type: 'บ้านเดี่ยว' as Property['property_type'],
+  property_code: '',
   project_name: '',
   location: '',
   province: '',
@@ -263,6 +264,19 @@ export default function PropertyForm({ initialData, isEdit = false }: PropertyFo
                   className="input font-mono text-sm"
                 />
               </div>
+              <div>
+                <label className="label" htmlFor="prop-code">รหัสทรัพย์</label>
+                <input
+                  id="prop-code"
+                  type="text"
+                  value={form.property_code || ''}
+                  onChange={e => set('property_code', e.target.value)}
+                  placeholder="ปล่อยว่างเพื่อสร้างอัตโนมัติ"
+                  className="input font-mono text-sm uppercase"
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="label" htmlFor="prop-project">ชื่อโครงการ</label>
                 <input

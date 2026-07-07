@@ -352,7 +352,7 @@ export default async function PropertyDetailPage({ params }: Props) {
                   <h3 className="font-semibold text-gray-900 mb-3 text-sm">สรุปข้อมูล</h3>
                   <dl className="space-y-2 text-sm">
                     {[
-                      { label: 'รหัสทรัพย์', value: `TBB-${property.id}` },
+                      { label: 'รหัสทรัพย์', value: property.property_code || `TBB-${property.id.substring(property.id.length - 6).toUpperCase()}` },
                       { label: 'ประเภท', value: property.property_type },
                       { label: 'ทำเล', value: property.location },
                       property.project_name && { label: 'โครงการ', value: property.project_name },
