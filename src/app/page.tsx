@@ -79,7 +79,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
             </div>
 
             <p className="text-xl md:text-2xl text-white/90 leading-relaxed mb-10 font-medium drop-shadow-md">
-              หาง่าย ครบ จบในที่เดียว
+              Expert Home 168
             </p>
 
             {/* Search Bar - Lifted up to overlap the hero section */}
