@@ -14,6 +14,7 @@ export default function SettingsPage() {
     address: '',
     workingHours: '',
     logoUrl: '',
+    heroBgUrl: '',
     portfolioImages: [] as string[]
   })
   const [saving, setSaving] = useState(false)
@@ -68,6 +69,30 @@ export default function SettingsPage() {
     }
   }
 
+  const handleHeroBgUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    setUploading(true)
+    const formData = new FormData()
+    formData.append('file', file)
+
+    try {
+      const res = await fetch('/api/upload', { method: 'POST', body: formData })
+      if (res.ok) {
+        const data = await res.json()
+        set('heroBgUrl', data.url)
+      } else {
+        alert('อัพโหลดรูปล้มเหลว')
+      }
+    } catch (err) {
+      alert('เกิดข้อผิดพลาดในการอัพโหลด')
+    } finally {
+      setUploading(false)
+      if (e.target) e.target.value = ''
+    }
+  }
+
   return (
     <div className="p-6 max-w-4xl mx-auto">
       <div className="flex items-center justify-between mb-8">
@@ -107,6 +132,42 @@ export default function SettingsPage() {
                   <label className="btn-secondary whitespace-nowrap cursor-pointer">
                     {uploading ? 'กำลังอัพโหลด...' : 'อัพโหลดไฟล์'}
                     <input type="file" accept="image/*" className="hidden" onChange={handleLogoUpload} disabled={uploading} />
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Hero Background Section */}
+          <div className="space-y-4 md:col-span-2 border-b border-gray-100 pb-8">
+            <h2 className="text-lg font-bold text-gray-800 flex items-center gap-2">
+              <ImageIcon size={20} className="text-forest-600" />
+              รูปภาพปกหน้าแรก (Hero Background)
+            </h2>
+            <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
+              {form.heroBgUrl ? (
+                <div className="w-40 h-24 bg-gray-50 rounded-xl border border-gray-200 flex items-center justify-center p-1 shrink-0 overflow-hidden">
+                  <img src={form.heroBgUrl} alt="Hero Bg" className="w-full h-full object-cover rounded-lg" />
+                </div>
+              ) : (
+                <div className="w-40 h-24 bg-gray-50 rounded-xl border border-gray-200 border-dashed flex flex-col items-center justify-center text-gray-400 shrink-0">
+                  <ImageIcon size={24} className="mb-1" />
+                  <span className="text-xs">No Image</span>
+                </div>
+              )}
+              <div className="flex-1 space-y-2 w-full">
+                <label className="label">อัพโหลดรูปภาพพื้นหลัง หรือใส่ URL</label>
+                <div className="flex gap-2">
+                  <input
+                    type="url"
+                    value={form.heroBgUrl}
+                    onChange={e => set('heroBgUrl', e.target.value)}
+                    placeholder="https://..."
+                    className="input flex-1"
+                  />
+                  <label className="btn-secondary whitespace-nowrap cursor-pointer">
+                    {uploading ? 'กำลังอัพโหลด...' : 'อัพโหลดไฟล์'}
+                    <input type="file" accept="image/*" className="hidden" onChange={handleHeroBgUpload} disabled={uploading} />
                   </label>
                 </div>
               </div>

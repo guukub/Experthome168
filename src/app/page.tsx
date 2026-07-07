@@ -62,7 +62,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
           <div
             className="absolute inset-0 bg-cover bg-center bg-no-repeat"
             style={{
-              backgroundImage: `url('https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1600&q=80')`,
+              backgroundImage: `url('${settings?.heroBgUrl || 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1600&q=80'}')`,
             }}
           />
           <div className="absolute inset-0 bg-gradient-to-r from-white/95 via-white/80 to-transparent" />
