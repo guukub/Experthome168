@@ -17,6 +17,29 @@ function getYouTubeEmbedUrl(url: string) {
     : null;
 }
 
+async function resolveMapCoordinates(url: string): Promise<string | null> {
+  if (!url) return null;
+  if (url.includes('maps.app.goo.gl') || url.includes('goo.gl/maps')) {
+    try {
+      const res = await fetch(url, { redirect: 'manual', next: { revalidate: 86400 } });
+      const location = res.headers.get('location');
+      if (location) {
+        const searchMatch = location.match(/search\/([^\?\/]+)/);
+        if (searchMatch) return searchMatch[1];
+        
+        const atMatch = location.match(/@([0-9.-]+,[0-9.-]+)/);
+        if (atMatch) return atMatch[1];
+      }
+    } catch (e) {
+      console.error("Failed to resolve map url", e);
+    }
+  } else if (url.includes('@')) {
+    const atMatch = url.match(/@([0-9.-]+,[0-9.-]+)/);
+    if (atMatch) return atMatch[1];
+  }
+  return null;
+}
+
 export const dynamic = 'force-dynamic'
 
 interface Props {
@@ -43,6 +66,11 @@ export default async function PropertyDetailPage({ params }: Props) {
   const property = visibleProperties.find(p => p.slug === decodedSlug)
 
   if (!property) notFound()
+  
+  const mapQuery = property.map_url 
+    ? await resolveMapCoordinates(property.map_url) 
+    : null;
+  const finalMapQuery = mapQuery || property.address || property.location;
 
   const relatedProperties = visibleProperties
     .filter(p => p.id !== property.id && p.location === property.location)
@@ -202,7 +230,7 @@ export default async function PropertyDetailPage({ params }: Props) {
                     scrolling="no" 
                     marginHeight={0} 
                     marginWidth={0} 
-                    src={`https://maps.google.com/maps?q=${encodeURIComponent(property.address || property.location)}&t=&z=15&ie=UTF8&iwloc=&output=embed`}
+                    src={`https://maps.google.com/maps?q=${encodeURIComponent(finalMapQuery)}&t=&z=15&ie=UTF8&iwloc=&output=embed`}
                   ></iframe>
                 </div>
                 <div className="mt-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
