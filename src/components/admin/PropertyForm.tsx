@@ -13,6 +13,7 @@ import PostcodeAutocomplete from './PostcodeAutocomplete'
 interface PropertyFormProps {
   initialData?: Partial<Property>
   isEdit?: boolean
+  propertyTypes?: string[]
 }
 
 const EMPTY_FORM = {
@@ -44,7 +45,7 @@ const EMPTY_FORM = {
   images: [] as string[],
 }
 
-export default function PropertyForm({ initialData, isEdit = false }: PropertyFormProps) {
+export default function PropertyForm({ initialData, isEdit = false, propertyTypes = PROPERTY_TYPES }: PropertyFormProps) {
   const router = useRouter()
   const [form, setForm] = useState({
     ...EMPTY_FORM,
@@ -293,7 +294,7 @@ export default function PropertyForm({ initialData, isEdit = false }: PropertyFo
               <div>
                 <label className="label" htmlFor="prop-type">ประเภทอสังหาฯ *</label>
                 <select id="prop-type" value={form.property_type} onChange={e => set('property_type', e.target.value)} className="select" required>
-                  {PROPERTY_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
+                  {propertyTypes.map(t => <option key={t} value={t}>{t}</option>)}
                 </select>
               </div>
               <div>

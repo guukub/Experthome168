@@ -113,9 +113,9 @@ export default async function HomePage({ searchParams }: HomePageProps) {
             </div>
           </div>
 
-          {/* Search Bar - Overlapping bottom */}
-          <div className="absolute bottom-0 left-0 right-0 translate-y-1/2 z-20 px-4">
-            <HeroSearch />
+          {/* Search Bar - Lifted up to overlap the hero section */}
+          <div className="max-w-5xl mx-auto px-4 -mt-10 relative z-20">
+            <HeroSearch propertyTypes={settings?.propertyTypes} />
           </div>
         </section>
 

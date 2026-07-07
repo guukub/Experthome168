@@ -12,6 +12,7 @@ const SettingsSchema = new mongoose.Schema({
   address: { type: String, default: 'บางบอน กรุงเทพมหานคร และพื้นที่ใกล้เคียง (หนองแขม · พุทธบูชา · บางแค · อ้อมน้อย)' },
   workingHours: { type: String, default: 'เปิดทุกวัน จันทร์–อาทิตย์ 8:00–20:00 น.' },
   heroBgUrl: { type: String, default: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1600&q=80' },
+  propertyTypes: { type: [String], default: ['บ้านเดี่ยว', 'ทาวน์เฮ้าส์', 'คอนโด', 'ที่ดิน', 'อาคารพาณิชย์'] },
 }, { timestamps: true })
 
 export default mongoose.models.Settings || mongoose.model('Settings', SettingsSchema)

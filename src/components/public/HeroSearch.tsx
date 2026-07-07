@@ -6,7 +6,7 @@ import { MapPin, Home, Wallet, ChevronDown, Search } from 'lucide-react'
 import { PROPERTY_TYPES } from '@/lib/utils'
 import locationsData from '@/lib/locations.json'
 
-export default function HeroSearch() {
+export default function HeroSearch({ propertyTypes = PROPERTY_TYPES }: { propertyTypes?: string[] }) {
   const router = useRouter()
   
   const [province, setProvince] = useState('')
@@ -150,7 +150,7 @@ export default function HeroSearch() {
             onChange={(e) => setType(e.target.value)}
           >
             <option value="">ทุกประเภท</option>
-            {PROPERTY_TYPES.map(t => (
+            {propertyTypes.map(t => (
               <option key={t} value={t}>{t}</option>
             ))}
           </select>

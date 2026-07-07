@@ -4,7 +4,7 @@ import Navbar from '@/components/public/Navbar'
 import Footer from '@/components/public/Footer'
 import PropertyCard from '@/components/public/PropertyCard'
 import SearchFilter from '@/components/public/SearchFilter'
-import { getPropertiesAction } from '@/app/actions'
+import { getPropertiesAction, getSettingsAction } from '@/app/actions'
 import { SearchFilters } from '@/types/property'
 
 export const dynamic = 'force-dynamic'
@@ -26,6 +26,7 @@ interface PropertiesPageProps {
 
 export default async function PropertiesPage({ searchParams }: PropertiesPageProps) {
   const allProps = await getPropertiesAction()
+  const settings = await getSettingsAction()
   const visibleProperties = allProps.filter(p => p.is_visible)
   
   // Filter properties based on search params
@@ -65,7 +66,7 @@ export default async function PropertiesPage({ searchParams }: PropertiesPagePro
           {/* Search & Filter */}
           <div className="mb-8">
             <Suspense fallback={<div className="h-20 bg-white rounded-2xl animate-pulse" />}>
-              <SearchFilter />
+              <SearchFilter propertyTypes={settings?.propertyTypes} />
             </Suspense>
           </div>
 

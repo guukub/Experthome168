@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Save, Phone, MessageCircle, Facebook, Image as ImageIcon, Upload, X } from 'lucide-react'
+import { Save, Phone, MessageCircle, Facebook, Image as ImageIcon, Upload, X, Home } from 'lucide-react'
 
 export default function SettingsPage() {
   const [form, setForm] = useState({
@@ -15,8 +15,10 @@ export default function SettingsPage() {
     workingHours: '',
     logoUrl: '',
     heroBgUrl: '',
-    portfolioImages: [] as string[]
+    portfolioImages: [] as string[],
+    propertyTypes: [] as string[]
   })
+  const [newPropertyType, setNewPropertyType] = useState('')
   const [saving, setSaving] = useState(false)
   const [uploading, setUploading] = useState(false)
 
@@ -91,6 +93,17 @@ export default function SettingsPage() {
       setUploading(false)
       if (e.target) e.target.value = ''
     }
+  }
+
+  const addPropertyType = () => {
+    if (newPropertyType.trim() && !form.propertyTypes.includes(newPropertyType.trim())) {
+      setForm(f => ({ ...f, propertyTypes: [...f.propertyTypes, newPropertyType.trim()] }))
+      setNewPropertyType('')
+    }
+  }
+
+  const removePropertyType = (typeToRemove: string) => {
+    setForm(f => ({ ...f, propertyTypes: f.propertyTypes.filter(t => t !== typeToRemove) }))
   }
 
   return (
@@ -287,6 +300,42 @@ export default function SettingsPage() {
                 className="input"
                 required
               />
+            </div>
+          </div>
+
+          <div className="space-y-4 md:col-span-2 border-t border-gray-100 pt-8">
+            <h2 className="text-lg font-bold text-gray-800 flex items-center gap-2">
+              <Home size={20} className="text-forest-600" />
+              ประเภทอสังหาฯ
+            </h2>
+            <div className="bg-gray-50 rounded-xl p-4 border border-gray-100">
+              <label className="label">จัดการประเภทอสังหาฯ (สำหรับใช้ในช่องค้นหาและเพิ่มทรัพย์)</label>
+              <div className="flex gap-2 mb-4">
+                <input
+                  type="text"
+                  value={newPropertyType}
+                  onChange={e => setNewPropertyType(e.target.value)}
+                  onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); addPropertyType() } }}
+                  placeholder="เช่น โฮมออฟฟิศ, โรงงาน"
+                  className="input flex-1"
+                />
+                <button type="button" onClick={addPropertyType} className="btn-secondary py-2 px-4 whitespace-nowrap">
+                  เพิ่ม
+                </button>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {form.propertyTypes && form.propertyTypes.map((type, i) => (
+                  <span key={i} className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-gray-200 text-gray-700 rounded-lg text-sm font-medium shadow-sm">
+                    {type}
+                    <button type="button" onClick={() => removePropertyType(type)} className="text-gray-400 hover:text-red-500 transition-colors">
+                      <X size={14} />
+                    </button>
+                  </span>
+                ))}
+                {(!form.propertyTypes || form.propertyTypes.length === 0) && (
+                  <span className="text-sm text-gray-500 italic">ยังไม่มีประเภทอสังหาฯ</span>
+                )}
+              </div>
             </div>
           </div>
 

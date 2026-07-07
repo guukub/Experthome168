@@ -6,7 +6,7 @@ import { Search, SlidersHorizontal, X } from 'lucide-react'
 import { PROPERTY_TYPES, PROPERTY_STATUSES } from '@/lib/utils'
 import locationsData from '@/lib/locations.json'
 
-export default function SearchFilter() {
+export default function SearchFilter({ propertyTypes = PROPERTY_TYPES }: { propertyTypes?: string[] }) {
   const router = useRouter()
   const searchParams = useSearchParams()
 
@@ -62,7 +62,7 @@ export default function SearchFilter() {
             className="select w-full"
           >
             <option value="">🏠 ประเภทอสังหาฯ</option>
-            {PROPERTY_TYPES.map(t => (
+            {propertyTypes.map(t => (
               <option key={t} value={t}>{t}</option>
             ))}
           </select>
