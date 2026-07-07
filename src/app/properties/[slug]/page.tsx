@@ -194,17 +194,32 @@ export default async function PropertyDetailPage({ params }: Props) {
 
               <div className="bg-white rounded-2xl border border-gray-100 p-6">
                 <h2 className="font-bold text-gray-900 text-lg mb-4">ทำเลที่ตั้ง</h2>
-                <div className="w-full h-52 bg-gradient-to-br from-forest-50 to-emerald-100 rounded-xl flex flex-col items-center justify-center gap-2 border border-forest-100">
-                  <MapPin size={32} className="text-forest-500" />
-                  <p className="font-semibold text-forest-700">{property.location}</p>
-                  <p className="text-sm text-gray-500">{property.address}</p>
+                <div className="w-full h-[300px] bg-gray-100 rounded-xl overflow-hidden border border-gray-200 relative">
+                  <iframe 
+                    width="100%" 
+                    height="100%" 
+                    frameBorder="0" 
+                    scrolling="no" 
+                    marginHeight={0} 
+                    marginWidth={0} 
+                    src={`https://maps.google.com/maps?q=${encodeURIComponent(property.address || property.location)}&t=&z=15&ie=UTF8&iwloc=&output=embed`}
+                  ></iframe>
+                </div>
+                <div className="mt-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <div>
+                    <p className="font-semibold text-gray-900 flex items-center gap-1.5">
+                      <MapPin size={16} className="text-forest-600" />
+                      {property.location}
+                    </p>
+                    {property.address && <p className="text-sm text-gray-500 mt-1 pl-5">{property.address}</p>}
+                  </div>
                   <a
                     href={property.map_url || `https://maps.google.com/?q=${encodeURIComponent(property.address || property.location)}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="mt-2 text-sm text-forest-600 font-medium hover:underline"
+                    className="shrink-0 inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-forest-50 hover:bg-forest-100 text-forest-700 font-medium rounded-xl text-sm transition-colors border border-forest-100"
                   >
-                    เปิดใน Google Maps →
+                    เปิดในแอป Google Maps
                   </a>
                 </div>
               </div>
