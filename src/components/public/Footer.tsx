@@ -9,7 +9,8 @@ export default function Footer() {
     lineId: '@teebangbon',
     lineUrl: 'https://line.me/ti/p/~@teebangbon',
     facebook: 'facebook.com/teebangbon',
-    facebookUrl: 'https://facebook.com/teebangbon'
+    facebookUrl: 'https://facebook.com/teebangbon',
+    logoUrl: ''
   })
 
   useEffect(() => {
@@ -24,9 +25,15 @@ export default function Footer() {
           {/* Logo & Description */}
           <div className="flex flex-col sm:flex-row items-center sm:items-start lg:items-center gap-4 text-center sm:text-left">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center">
-                <span className="text-forest-800 font-bold text-xl">ตี๋</span>
-              </div>
+              {settings.logoUrl ? (
+                <div className="flex items-center justify-center shrink-0">
+                  <img src={settings.logoUrl} alt="Logo" className="max-h-12 w-auto object-contain brightness-0 invert" />
+                </div>
+              ) : (
+                <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center shrink-0">
+                  <span className="text-forest-800 font-bold text-xl">ตี๋</span>
+                </div>
+              )}
               <div>
                 <div className="font-bold text-white text-xl leading-tight">ตี๋บางบอน</div>
                 <div className="text-xs text-forest-200 leading-tight tracking-wide mt-0.5">เพื่อนคู่คิด คนหาบ้าน</div>

@@ -131,7 +131,8 @@ export async function getSettingsAction() {
       lineId: '@teebangbon',
       lineUrl: 'https://line.me/ti/p/~@teebangbon',
       facebook: 'facebook.com/teebangbon',
-      facebookUrl: 'https://facebook.com/teebangbon'
+      facebookUrl: 'https://facebook.com/teebangbon',
+      logoUrl: ''
     }
   }
   return toPlainObject(settings)

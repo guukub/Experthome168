@@ -10,7 +10,8 @@ export default function Navbar() {
   const [settings, setSettings] = useState({
     phone: '081-123-4567',
     lineId: '@teebangbon',
-    lineUrl: 'https://line.me/ti/p/~@teebangbon'
+    lineUrl: 'https://line.me/ti/p/~@teebangbon',
+    logoUrl: ''
   })
 
   useEffect(() => {
@@ -29,9 +30,15 @@ export default function Navbar() {
         <div className="flex items-center justify-between">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-3 group">
-            <div className="w-12 h-12 bg-forest-700 rounded-2xl flex items-center justify-center shadow-sm group-hover:bg-forest-800 transition-colors">
-              <span className="text-white font-bold text-xl">ตี๋</span>
-            </div>
+            {settings.logoUrl ? (
+              <div className="flex items-center justify-center shrink-0">
+                <img src={settings.logoUrl} alt="Logo" className="max-h-12 w-auto object-contain" />
+              </div>
+            ) : (
+              <div className="w-12 h-12 bg-forest-700 rounded-2xl flex items-center justify-center shadow-sm group-hover:bg-forest-800 transition-colors shrink-0">
+                <span className="text-white font-bold text-xl">ตี๋</span>
+              </div>
+            )}
             <div>
               <div className="font-bold text-forest-800 text-xl leading-tight">ตี๋บางบอน</div>
               <div className="text-xs text-gray-500 leading-tight tracking-wide mt-0.5">เพื่อนคู่คิด คนหาบ้าน</div>

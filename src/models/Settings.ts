@@ -6,6 +6,7 @@ const SettingsSchema = new mongoose.Schema({
   lineUrl: { type: String, default: 'https://line.me/ti/p/~@teebangbon' },
   facebook: { type: String, default: 'facebook.com/teebangbon' },
   facebookUrl: { type: String, default: 'https://facebook.com/teebangbon' },
+  logoUrl: { type: String, default: '' },
 }, { timestamps: true })
 
 export default mongoose.models.Settings || mongoose.model('Settings', SettingsSchema)
