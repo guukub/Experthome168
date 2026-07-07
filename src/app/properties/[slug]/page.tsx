@@ -180,10 +180,10 @@ export default async function PropertyDetailPage({ params }: Props) {
                       icon: Car, label: 'ที่จอดรถ', value: `${property.parking} คัน`, color: 'text-gray-500 bg-gray-50'
                     },
                     property.land_size && property.land_size !== '-' && {
-                      icon: Maximize, label: 'ที่ดิน', value: property.land_size, color: 'text-forest-500 bg-forest-50'
+                      icon: Maximize, label: 'ที่ดิน', value: property.land_size.includes('ตร') || property.land_size.includes('ไร่') || property.land_size.includes('งาน') ? property.land_size : `${property.land_size} ตร.ว.`, color: 'text-forest-500 bg-forest-50'
                     },
                     property.usable_area && property.usable_area !== '-' && {
-                      icon: Maximize, label: 'พื้นที่ใช้สอย', value: property.usable_area, color: 'text-emerald-500 bg-emerald-50'
+                      icon: Maximize, label: 'พื้นที่ใช้สอย', value: property.usable_area.includes('ตร') ? property.usable_area : `${property.usable_area} ตร.ม.`, color: 'text-emerald-500 bg-emerald-50'
                     },
                     property.property_type && {
                       icon: CheckCircle, label: 'ประเภท', value: property.property_type, color: 'text-purple-500 bg-purple-50'
