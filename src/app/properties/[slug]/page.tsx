@@ -40,6 +40,26 @@ async function resolveMapCoordinates(url: string): Promise<string | null> {
   return null;
 }
 
+async function resolveTikTokVideoId(url: string): Promise<string | null> {
+  if (!url) return null;
+  const videoMatch = url.match(/video\/(\d+)/);
+  if (videoMatch) return videoMatch[1];
+  
+  if (url.includes('vt.tiktok.com') || url.includes('vm.tiktok.com')) {
+    try {
+      const res = await fetch(url, { redirect: 'manual', next: { revalidate: 86400 } });
+      const location = res.headers.get('location');
+      if (location) {
+        const match = location.match(/video\/(\d+)/);
+        if (match) return match[1];
+      }
+    } catch (e) {
+      console.error("Failed to resolve tiktok url", e);
+    }
+  }
+  return null;
+}
+
 export const dynamic = 'force-dynamic'
 
 interface Props {
@@ -71,6 +91,23 @@ export default async function PropertyDetailPage({ params }: Props) {
     ? await resolveMapCoordinates(property.map_url) 
     : null;
   const finalMapQuery = mapQuery || property.address || property.location;
+
+  let videoEmbedType: 'youtube' | 'tiktok' | null = null;
+  let videoEmbedUrl: string | null = null;
+
+  if (property.video_url) {
+    const ytUrl = getYouTubeEmbedUrl(property.video_url);
+    if (ytUrl) {
+      videoEmbedType = 'youtube';
+      videoEmbedUrl = ytUrl;
+    } else if (property.video_url.includes('tiktok.com')) {
+      const ttId = await resolveTikTokVideoId(property.video_url);
+      if (ttId) {
+        videoEmbedType = 'tiktok';
+        videoEmbedUrl = `https://www.tiktok.com/embed/v2/${ttId}`;
+      }
+    }
+  }
 
   const relatedProperties = visibleProperties
     .filter(p => p.id !== property.id && p.location === property.location)
@@ -178,12 +215,21 @@ export default async function PropertyDetailPage({ params }: Props) {
               {property.video_url && (
                 <div className="bg-white rounded-2xl border border-gray-100 p-6">
                   <h2 className="font-bold text-gray-900 text-lg mb-4">วิดีโอแนะนำทรัพย์</h2>
-                  {getYouTubeEmbedUrl(property.video_url) ? (
+                  {videoEmbedType === 'youtube' ? (
                     <div className="relative w-full aspect-video rounded-xl overflow-hidden bg-gray-100 border border-gray-100">
                       <iframe
-                        src={getYouTubeEmbedUrl(property.video_url)!}
+                        src={videoEmbedUrl!}
                         className="absolute top-0 left-0 w-full h-full"
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                      />
+                    </div>
+                  ) : videoEmbedType === 'tiktok' ? (
+                    <div className="flex justify-center w-full">
+                      <iframe
+                        src={videoEmbedUrl!}
+                        className="w-full max-w-[340px] h-[700px] rounded-xl border border-gray-200 overflow-hidden"
+                        allow="encrypted-media"
                         allowFullScreen
                       />
                     </div>
