@@ -57,7 +57,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
       <Navbar />
       <main className="bg-warm-50 min-h-screen">
         {/* ─── HERO SECTION ─── */}
-        <section className="relative pt-24 pb-32">
+        <section className="relative pt-32 pb-24 overflow-hidden">
           {/* Background */}
           <div
             className="absolute inset-0 bg-cover bg-center bg-no-repeat"
@@ -65,61 +65,80 @@ export default async function HomePage({ searchParams }: HomePageProps) {
               backgroundImage: `url('${settings?.heroBgUrl || 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1600&q=80'}')`,
             }}
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-white/95 via-white/80 to-transparent" />
+          <div className="absolute inset-0 bg-[#0a150f]/60" /> {/* Dark overlay for premium look */}
 
-          <div className="relative z-10 container-main">
-            <div className="max-w-2xl pt-4 pb-8">
-              <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-forest-800 leading-tight mb-5">
-                บ้านสวย <span className="text-gray-400 font-light">|</span> พร้อมอยู่
-                <br />
-                คัดคุณภาพ <span className="text-gray-400 font-light">|</span> เพื่อคนหาบ้านจริง
-              </h1>
+          <div className="relative z-10 container-main flex flex-col items-center text-center">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-white leading-tight mb-4 drop-shadow-md">
+              ค้นหาบ้านที่ใช่ สำหรับคุณ
+            </h1>
+            
+            <div className="flex items-center gap-3 mb-4">
+              <div className="h-[1px] w-12 bg-gradient-to-r from-transparent to-[#d4af37]"></div>
+              <div className="text-[#d4af37] text-xl">✦</div>
+              <div className="h-[1px] w-12 bg-gradient-to-l from-transparent to-[#d4af37]"></div>
+            </div>
 
-              <p className="text-lg md:text-xl text-gray-700 leading-relaxed mb-8 max-w-xl font-medium">
-                เราช่วยคุณค้นหาบ้านที่ใช่ ในทำเลที่ชอบ<br/>
-                พร้อมบริการครบ จบทุกขั้นตอน
-              </p>
+            <p className="text-xl md:text-2xl text-white/90 leading-relaxed mb-10 font-medium drop-shadow-md">
+              หาง่าย ครบ จบในที่เดียว
+            </p>
 
-              {/* Features List */}
-              <div className="flex flex-col sm:flex-row gap-6 mb-12">
-                <div className="flex items-start gap-3">
-                  <div className="mt-1">
-                    <Shield className="text-forest-700" size={24} />
-                  </div>
-                  <div>
-                    <div className="font-bold text-gray-900">คัดทรัพย์คุณภาพ</div>
-                    <div className="text-sm text-gray-600">ตรวจสอบทุกหลัง</div>
-                  </div>
+            {/* Search Bar - Lifted up to overlap the hero section */}
+            <div className="w-full relative z-20 mb-8">
+              <HeroSearch propertyTypes={settings?.propertyTypes} />
+            </div>
+
+            {/* Quick Filter Tags */}
+            <div className="flex flex-wrap justify-center gap-3 mb-12">
+              <Link href="/properties" className="bg-[#f9f6ef] hover:bg-white text-[#0f2a1c] px-5 py-2.5 rounded-full font-medium text-sm flex items-center gap-2 transition-colors shadow-sm">
+                <Search size={16} className="text-[#0f2a1c]" /> ตัวกรองเพิ่มเติม
+              </Link>
+              <Link href="/?type=บ้านเดี่ยว#properties" className="bg-[#f9f6ef] hover:bg-white text-[#0f2a1c] px-5 py-2.5 rounded-full font-medium text-sm flex items-center gap-2 transition-colors shadow-sm">
+                <Home size={16} className="text-[#d4af37]" /> บ้านเดี่ยว
+              </Link>
+              <Link href="/?type=คอนโด#properties" className="bg-[#f9f6ef] hover:bg-white text-[#0f2a1c] px-5 py-2.5 rounded-full font-medium text-sm flex items-center gap-2 transition-colors shadow-sm">
+                <Building size={16} className="text-[#d4af37]" /> คอนโด
+              </Link>
+              <Link href="/?type=ทาวน์โฮม#properties" className="bg-[#f9f6ef] hover:bg-white text-[#0f2a1c] px-5 py-2.5 rounded-full font-medium text-sm flex items-center gap-2 transition-colors shadow-sm">
+                <Home size={16} className="text-[#d4af37]" /> ทาวน์โฮม
+              </Link>
+              <Link href="/?type=ที่ดิน#properties" className="bg-[#f9f6ef] hover:bg-white text-[#0f2a1c] px-5 py-2.5 rounded-full font-medium text-sm flex items-center gap-2 transition-colors shadow-sm">
+                <MapPin size={16} className="text-[#d4af37]" /> ที่ดิน
+              </Link>
+            </div>
+
+            {/* Trust & Features Bar */}
+            <div className="bg-[#113123]/90 backdrop-blur-md border border-[#d4af37]/20 rounded-3xl xl:rounded-full px-8 py-5 w-full max-w-5xl shadow-xl flex flex-col md:flex-row justify-between gap-6 md:gap-4 ring-1 ring-[#d4af37]/10">
+              <div className="flex items-center gap-4 border-b md:border-b-0 md:border-r border-[#d4af37]/20 pb-4 md:pb-0 md:pr-4 flex-1">
+                <Shield className="text-[#d4af37] shrink-0" size={28} />
+                <div className="text-left">
+                  <div className="font-bold text-white text-sm mb-0.5">เชื่อถือได้</div>
+                  <div className="text-xs text-white/70">ประกาศจริง ตรวจสอบแล้ว</div>
                 </div>
-                <div className="flex items-start gap-3">
-                  <div className="mt-1">
-                    <CheckCircle className="text-forest-700" size={24} />
-                  </div>
-                  <div>
-                    <div className="font-bold text-gray-900">โปร่งใส เชื่อถือได้</div>
-                    <div className="text-sm text-gray-600">บริการด้วยใจ</div>
-                  </div>
+              </div>
+              <div className="flex items-center gap-4 border-b md:border-b-0 md:border-r border-[#d4af37]/20 pb-4 md:pb-0 md:pr-4 flex-1">
+                <Users className="text-[#d4af37] shrink-0" size={28} />
+                <div className="text-left">
+                  <div className="font-bold text-white text-sm mb-0.5">ครบทุกประเภท</div>
+                  <div className="text-xs text-white/70">บ้าน คอนโด ที่ดิน และอื่นๆ</div>
                 </div>
-                <div className="flex items-start gap-3">
-                  <div className="mt-1">
-                    <Users className="text-forest-700" size={24} />
-                  </div>
-                  <div>
-                    <div className="font-bold text-gray-900">ดูแลครบทุกขั้นตอน</div>
-                    <div className="text-sm text-gray-600">จนกว่าจะโอนกรรมสิทธิ์</div>
-                  </div>
+              </div>
+              <div className="flex items-center gap-4 border-b md:border-b-0 md:border-r border-[#d4af37]/20 pb-4 md:pb-0 md:pr-4 flex-1">
+                <TrendingUp className="text-[#d4af37] shrink-0" size={28} />
+                <div className="text-left">
+                  <div className="font-bold text-white text-sm mb-0.5">บริการมืออาชีพ</div>
+                  <div className="text-xs text-white/70">ดูแลครบ จบทุกขั้นตอน</div>
+                </div>
+              </div>
+              <div className="flex items-center gap-4 flex-1">
+                <CheckCircle className="text-[#d4af37] shrink-0" size={28} />
+                <div className="text-left">
+                  <div className="font-bold text-white text-sm mb-0.5">ช่วยเหลือทุกขั้นตอน</div>
+                  <div className="text-xs text-white/70">ให้คำปรึกษาโดยผู้เชี่ยวชาญ</div>
                 </div>
               </div>
             </div>
           </div>
-
-          {/* Search Bar - Lifted up to overlap the hero section */}
-          <div className="max-w-5xl mx-auto px-4 -mt-10 relative z-20">
-            <HeroSearch propertyTypes={settings?.propertyTypes} />
-          </div>
         </section>
-
-        <div className="h-24"></div> {/* Spacer for search bar */}
 
         {/* ─── PROPERTIES SECTION ─── */}
         <section id="properties" className="py-12">

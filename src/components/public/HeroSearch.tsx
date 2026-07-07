@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
-import { MapPin, Home, Wallet, ChevronDown, Search } from 'lucide-react'
+import { MapPin, Home, Wallet, ChevronDown, Search, Building2, Map } from 'lucide-react'
 import { PROPERTY_TYPES } from '@/lib/utils'
 import locationsData from '@/lib/locations.json'
 
@@ -59,18 +59,20 @@ export default function HeroSearch({ propertyTypes = PROPERTY_TYPES }: { propert
   }
 
   return (
-    <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-2 flex flex-col xl:flex-row items-center gap-2 max-w-7xl mx-auto">
+    <div className="bg-[#113123]/95 backdrop-blur-md rounded-3xl xl:rounded-full shadow-2xl border border-[#d4af37]/40 p-2 xl:p-2.5 flex flex-col xl:flex-row items-center gap-2 max-w-6xl mx-auto ring-1 ring-[#d4af37]/20">
       
       {/* Province */}
-      <div className="relative flex-1 flex items-center gap-3 px-3 py-3 w-full border-b xl:border-b-0 xl:border-r border-gray-100 group">
-        <MapPin className="text-gray-400 group-hover:text-forest-600 transition-colors shrink-0" size={18} />
+      <div className="relative flex-1 flex items-center gap-3 px-4 py-3 w-full border-b xl:border-b-0 xl:border-r border-[#d4af37]/20 group hover:bg-white/5 rounded-2xl xl:rounded-none xl:rounded-l-full transition-colors cursor-pointer">
+        <div className="w-8 h-8 rounded-full bg-[#d4af37]/10 flex items-center justify-center shrink-0">
+          <MapPin className="text-[#d4af37]" size={16} />
+        </div>
         <div className="flex-1 relative min-w-0">
-          <div className="text-[11px] font-bold text-gray-900 mb-0.5">จังหวัด</div>
-          <div className="flex items-center justify-between text-xs text-gray-500">
-            <span className={`truncate pr-2 ${province ? "text-gray-900 font-medium" : ""}`}>
+          <div className="text-[11px] font-medium text-[#d4af37] mb-0.5">จังหวัด</div>
+          <div className="flex items-center justify-between text-xs text-white/70">
+            <span className={`truncate pr-2 ${province ? "text-white font-medium" : ""}`}>
               {province || 'เลือกจังหวัด'}
             </span>
-            <ChevronDown size={14} className="text-gray-400 shrink-0" />
+            <ChevronDown size={14} className="text-[#d4af37]/60 shrink-0" />
           </div>
           <select 
             className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
@@ -86,14 +88,17 @@ export default function HeroSearch({ propertyTypes = PROPERTY_TYPES }: { propert
       </div>
 
       {/* District */}
-      <div className="relative flex-1 flex items-center gap-3 px-3 py-3 w-full border-b xl:border-b-0 xl:border-r border-gray-100 group">
+      <div className="relative flex-1 flex items-center gap-3 px-4 py-3 w-full border-b xl:border-b-0 xl:border-r border-[#d4af37]/20 group hover:bg-white/5 rounded-2xl xl:rounded-none transition-colors cursor-pointer">
+        <div className="w-8 h-8 rounded-full bg-[#d4af37]/10 flex items-center justify-center shrink-0">
+          <Building2 className="text-[#d4af37]" size={16} />
+        </div>
         <div className="flex-1 relative min-w-0">
-          <div className="text-[11px] font-bold text-gray-900 mb-0.5">เขต/อำเภอ</div>
-          <div className="flex items-center justify-between text-xs text-gray-500">
-            <span className={`truncate pr-2 ${district ? "text-gray-900 font-medium" : ""}`}>
+          <div className="text-[11px] font-medium text-[#d4af37] mb-0.5">เขต/อำเภอ</div>
+          <div className="flex items-center justify-between text-xs text-white/70">
+            <span className={`truncate pr-2 ${district ? "text-white font-medium" : ""}`}>
               {district || 'เลือกอำเภอ'}
             </span>
-            <ChevronDown size={14} className="text-gray-400 shrink-0" />
+            <ChevronDown size={14} className="text-[#d4af37]/60 shrink-0" />
           </div>
           <select 
             className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
@@ -110,14 +115,17 @@ export default function HeroSearch({ propertyTypes = PROPERTY_TYPES }: { propert
       </div>
 
       {/* Tambon */}
-      <div className="relative flex-1 flex items-center gap-3 px-3 py-3 w-full border-b xl:border-b-0 xl:border-r border-gray-100 group">
+      <div className="relative flex-1 flex items-center gap-3 px-4 py-3 w-full border-b xl:border-b-0 xl:border-r border-[#d4af37]/20 group hover:bg-white/5 rounded-2xl xl:rounded-none transition-colors cursor-pointer">
+        <div className="w-8 h-8 rounded-full bg-[#d4af37]/10 flex items-center justify-center shrink-0">
+          <Map className="text-[#d4af37]" size={16} />
+        </div>
         <div className="flex-1 relative min-w-0">
-          <div className="text-[11px] font-bold text-gray-900 mb-0.5">แขวง/ตำบล</div>
-          <div className="flex items-center justify-between text-xs text-gray-500">
-            <span className={`truncate pr-2 ${tambon ? "text-gray-900 font-medium" : ""}`}>
+          <div className="text-[11px] font-medium text-[#d4af37] mb-0.5">แขวง/ตำบล</div>
+          <div className="flex items-center justify-between text-xs text-white/70">
+            <span className={`truncate pr-2 ${tambon ? "text-white font-medium" : ""}`}>
               {tambon || 'เลือกตำบล'}
             </span>
-            <ChevronDown size={14} className="text-gray-400 shrink-0" />
+            <ChevronDown size={14} className="text-[#d4af37]/60 shrink-0" />
           </div>
           <select 
             className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
@@ -134,15 +142,17 @@ export default function HeroSearch({ propertyTypes = PROPERTY_TYPES }: { propert
       </div>
 
       {/* Property Type */}
-      <div className="relative flex-1 flex items-center gap-3 px-3 py-3 w-full border-b xl:border-b-0 xl:border-r border-gray-100 group">
-        <Home className="text-gray-400 group-hover:text-forest-600 transition-colors shrink-0" size={18} />
+      <div className="relative flex-1 flex items-center gap-3 px-4 py-3 w-full border-b xl:border-b-0 xl:border-r border-[#d4af37]/20 group hover:bg-white/5 rounded-2xl xl:rounded-none transition-colors cursor-pointer">
+        <div className="w-8 h-8 rounded-full bg-[#d4af37]/10 flex items-center justify-center shrink-0">
+          <Home className="text-[#d4af37]" size={16} />
+        </div>
         <div className="flex-1 relative min-w-0">
-          <div className="text-[11px] font-bold text-gray-900 mb-0.5">ประเภททรัพย์</div>
-          <div className="flex items-center justify-between text-xs text-gray-500">
-            <span className={`truncate pr-2 ${type ? "text-gray-900 font-medium" : ""}`}>
+          <div className="text-[11px] font-medium text-[#d4af37] mb-0.5">ประเภททรัพย์</div>
+          <div className="flex items-center justify-between text-xs text-white/70">
+            <span className={`truncate pr-2 ${type ? "text-white font-medium" : ""}`}>
               {type || 'เลือกประเภททรัพย์'}
             </span>
-            <ChevronDown size={14} className="text-gray-400 shrink-0" />
+            <ChevronDown size={14} className="text-[#d4af37]/60 shrink-0" />
           </div>
           <select 
             className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
@@ -158,18 +168,20 @@ export default function HeroSearch({ propertyTypes = PROPERTY_TYPES }: { propert
       </div>
 
       {/* Price Range */}
-      <div className="relative flex-1 flex items-center gap-3 px-3 py-3 w-full group">
-        <Wallet className="text-gray-400 group-hover:text-forest-600 transition-colors shrink-0" size={18} />
+      <div className="relative flex-1 flex items-center gap-3 px-4 py-3 w-full group hover:bg-white/5 rounded-2xl xl:rounded-none transition-colors cursor-pointer">
+        <div className="w-8 h-8 rounded-full bg-[#d4af37]/10 flex items-center justify-center shrink-0">
+          <Wallet className="text-[#d4af37]" size={16} />
+        </div>
         <div className="flex-1 relative min-w-0">
-          <div className="text-[11px] font-bold text-gray-900 mb-0.5">ช่วงราคา</div>
-          <div className="flex items-center justify-between text-xs text-gray-500">
-            <span className={`truncate pr-2 ${price ? "text-gray-900 font-medium" : ""}`}>
+          <div className="text-[11px] font-medium text-[#d4af37] mb-0.5">ช่วงราคา</div>
+          <div className="flex items-center justify-between text-xs text-white/70">
+            <span className={`truncate pr-2 ${price ? "text-white font-medium" : ""}`}>
               {price === 'under_3m' ? 'ต่ำกว่า 3 ล้าน' : 
                price === '3m_to_5m' ? '3 - 5 ล้าน' : 
                price === 'over_5m' ? 'มากกว่า 5 ล้าน' : 
                'ไม่จำกัดช่วงราคา'}
             </span>
-            <ChevronDown size={14} className="text-gray-400 shrink-0" />
+            <ChevronDown size={14} className="text-[#d4af37]/60 shrink-0" />
           </div>
           <select 
             className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
@@ -187,9 +199,9 @@ export default function HeroSearch({ propertyTypes = PROPERTY_TYPES }: { propert
       {/* Search Button */}
       <button 
         onClick={handleSearch}
-        className="w-full xl:w-auto bg-forest-700 hover:bg-forest-800 text-white font-bold py-3.5 px-6 rounded-xl flex items-center justify-center gap-2 transition-colors shrink-0 text-sm"
+        className="w-full xl:w-auto bg-gradient-to-r from-[#e3c47a] to-[#d4af37] hover:from-[#d4af37] hover:to-[#b8880f] text-[#0f2a1c] font-bold py-4 xl:py-5 px-8 rounded-2xl xl:rounded-full flex items-center justify-center gap-2 transition-all shadow-lg shrink-0 text-sm transform hover:scale-[1.02]"
       >
-        <Search size={16} /> ค้นหาทรัพย์
+        <Search size={18} /> ค้นหาทรัพย์
       </button>
     </div>
   )
