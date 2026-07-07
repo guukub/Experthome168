@@ -1,5 +1,5 @@
 export type PropertyStatus = 'พร้อมขาย' | 'จองแล้ว' | 'ขายแล้ว'
-export type PropertyType = 'บ้านเดี่ยว' | 'ทาวน์เฮ้าส์' | 'คอนโด' | 'ที่ดิน' | 'อาคารพาณิชย์'
+export type PropertyType = string
 
 export interface Property {
   id: string
