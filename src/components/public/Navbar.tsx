@@ -31,8 +31,8 @@ export default function Navbar() {
           {/* Logo */}
           <Link href="/" className="flex items-center gap-3 group">
             {settings.logoUrl ? (
-              <div className="flex items-center justify-center shrink-0">
-                <img src={settings.logoUrl} alt="Logo" className="max-h-12 w-auto object-contain" />
+              <div className="w-12 h-12 flex items-center justify-center shrink-0 rounded-2xl overflow-hidden bg-white shadow-sm">
+                <img src={settings.logoUrl} alt="Logo" className="w-full h-full object-cover" />
               </div>
             ) : (
               <div className="w-12 h-12 bg-forest-700 rounded-2xl flex items-center justify-center shadow-sm group-hover:bg-forest-800 transition-colors shrink-0">
