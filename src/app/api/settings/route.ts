@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import connectDB from '@/lib/db'
+import connectToDatabase from '@/lib/mongodb'
 import Settings from '@/models/Settings'
 
 const DEFAULT_SETTINGS = {
@@ -12,7 +12,7 @@ const DEFAULT_SETTINGS = {
 
 export async function GET() {
   try {
-    await connectDB()
+    await connectToDatabase()
     const settings = await Settings.findOne()
     if (!settings) {
       return NextResponse.json(DEFAULT_SETTINGS)
@@ -25,7 +25,7 @@ export async function GET() {
 
 export async function POST(req: Request) {
   try {
-    await connectDB()
+    await connectToDatabase()
     const body = await req.json()
     let settings = await Settings.findOne()
     if (!settings) {
