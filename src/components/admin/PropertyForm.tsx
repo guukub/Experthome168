@@ -67,6 +67,7 @@ export default function PropertyForm({ initialData, isEdit = false, propertyType
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
   const [uploadingImage, setUploadingImage] = useState(false)
+  const [draggedIdx, setDraggedIdx] = useState<number | null>(null)
 
   const set = (key: string, value: any) => setForm(f => ({ ...f, [key]: value }))
 
@@ -191,6 +192,16 @@ export default function PropertyForm({ initialData, isEdit = false, propertyType
 
   const removeImage = (i: number) => {
     set('images', form.images.filter((_: string, idx: number) => idx !== i))
+  }
+
+  const handleDrop = (e: React.DragEvent, targetIdx: number) => {
+    e.preventDefault()
+    if (draggedIdx === null || draggedIdx === targetIdx) return
+    const newImages = [...form.images]
+    const [draggedImage] = newImages.splice(draggedIdx, 1)
+    newImages.splice(targetIdx, 0, draggedImage)
+    set('images', newImages)
+    setDraggedIdx(null)
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -587,12 +598,30 @@ export default function PropertyForm({ initialData, isEdit = false, propertyType
           {form.images.length > 0 && (
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
               {form.images.map((img: string, i: number) => (
-                <div key={i} className="relative group aspect-video rounded-xl overflow-hidden bg-gray-100">
-                  <img src={img} alt={`img ${i + 1}`} className="w-full h-full object-cover" />
+                <div 
+                  key={i} 
+                  draggable
+                  onDragStart={(e) => {
+                    setDraggedIdx(i)
+                    if (e.dataTransfer) {
+                      e.dataTransfer.effectAllowed = 'move'
+                    }
+                  }}
+                  onDragOver={(e) => {
+                    e.preventDefault()
+                    if (e.dataTransfer) {
+                      e.dataTransfer.dropEffect = 'move'
+                    }
+                  }}
+                  onDrop={(e) => handleDrop(e, i)}
+                  onDragEnd={() => setDraggedIdx(null)}
+                  className={`relative group aspect-video rounded-xl overflow-hidden bg-gray-100 cursor-move transition-transform ${draggedIdx === i ? 'opacity-50 scale-95' : 'hover:scale-[1.02]'}`}
+                >
+                  <img src={img} alt={`img ${i + 1}`} className="w-full h-full object-cover pointer-events-none" />
                   <button
                     type="button"
                     onClick={() => removeImage(i)}
-                    className="absolute top-1.5 right-1.5 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                    className="absolute top-1.5 right-1.5 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-10 cursor-pointer pointer-events-auto"
                   >
                     <X size={12} />
                   </button>
