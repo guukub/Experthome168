@@ -76,6 +76,7 @@ function NavbarContent() {
             <Link href="/properties?type=บ้านเดี่ยว" className={getLinkClass('/properties', 'type', 'บ้านเดี่ยว')}>บ้านขาย</Link>
             <Link href="/properties?type=คอนโด" className={getLinkClass('/properties', 'type', 'คอนโด')}>คอนโด</Link>
             <Link href="/properties?type=ที่ดิน" className={getLinkClass('/properties', 'type', 'ที่ดิน')}>ที่ดิน</Link>
+            <Link href="/portfolio" className={getLinkClass('/portfolio')}>ผลงาน</Link>
             <Link href="/contact" className={getLinkClass('/contact')}>ติดต่อเรา</Link>
           </div>
 
@@ -128,6 +129,9 @@ function NavbarContent() {
             </Link>
             <Link href="/properties?type=ที่ดิน" className={getMobileLinkClass('/properties', 'type', 'ที่ดิน')} onClick={() => setIsOpen(false)}>
               ที่ดิน
+            </Link>
+            <Link href="/portfolio" className={getMobileLinkClass('/portfolio')} onClick={() => setIsOpen(false)}>
+              ผลงาน
             </Link>
             <Link href="/contact" className={getMobileLinkClass('/contact')} onClick={() => setIsOpen(false)}>
               ติดต่อเรา

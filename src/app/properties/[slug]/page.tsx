@@ -1,12 +1,14 @@
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import { MapPin, Bed, Bath, Car, Maximize, ArrowLeft, Phone, MessageCircle, Facebook, CheckCircle, Calendar, Play } from 'lucide-react'
+import { MapPin, Bed, Bath, Car, Maximize, ArrowLeft, Phone, MessageCircle, Facebook, CheckCircle, Calendar, Play, Video } from 'lucide-react'
 import Navbar from '@/components/public/Navbar'
 import Footer from '@/components/public/Footer'
 import ImageGallery from '@/components/public/ImageGallery'
 import { getPropertiesAction, getSettingsAction } from '@/app/actions'
 import { formatPriceRaw, getStatusColor, getStatusDotColor, getPropertyTypeIcon, formatDate, formatPrice } from '@/lib/utils'
+
+export const dynamic = 'force-dynamic'
 
 function getYouTubeEmbedUrl(url: string) {
   if (!url) return null;
@@ -59,8 +61,6 @@ async function resolveTikTokVideoId(url: string): Promise<string | null> {
   }
   return null;
 }
-
-export const dynamic = 'force-dynamic'
 
 interface Props {
   params: { slug: string }
@@ -370,6 +370,16 @@ export default async function PropertyDetailPage({ params }: Props) {
                     >
                       <Facebook size={18} /> Facebook
                     </a>
+                    {settings.tiktokUrl && (
+                      <a
+                        href={settings.tiktokUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center justify-center gap-2 w-full py-3.5 bg-black text-white font-semibold rounded-xl hover:bg-gray-900 transition-colors"
+                      >
+                        <Video size={18} /> TikTok
+                      </a>
+                    )}
                   </div>
 
                   <div className="mt-4 text-center text-xs text-gray-400">

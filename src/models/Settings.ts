@@ -6,6 +6,8 @@ const SettingsSchema = new mongoose.Schema({
   lineUrl: { type: String, default: 'https://line.me/ti/p/~@teebangbon' },
   facebook: { type: String, default: 'facebook.com/teebangbon' },
   facebookUrl: { type: String, default: 'https://facebook.com/teebangbon' },
+  tiktok: { type: String, default: 'TikTok: teebangbon' },
+  tiktokUrl: { type: String, default: 'https://www.tiktok.com/@teebangbon' },
   logoUrl: { type: String, default: '' },
   portfolioImages: [{ type: String }],
   email: { type: String, default: 'info@teebangbon.com' },

@@ -13,7 +13,8 @@ import { useRouter } from 'next/navigation'
 const navItems = [
   { href: '/admin/dashboard', label: 'ภาพรวม', icon: LayoutDashboard },
   { href: '/admin/properties', label: 'จัดการทรัพย์', icon: Home },
-  { href: '/admin/portfolio', label: 'จัดการผลงาน', icon: ImageIcon },
+  { href: '/admin/gallery', label: 'แกลลอรีผลงาน', icon: ImageIcon },
+  { href: '/admin/portfolio', label: 'โลโก้ความไว้วางใจ', icon: ImageIcon },
   { href: '/admin/inquiries', label: 'ลูกค้าติดต่อ', icon: MessageSquare },
   { href: '/admin/settings', label: 'ตั้งค่าเว็บไซต์', icon: Settings },
   { href: '/admin/admins', label: 'ผู้ดูแลระบบ', icon: Users },

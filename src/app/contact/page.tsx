@@ -2,14 +2,14 @@ import { Metadata } from 'next'
 import { getSettingsAction } from '@/app/actions'
 import Navbar from '@/components/public/Navbar'
 import Footer from '@/components/public/Footer'
-import { Phone, MessageCircle, Facebook, MapPin, Clock, Mail, Send } from 'lucide-react'
+import { Phone, MessageCircle, Facebook, MapPin, Clock, Mail, Send, Video } from 'lucide-react'
+
+export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
   title: 'ติดต่อเรา',
   description: 'ติดต่อตี๋บางบอน นายหน้าอสังหาริมทรัพย์ โทร ไลน์ เฟซบุ๊ก หรือกรอกฟอร์ม',
 }
-
-export const dynamic = 'force-dynamic'
 
 export default async function ContactPage() {
   const settings = await getSettingsAction()
@@ -46,6 +46,10 @@ export default async function ContactPage() {
                     icon: Facebook, label: 'Facebook', value: settings.facebook || 'ตี๋บางบอน อสังหาฯ',
                     href: settings.facebookUrl || '#', color: 'bg-blue-600', desc: 'ดูรูปและข้อมูลทรัพย์'
                   },
+                  ...(settings.tiktokUrl ? [{
+                    icon: Video, label: 'TikTok', value: settings.tiktok || 'ตี๋บางบอน TikTok',
+                    href: settings.tiktokUrl, color: 'bg-black', desc: 'รีวิวบ้านแบบวิดีโอสั้น'
+                  }] : []),
                   {
                     icon: Mail, label: 'อีเมล', value: settings.email || 'info@teebangbon.com',
                     href: `mailto:${settings.email || 'info@teebangbon.com'}`, color: 'bg-red-500', desc: 'สำหรับเอกสารและสัญญา'

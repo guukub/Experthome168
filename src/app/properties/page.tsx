@@ -1,5 +1,6 @@
 import { Metadata } from 'next'
 import { Suspense } from 'react'
+import Link from 'next/link'
 import Navbar from '@/components/public/Navbar'
 import Footer from '@/components/public/Footer'
 import PropertyCard from '@/components/public/PropertyCard'
@@ -21,6 +22,7 @@ interface PropertiesPageProps {
     status?: string
     min_price?: string
     max_price?: string
+    page?: string
   }
 }
 
@@ -49,6 +51,22 @@ export default async function PropertiesPage({ searchParams }: PropertiesPagePro
   }
 
   const hasFilters = Object.values(searchParams).some(v => v)
+
+  // Pagination logic
+  const PAGE_SIZE = 20
+  const currentPage = Number(searchParams.page) || 1
+  const totalPages = Math.ceil(filtered.length / PAGE_SIZE)
+  const paginatedProperties = filtered.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE)
+
+  // Generate pagination links maintaining existing search params
+  const getPageLink = (pageNum: number) => {
+    const params = new URLSearchParams()
+    Object.entries(searchParams).forEach(([key, value]) => {
+      if (value && key !== 'page') params.append(key, value)
+    })
+    params.append('page', pageNum.toString())
+    return `/properties?${params.toString()}`
+  }
 
   return (
     <>
@@ -98,7 +116,7 @@ export default async function PropertiesPage({ searchParams }: PropertiesPagePro
           {/* Grid */}
           {filtered.length > 0 ? (
             <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
-              {filtered.map(property => (
+              {paginatedProperties.map(property => (
                 <PropertyCard key={property.id} property={property} />
               ))}
             </div>
@@ -108,6 +126,37 @@ export default async function PropertiesPage({ searchParams }: PropertiesPagePro
               <h2 className="text-xl font-bold text-gray-700 mb-2">ไม่พบทรัพย์ที่ค้นหา</h2>
               <p className="text-gray-500 mb-6">ลองเปลี่ยนตัวกรองหรือติดต่อเราเพื่อสอบถามทรัพย์ที่ต้องการ</p>
               <a href="tel:+66812345678" className="btn-primary">โทรสอบถาม</a>
+            </div>
+          )}
+
+          {/* Pagination Controls */}
+          {totalPages > 1 && (
+            <div className="flex justify-center mt-12 gap-2">
+              {currentPage > 1 && (
+                <Link href={getPageLink(currentPage - 1)} className="px-4 py-2 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium text-gray-700">
+                  ก่อนหน้า
+                </Link>
+              )}
+              
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                <Link
+                  key={page}
+                  href={getPageLink(page)}
+                  className={`w-10 h-10 flex items-center justify-center rounded-lg text-sm font-medium transition-colors ${
+                    currentPage === page
+                      ? 'bg-forest-600 text-white shadow-sm'
+                      : 'bg-white border border-gray-200 text-gray-700 hover:bg-gray-50'
+                  }`}
+                >
+                  {page}
+                </Link>
+              ))}
+
+              {currentPage < totalPages && (
+                <Link href={getPageLink(currentPage + 1)} className="px-4 py-2 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium text-gray-700">
+                  หน้าถัดไป
+                </Link>
+              )}
             </div>
           )}
         </div>

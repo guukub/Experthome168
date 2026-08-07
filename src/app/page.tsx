@@ -24,6 +24,7 @@ interface HomePageProps {
     tambon?: string
     min_price?: string
     max_price?: string
+    page?: string
   }
 }
 
@@ -32,6 +33,11 @@ export default async function HomePage({ searchParams }: HomePageProps) {
   const settings = await getSettingsAction()
   const portfolioImages = settings?.portfolioImages || []
   let filtered = allProps.filter(p => p.is_visible)
+
+  // Extract unique project names and titles for search suggestions
+  const searchSuggestions = Array.from(new Set(
+    allProps.flatMap(p => [p.project_name, p.title]).filter(Boolean)
+  )) as string[]
 
   if (searchParams.type) {
     filtered = filtered.filter(p => p.property_type === searchParams.type)
@@ -52,43 +58,65 @@ export default async function HomePage({ searchParams }: HomePageProps) {
     filtered = filtered.filter(p => p.price <= Number(searchParams.max_price))
   }
 
+  const ITEMS_PER_PAGE = 20;
+  const currentPage = Number(searchParams.page) || 1;
+  const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE);
+  const paginatedProperties = filtered.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
+
+  const buildPageUrl = (page: number) => {
+    const params = new URLSearchParams()
+    if (searchParams.type) params.set('type', searchParams.type)
+    if (searchParams.province) params.set('province', searchParams.province)
+    if (searchParams.district) params.set('district', searchParams.district)
+    if (searchParams.tambon) params.set('tambon', searchParams.tambon)
+    if (searchParams.min_price) params.set('min_price', searchParams.min_price)
+    if (searchParams.max_price) params.set('max_price', searchParams.max_price)
+    params.set('page', page.toString())
+    return `/?${params.toString()}#properties`
+  }
+
   return (
     <>
       <Navbar />
       <main className="bg-warm-50 min-h-screen">
         {/* ─── HERO SECTION ─── */}
-        <section className="relative pt-32 pb-24 overflow-hidden">
+        <section className="relative pt-[calc(58vw+72px)] sm:pt-[calc(45vw+72px)] md:pt-32 pb-0 md:pb-24 bg-[#0a150f]">
           {/* Background */}
           <div
-            className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+            className="absolute inset-0 top-[72px] md:top-0 bg-[length:100%_auto] md:bg-cover bg-top md:bg-center bg-no-repeat"
             style={{
               backgroundImage: `url('${settings?.heroBgUrl || 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1600&q=80'}')`,
             }}
           />
-          <div className="absolute inset-0 bg-[#0a150f]/60" /> {/* Dark overlay for premium look */}
+          {/* Overlay - Clear at top on mobile, dark at bottom for text. Uniform on desktop */}
+          <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-[#0a150f]/95 to-[#0a150f] md:bg-black/50 md:bg-none" />
 
           <div className="relative z-10 container-main flex flex-col items-center text-center">
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-white leading-tight mb-4 drop-shadow-md">
+            {/* Desktop Only Title */}
+            <h1 className="hidden md:block text-4xl sm:text-5xl md:text-6xl font-bold text-white leading-tight mb-4 drop-shadow-md">
               ค้นหาบ้านที่ใช่ สำหรับคุณ
             </h1>
             
-            <div className="flex items-center gap-3 mb-4">
+            <div className="hidden md:flex items-center gap-3 mb-4">
               <div className="h-[1px] w-12 bg-gradient-to-r from-transparent to-[#d4af37]"></div>
               <div className="text-[#d4af37] text-xl">✦</div>
               <div className="h-[1px] w-12 bg-gradient-to-l from-transparent to-[#d4af37]"></div>
             </div>
 
-            <p className="text-xl md:text-2xl text-white/90 leading-relaxed mb-10 font-medium drop-shadow-md">
+            <p className="hidden md:block text-xl md:text-2xl text-white/90 leading-relaxed mb-10 font-medium drop-shadow-md">
               Expert Home 168
             </p>
 
-            {/* Search Bar - Lifted up to overlap the hero section */}
-            <div className="w-full relative z-20 mb-8">
-              <HeroSearch propertyTypes={settings?.propertyTypes} />
+            {/* Search Bar */}
+            <div className="w-full relative z-20 mb-2 mt-[-10px] md:mt-0 md:mb-8">
+              <HeroSearch 
+                propertyTypes={settings?.propertyTypes} 
+                searchSuggestions={searchSuggestions}
+              />
             </div>
 
-            {/* Quick Filter Tags */}
-            <div className="flex flex-wrap justify-center gap-3 mb-12">
+            {/* Quick Filter Tags (Desktop Only) */}
+            <div className="hidden md:flex flex-wrap justify-center gap-3 mb-12 mt-8">
               <Link href="/properties" className="bg-[#f9f6ef] hover:bg-white text-[#0f2a1c] px-5 py-2.5 rounded-full font-medium text-sm flex items-center gap-2 transition-colors shadow-sm">
                 <Search size={16} className="text-[#0f2a1c]" /> ตัวกรองเพิ่มเติม
               </Link>
@@ -125,8 +153,8 @@ export default async function HomePage({ searchParams }: HomePageProps) {
             </div>
 
             <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
-              {filtered.length > 0 ? (
-                filtered.map(property => (
+              {paginatedProperties.length > 0 ? (
+                paginatedProperties.map(property => (
                   <PropertyCard key={property.id} property={property} />
                 ))
               ) : (
@@ -135,6 +163,42 @@ export default async function HomePage({ searchParams }: HomePageProps) {
                 </div>
               )}
             </div>
+
+            {/* Pagination Controls */}
+            {totalPages > 1 && (
+              <div className="flex justify-center items-center gap-2 mt-12">
+                {currentPage > 1 && (
+                  <Link href={buildPageUrl(currentPage - 1)} className="px-4 py-2 border border-gray-200 rounded-lg text-sm hover:bg-gray-50 transition-colors">
+                    ก่อนหน้า
+                  </Link>
+                )}
+                <div className="flex gap-1">
+                  {Array.from({ length: totalPages }).map((_, i) => {
+                    const pageNum = i + 1;
+                    if (pageNum === 1 || pageNum === totalPages || (pageNum >= currentPage - 1 && pageNum <= currentPage + 1)) {
+                      return (
+                        <Link 
+                          key={pageNum} 
+                          href={buildPageUrl(pageNum)}
+                          className={`w-10 h-10 flex items-center justify-center rounded-lg text-sm transition-colors ${pageNum === currentPage ? 'bg-[#163a2c] text-white font-bold shadow-md' : 'border border-gray-200 hover:bg-gray-50'}`}
+                        >
+                          {pageNum}
+                        </Link>
+                      )
+                    }
+                    if (pageNum === currentPage - 2 || pageNum === currentPage + 2) {
+                      return <span key={pageNum} className="w-10 h-10 flex items-center justify-center text-gray-400">...</span>
+                    }
+                    return null;
+                  })}
+                </div>
+                {currentPage < totalPages && (
+                  <Link href={buildPageUrl(currentPage + 1)} className="px-4 py-2 border border-gray-200 rounded-lg text-sm hover:bg-gray-50 transition-colors">
+                    ถัดไป
+                  </Link>
+                )}
+              </div>
+            )}
           </div>
         </section>
 

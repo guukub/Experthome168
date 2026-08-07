@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Save, Phone, MessageCircle, Facebook, Image as ImageIcon, Upload, X, Home } from 'lucide-react'
+import { Save, Phone, MessageCircle, Facebook, Image as ImageIcon, Upload, X, Home, Video } from 'lucide-react'
 
 export default function SettingsPage() {
   const [form, setForm] = useState({
@@ -10,6 +10,8 @@ export default function SettingsPage() {
     lineUrl: '',
     facebook: '',
     facebookUrl: '',
+    tiktok: '',
+    tiktokUrl: '',
     email: '',
     address: '',
     workingHours: '',
@@ -259,6 +261,33 @@ export default function SettingsPage() {
                 placeholder="เช่น https://facebook.com/..."
                 className="input"
                 required
+              />
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            <h2 className="text-lg font-bold text-gray-800 flex items-center gap-2">
+              <Video size={20} className="text-black" />
+              TikTok
+            </h2>
+            <div>
+              <label className="label">ชื่อบัญชี (แสดงบนเว็บ)</label>
+              <input
+                type="text"
+                value={form.tiktok || ''}
+                onChange={e => set('tiktok', e.target.value)}
+                placeholder="เช่น @teebangbon"
+                className="input"
+              />
+            </div>
+            <div>
+              <label className="label">ลิงก์ไปยังบัญชี (URL)</label>
+              <input
+                type="url"
+                value={form.tiktokUrl || ''}
+                onChange={e => set('tiktokUrl', e.target.value)}
+                placeholder="เช่น https://www.tiktok.com/@..."
+                className="input"
               />
             </div>
           </div>

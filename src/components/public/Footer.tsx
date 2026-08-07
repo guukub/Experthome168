@@ -10,6 +10,8 @@ export default function Footer() {
     lineUrl: 'https://line.me/ti/p/~@teebangbon',
     facebook: 'facebook.com/teebangbon',
     facebookUrl: 'https://facebook.com/teebangbon',
+    tiktok: '',
+    tiktokUrl: '',
     logoUrl: ''
   })
 
@@ -80,6 +82,21 @@ export default function Footer() {
                 <span className="text-xs text-forest-200">ติดตามทรัพย์ใหม่ก่อนใคร</span>
               </div>
             </div>
+
+            {settings.tiktokUrl && (
+              <>
+                <div className="hidden sm:block w-px h-10 bg-forest-600"></div>
+                <div className="flex items-center gap-3">
+                  <a href={settings.tiktokUrl} target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-white text-black rounded-full flex items-center justify-center hover:bg-forest-50 transition-colors shrink-0 font-bold text-lg">
+                    <span className="mt-0.5">🎵</span>
+                  </a>
+                  <div>
+                    <a href={settings.tiktokUrl} target="_blank" rel="noopener noreferrer" className="font-bold block hover:text-forest-200 transition-colors">{settings.tiktok}</a>
+                    <span className="text-xs text-forest-200">รีวิวบ้านแบบวิดีโอสั้น</span>
+                  </div>
+                </div>
+              </>
+            )}
           </div>
         </div>
       </div>

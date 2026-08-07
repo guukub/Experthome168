@@ -124,22 +124,34 @@ export async function getPropertiesAction() {
 export async function getSettingsAction() {
   await connectToDatabase()
   const { default: Settings } = await import('@/models/Settings')
-  const settings = await Settings.findOne()
-  if (!settings) {
-    return {
+  try {
+    const settings = await Settings.findOne()
+    const DEFAULT_SETTINGS = {
       phone: '081-123-4567',
       lineId: '@teebangbon',
       lineUrl: 'https://line.me/ti/p/~@teebangbon',
       facebook: 'facebook.com/teebangbon',
       facebookUrl: 'https://facebook.com/teebangbon',
-      logoUrl: '',
-      portfolioImages: [],
+      tiktok: 'TikTok: teebangbon',
+      tiktokUrl: 'https://www.tiktok.com/@teebangbon',
       email: 'info@teebangbon.com',
+      portfolioImages: [],
       address: 'บางบอน กรุงเทพมหานคร และพื้นที่ใกล้เคียง (หนองแขม · พุทธบูชา · บางแค · อ้อมน้อย)',
       workingHours: 'เปิดทุกวัน จันทร์–อาทิตย์ 8:00–20:00 น.',
       heroBgUrl: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1600&q=80',
       propertyTypes: ['บ้านเดี่ยว', 'ทาวน์เฮ้าส์', 'คอนโด', 'ที่ดิน', 'อาคารพาณิชย์']
     }
+
+    if (!settings) {
+      return DEFAULT_SETTINGS
+    }
+    
+    const settingsObj = settings.toObject({ virtuals: true })
+    const mergedSettings = { ...DEFAULT_SETTINGS, ...settingsObj }
+    
+    return toPlainObject(mergedSettings)
+  } catch (error) {
+    console.error('Error in getSettingsAction:', error)
+    return null
   }
-  return toPlainObject(settings)
 }

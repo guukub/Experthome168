@@ -8,6 +8,8 @@ const DEFAULT_SETTINGS = {
   lineUrl: 'https://line.me/ti/p/~@teebangbon',
   facebook: 'facebook.com/teebangbon',
   facebookUrl: 'https://facebook.com/teebangbon',
+  tiktok: 'TikTok: teebangbon',
+  tiktokUrl: 'https://www.tiktok.com/@teebangbon',
   email: 'info@teebangbon.com',
   address: 'บางบอน กรุงเทพมหานคร และพื้นที่ใกล้เคียง (หนองแขม · พุทธบูชา · บางแค · อ้อมน้อย)',
   workingHours: 'เปิดทุกวัน จันทร์–อาทิตย์ 8:00–20:00 น.',

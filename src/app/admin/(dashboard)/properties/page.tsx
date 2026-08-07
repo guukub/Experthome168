@@ -19,7 +19,10 @@ export default function AdminPropertiesPage() {
   }, [])
 
   const filtered = properties.filter(p =>
-    p.title.includes(search) || p.location.includes(search) || p.property_type.includes(search)
+    p.title.includes(search) || 
+    p.location.includes(search) || 
+    p.property_type.includes(search) || 
+    (p.property_code && p.property_code.includes(search))
   )
 
   const updateStatus = async (id: string, status: Property['status']) => {
@@ -66,7 +69,7 @@ export default function AdminPropertiesPage() {
         <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
         <input
           type="text"
-          placeholder="ค้นหาทรัพย์จากชื่อ, ทำเล หรือประเภท..."
+          placeholder="ค้นหาทรัพย์จากรหัส, ชื่อ, ทำเล หรือประเภท..."
           value={search}
           onChange={e => setSearch(e.target.value)}
           className="w-full max-w-md pl-11 pr-4 py-3 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-forest-500/20 focus:border-forest-500 shadow-sm text-sm"
@@ -103,7 +106,12 @@ export default function AdminPropertiesPage() {
                         <div className="font-bold text-[#0a192f] text-sm leading-snug max-w-[280px] truncate group-hover:text-forest-600 transition-colors">
                           {property.title}
                         </div>
-                        <div className="flex items-center gap-2 mt-1 text-xs">
+                        <div className="flex flex-wrap items-center gap-2 mt-1 text-xs">
+                          {property.property_code && (
+                            <span className="font-semibold text-blue-600 bg-blue-50 px-2 py-0.5 rounded border border-blue-100">
+                              #{property.property_code}
+                            </span>
+                          )}
                           <span className="font-semibold text-forest-600 bg-forest-50 px-2 py-0.5 rounded">
                             {property.property_type}
                           </span>
