@@ -7,7 +7,6 @@ import {
   LayoutDashboard, Building2, MessageSquare, LogOut,
   Menu, X, ExternalLink, ChevronRight, Settings, Home, Users, Image as ImageIcon
 } from 'lucide-react'
-import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 
 const navItems = [
@@ -25,11 +24,9 @@ export default function AdminNav() {
   const router = useRouter()
   const [mobileOpen, setMobileOpen] = useState(false)
 
-  const handleLogout = async () => {
-    // Clear demo bypass cookie
+  const handleLogout = () => {
     document.cookie = "demo_admin=; path=/; max-age=0"
-    const supabase = createClient()
-    await supabase.auth.signOut()
+    document.cookie = "auth_admin=; path=/; max-age=0"
     router.push('/admin/login')
   }
 
