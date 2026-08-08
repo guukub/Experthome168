@@ -18,11 +18,12 @@ export default function AdminPropertiesPage() {
     getPropertiesAction().then(setProperties)
   }, [])
 
+  const searchLower = search.toLowerCase()
   const filtered = properties.filter(p =>
-    p.title.includes(search) || 
-    p.location.includes(search) || 
-    p.property_type.includes(search) || 
-    (p.property_code && p.property_code.includes(search))
+    (p.title?.toLowerCase() || '').includes(searchLower) || 
+    (p.location?.toLowerCase() || '').includes(searchLower) || 
+    (p.property_type?.toLowerCase() || '').includes(searchLower) || 
+    (p.property_code?.toLowerCase() || '').includes(searchLower)
   )
 
   const updateStatus = async (id: string, status: Property['status']) => {
