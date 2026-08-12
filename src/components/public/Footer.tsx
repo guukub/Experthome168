@@ -36,24 +36,24 @@ export default function Footer() {
                   <span className="text-forest-800 font-bold text-xl">ตี๋</span>
                 </div>
               )}
-              <div>
+              <div className="whitespace-nowrap">
                 <div className="font-bold text-white text-xl leading-tight">ตี๋บางบอน</div>
                 <div className="text-xs text-forest-200 leading-tight tracking-wide mt-0.5">เพื่อนคู่คิด คนหาบ้าน</div>
               </div>
             </div>
-            <div className="hidden sm:block w-px h-12 bg-forest-600 mx-2"></div>
-            <p className="text-sm text-forest-100 max-w-xs leading-relaxed">
+            <div className="hidden sm:block w-px h-12 bg-forest-600 mx-2 shrink-0"></div>
+            <p className="text-sm text-forest-100 max-w-xs leading-relaxed shrink-0">
               ศูนย์รวมบ้านมือสองคุณภาพ คัดสรรทุกหลัง<br/>ด้วยความใส่ใจ เพื่อให้คุณได้บ้านที่ใช่
             </p>
           </div>
 
           {/* Contacts */}
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 lg:gap-8">
+          <div className="flex flex-col sm:flex-row flex-wrap items-start sm:items-center justify-center lg:justify-end gap-6 lg:gap-8">
             <div className="flex items-center gap-3">
               <a href={`tel:${settings.phone.replace(/\D/g, '')}`} className="w-10 h-10 bg-white text-forest-800 rounded-full flex items-center justify-center hover:bg-forest-50 transition-colors shrink-0">
                 <Phone size={18} />
               </a>
-              <div>
+              <div className="whitespace-nowrap">
                 <a href={`tel:${settings.phone.replace(/\D/g, '')}`} className="font-bold block hover:text-forest-200 transition-colors">{settings.phone}</a>
                 <span className="text-xs text-forest-200">ทุกวัน 09.00 - 18.00 น.</span>
               </div>
@@ -65,7 +65,7 @@ export default function Footer() {
               <a href={settings.lineUrl} target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-white text-green-600 rounded-full flex items-center justify-center hover:bg-forest-50 transition-colors shrink-0">
                 <span className="font-extrabold text-[10px]">LINE</span>
               </a>
-              <div>
+              <div className="whitespace-nowrap">
                 <a href={settings.lineUrl} target="_blank" rel="noopener noreferrer" className="font-bold block hover:text-forest-200 transition-colors">{settings.lineId}</a>
                 <span className="text-xs text-forest-200">ตอบไว แชทได้เลย</span>
               </div>
@@ -77,7 +77,7 @@ export default function Footer() {
               <a href={settings.facebookUrl} target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-white text-blue-600 rounded-full flex items-center justify-center hover:bg-forest-50 transition-colors shrink-0">
                 <Facebook size={18} />
               </a>
-              <div>
+              <div className="whitespace-nowrap">
                 <a href={settings.facebookUrl} target="_blank" rel="noopener noreferrer" className="font-bold block hover:text-forest-200 transition-colors">{settings.facebook}</a>
                 <span className="text-xs text-forest-200">ติดตามทรัพย์ใหม่ก่อนใคร</span>
               </div>
@@ -90,7 +90,7 @@ export default function Footer() {
                   <a href={settings.tiktokUrl} target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-white text-black rounded-full flex items-center justify-center hover:bg-forest-50 transition-colors shrink-0 font-bold text-lg">
                     <span className="mt-0.5">🎵</span>
                   </a>
-                  <div>
+                  <div className="whitespace-nowrap">
                     <a href={settings.tiktokUrl} target="_blank" rel="noopener noreferrer" className="font-bold block hover:text-forest-200 transition-colors">{settings.tiktok}</a>
                     <span className="text-xs text-forest-200">รีวิวบ้านแบบวิดีโอสั้น</span>
                   </div>

@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation'
 import { useState } from 'react'
 import {
   LayoutDashboard, Building2, MessageSquare, LogOut,
-  Menu, X, ExternalLink, ChevronRight, Settings, Home, Users, Image as ImageIcon
+  Menu, X, ExternalLink, ChevronRight, Settings, Home, Users, Image as ImageIcon, FileText
 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
@@ -15,6 +15,7 @@ const navItems = [
   { href: '/admin/gallery', label: 'แกลลอรีผลงาน', icon: ImageIcon },
   { href: '/admin/portfolio', label: 'โลโก้ความไว้วางใจ', icon: ImageIcon },
   { href: '/admin/inquiries', label: 'ลูกค้าติดต่อ', icon: MessageSquare },
+  { href: '/admin/changelog', label: 'บันทึกการอัปเดต', icon: FileText },
   { href: '/admin/settings', label: 'ตั้งค่าเว็บไซต์', icon: Settings },
   { href: '/admin/admins', label: 'ผู้ดูแลระบบ', icon: Users },
 ]

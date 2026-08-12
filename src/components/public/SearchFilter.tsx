@@ -52,11 +52,12 @@ export default function SearchFilter({ propertyTypes = PROPERTY_TYPES }: { prope
   const hasFilters = Object.values(filters).some(v => v !== '')
 
   return (
-    <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-5">
+    <form id="search-form" action="/properties" className="bg-white rounded-2xl shadow-lg border border-gray-100 p-5">
       {/* Main search row */}
       <div className="flex flex-col sm:flex-row gap-3">
         <div className="flex-1 min-w-0">
           <select
+            name="type"
             value={filters.type}
             onChange={e => setFilters(f => ({ ...f, type: e.target.value }))}
             className="select w-full"
@@ -70,6 +71,7 @@ export default function SearchFilter({ propertyTypes = PROPERTY_TYPES }: { prope
 
         <div className="flex-1 min-w-0">
           <select
+            name="province"
             value={filters.province}
             onChange={e => setFilters(f => ({ ...f, province: e.target.value, district: '', tambon: '' }))}
             className="select w-full"
@@ -83,6 +85,7 @@ export default function SearchFilter({ propertyTypes = PROPERTY_TYPES }: { prope
 
         <div className="flex-1 min-w-0">
           <select
+            name="district"
             value={filters.district}
             onChange={e => setFilters(f => ({ ...f, district: e.target.value, tambon: '' }))}
             className="select w-full"
@@ -97,6 +100,7 @@ export default function SearchFilter({ propertyTypes = PROPERTY_TYPES }: { prope
 
         <div className="flex-1 min-w-0">
           <select
+            name="tambon"
             value={filters.tambon}
             onChange={e => setFilters(f => ({ ...f, tambon: e.target.value }))}
             className="select w-full"
@@ -111,6 +115,7 @@ export default function SearchFilter({ propertyTypes = PROPERTY_TYPES }: { prope
 
         <div className="flex-1 min-w-0">
           <select
+            name="status"
             value={filters.status}
             onChange={e => setFilters(f => ({ ...f, status: e.target.value }))}
             className="select w-full"
@@ -124,6 +129,7 @@ export default function SearchFilter({ propertyTypes = PROPERTY_TYPES }: { prope
 
         <div className="flex gap-2">
           <button
+            type="button"
             onClick={() => setIsExpanded(!isExpanded)}
             className="flex items-center justify-center gap-2 px-3 py-3 border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors text-gray-600 font-medium text-sm shrink-0"
           >
@@ -131,7 +137,7 @@ export default function SearchFilter({ propertyTypes = PROPERTY_TYPES }: { prope
             <span className="hidden sm:inline">ราคา</span>
           </button>
           <button
-            onClick={applyFilters}
+            type="submit"
             className="btn-primary py-3 px-4 text-sm shrink-0"
           >
             <Search size={16} />
@@ -147,6 +153,7 @@ export default function SearchFilter({ propertyTypes = PROPERTY_TYPES }: { prope
             <label className="label">ราคาต่ำสุด (บาท)</label>
             <input
               type="number"
+              name="min_price"
               placeholder="0"
               value={filters.min_price}
               onChange={e => setFilters(f => ({ ...f, min_price: e.target.value }))}
@@ -157,6 +164,7 @@ export default function SearchFilter({ propertyTypes = PROPERTY_TYPES }: { prope
             <label className="label">ราคาสูงสุด (บาท)</label>
             <input
               type="number"
+              name="max_price"
               placeholder="ไม่จำกัด"
               value={filters.max_price}
               onChange={e => setFilters(f => ({ ...f, max_price: e.target.value }))}
@@ -173,44 +181,44 @@ export default function SearchFilter({ propertyTypes = PROPERTY_TYPES }: { prope
           {filters.type && (
             <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-forest-50 text-forest-700 rounded-full text-xs font-medium border border-forest-100">
               {filters.type}
-              <button onClick={() => setFilters(f => ({ ...f, type: '' }))}><X size={10} /></button>
+              <button type="button" onClick={() => { setFilters(f => ({ ...f, type: '' })); (document.getElementById('search-form') as HTMLFormElement)?.requestSubmit(); }}><X size={10} /></button>
             </span>
           )}
           {filters.province && (
             <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-forest-50 text-forest-700 rounded-full text-xs font-medium border border-forest-100">
               {filters.province}
-              <button onClick={() => setFilters(f => ({ ...f, province: '', district: '', tambon: '' }))}><X size={10} /></button>
+              <button type="button" onClick={() => { setFilters(f => ({ ...f, province: '', district: '', tambon: '' })); (document.getElementById('search-form') as HTMLFormElement)?.requestSubmit(); }}><X size={10} /></button>
             </span>
           )}
           {filters.district && (
             <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-forest-50 text-forest-700 rounded-full text-xs font-medium border border-forest-100">
               {filters.district}
-              <button onClick={() => setFilters(f => ({ ...f, district: '', tambon: '' }))}><X size={10} /></button>
+              <button type="button" onClick={() => { setFilters(f => ({ ...f, district: '', tambon: '' })); (document.getElementById('search-form') as HTMLFormElement)?.requestSubmit(); }}><X size={10} /></button>
             </span>
           )}
           {filters.tambon && (
             <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-forest-50 text-forest-700 rounded-full text-xs font-medium border border-forest-100">
               {filters.tambon}
-              <button onClick={() => setFilters(f => ({ ...f, tambon: '' }))}><X size={10} /></button>
+              <button type="button" onClick={() => { setFilters(f => ({ ...f, tambon: '' })); (document.getElementById('search-form') as HTMLFormElement)?.requestSubmit(); }}><X size={10} /></button>
             </span>
           )}
           {filters.status && (
             <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-forest-50 text-forest-700 rounded-full text-xs font-medium border border-forest-100">
               {filters.status}
-              <button onClick={() => setFilters(f => ({ ...f, status: '' }))}><X size={10} /></button>
+              <button type="button" onClick={() => { setFilters(f => ({ ...f, status: '' })); (document.getElementById('search-form') as HTMLFormElement)?.requestSubmit(); }}><X size={10} /></button>
             </span>
           )}
           {(filters.min_price || filters.max_price) && (
             <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-forest-50 text-forest-700 rounded-full text-xs font-medium border border-forest-100">
               ราคา
-              <button onClick={() => setFilters(f => ({ ...f, min_price: '', max_price: '' }))}><X size={10} /></button>
+              <button type="button" onClick={() => { setFilters(f => ({ ...f, min_price: '', max_price: '' })); (document.getElementById('search-form') as HTMLFormElement)?.requestSubmit(); }}><X size={10} /></button>
             </span>
           )}
-          <button onClick={clearFilters} className="text-xs text-red-500 hover:text-red-700 font-medium ml-auto">
+          <button type="button" onClick={clearFilters} className="text-xs text-red-500 hover:text-red-700 font-medium ml-auto">
             ล้างทั้งหมด
           </button>
         </div>
       )}
-    </div>
+    </form>
   )
 }

@@ -89,7 +89,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
             }}
           />
           {/* Overlay - Clear at top on mobile, dark at bottom for text. Uniform on desktop */}
-          <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-[#0a150f]/95 to-[#0a150f] md:bg-black/50 md:bg-none" />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-[#0a150f]/95 to-[#0a150f] md:bg-black/40" />
 
           <div className="relative z-10 container-main flex flex-col items-center text-center">
             {/* Desktop Only Title */}
@@ -126,8 +126,8 @@ export default async function HomePage({ searchParams }: HomePageProps) {
               <Link href="/?type=คอนโด#properties" className="bg-[#f9f6ef] hover:bg-white text-[#0f2a1c] px-5 py-2.5 rounded-full font-medium text-sm flex items-center gap-2 transition-colors shadow-sm">
                 <Building size={16} className="text-[#d4af37]" /> คอนโด
               </Link>
-              <Link href="/?type=ทาวน์โฮม#properties" className="bg-[#f9f6ef] hover:bg-white text-[#0f2a1c] px-5 py-2.5 rounded-full font-medium text-sm flex items-center gap-2 transition-colors shadow-sm">
-                <Home size={16} className="text-[#d4af37]" /> ทาวน์โฮม
+              <Link href="/?type=ทาวน์เฮ้าส์#properties" className="bg-[#f9f6ef] hover:bg-white text-[#0f2a1c] px-5 py-2.5 rounded-full font-medium text-sm flex items-center gap-2 transition-colors shadow-sm">
+                <Home size={16} className="text-[#d4af37]" /> ทาวน์เฮ้าส์
               </Link>
               <Link href="/?type=ที่ดิน#properties" className="bg-[#f9f6ef] hover:bg-white text-[#0f2a1c] px-5 py-2.5 rounded-full font-medium text-sm flex items-center gap-2 transition-colors shadow-sm">
                 <MapPin size={16} className="text-[#d4af37]" /> ที่ดิน

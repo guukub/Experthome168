@@ -16,6 +16,7 @@ export default function SettingsPage() {
     address: '',
     workingHours: '',
     logoUrl: '',
+    faviconUrl: '',
     heroBgUrl: '',
     portfolioImages: [] as string[],
     propertyTypes: [] as string[]
@@ -62,6 +63,30 @@ export default function SettingsPage() {
       if (res.ok) {
         const data = await res.json()
         set('logoUrl', data.url)
+      } else {
+        alert('อัพโหลดรูปล้มเหลว')
+      }
+    } catch (err) {
+      alert('เกิดข้อผิดพลาดในการอัพโหลด')
+    } finally {
+      setUploading(false)
+      if (e.target) e.target.value = ''
+    }
+  }
+
+  const handleFaviconUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    setUploading(true)
+    const formData = new FormData()
+    formData.append('file', file)
+
+    try {
+      const res = await fetch('/api/upload', { method: 'POST', body: formData })
+      if (res.ok) {
+        const data = await res.json()
+        set('faviconUrl', data.url)
       } else {
         alert('อัพโหลดรูปล้มเหลว')
       }
@@ -147,6 +172,42 @@ export default function SettingsPage() {
                   <label className="btn-secondary whitespace-nowrap cursor-pointer">
                     {uploading ? 'กำลังอัพโหลด...' : 'อัพโหลดไฟล์'}
                     <input type="file" accept="image/*" className="hidden" onChange={handleLogoUpload} disabled={uploading} />
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Favicon Section */}
+          <div className="space-y-4 md:col-span-2 border-b border-gray-100 pb-8">
+            <h2 className="text-lg font-bold text-gray-800 flex items-center gap-2">
+              <ImageIcon size={20} className="text-blue-500" />
+              ไอคอนเว็บไซต์ (Favicon)
+            </h2>
+            <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
+              {form.faviconUrl ? (
+                <div className="w-16 h-16 bg-gray-50 rounded-xl border border-gray-200 flex items-center justify-center p-2 shrink-0">
+                  <img src={form.faviconUrl} alt="Favicon" className="max-w-full max-h-full object-contain" />
+                </div>
+              ) : (
+                <div className="w-16 h-16 bg-gray-50 rounded-xl border border-gray-200 border-dashed flex flex-col items-center justify-center text-gray-400 shrink-0">
+                  <ImageIcon size={20} className="mb-1" />
+                  <span className="text-[10px]">No Favicon</span>
+                </div>
+              )}
+              <div className="flex-1 space-y-2 w-full">
+                <label className="label">อัพโหลดไอคอนที่แท็บบราวเซอร์ (แนะนำขนาด 32x32px หรือสี่เหลี่ยมจัตุรัส)</label>
+                <div className="flex gap-2">
+                  <input
+                    type="url"
+                    value={form.faviconUrl}
+                    onChange={e => set('faviconUrl', e.target.value)}
+                    placeholder="https://..."
+                    className="input flex-1"
+                  />
+                  <label className="btn-secondary whitespace-nowrap cursor-pointer">
+                    {uploading ? 'กำลังอัพโหลด...' : 'อัพโหลดไฟล์'}
+                    <input type="file" accept="image/*" className="hidden" onChange={handleFaviconUpload} disabled={uploading} />
                   </label>
                 </div>
               </div>

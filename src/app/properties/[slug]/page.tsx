@@ -7,6 +7,10 @@ import Footer from '@/components/public/Footer'
 import ImageGallery from '@/components/public/ImageGallery'
 import { getPropertiesAction, getSettingsAction } from '@/app/actions'
 import { formatPriceRaw, getStatusColor, getStatusDotColor, getPropertyTypeIcon, formatDate, formatPrice } from '@/lib/utils'
+import { generatePropertyMetadata } from '@/lib/seo/metadata'
+import { generateRealEstateListingSchema, generateFAQSchema } from '@/lib/seo/schema'
+import JsonLd from '@/components/seo/JsonLd'
+import Breadcrumbs from '@/components/seo/Breadcrumbs'
 
 export const dynamic = 'force-dynamic'
 
@@ -71,10 +75,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const allProps = await getPropertiesAction()
   const property = allProps.find(p => p.slug === decodedSlug)
   if (!property) return { title: 'ไม่พบทรัพย์' }
-  return {
-    title: property.title,
-    description: property.description || `${property.property_type} ${property.location} ราคา ${formatPriceRaw(property.price)}`,
-  }
+  
+  return generatePropertyMetadata(property)
 }
 
 // Removed generateStaticParams because force-dynamic is used
@@ -115,19 +117,46 @@ export default async function PropertyDetailPage({ params }: Props) {
     .filter(p => p.id !== property.id && p.location === property.location)
     .slice(0, 3)
 
+  const schema = generateRealEstateListingSchema(property)
+  
+  // Setup standard FAQ for AEO based on deterministic property data
+  const faqItems = []
+  if (property.price || property.rent_price) {
+    faqItems.push({
+      question: `ทรัพย์นี้ราคาเท่าไร?`,
+      answer: property.price ? `ราคาขายอยู่ที่ ${formatPriceRaw(property.price)} บาท` : `ราคาเช่าอยู่ที่ ${formatPriceRaw(property.rent_price || 0)} บาท/เดือน`
+    })
+  }
+  if (property.bedrooms) {
+    faqItems.push({
+      question: `มีกี่ห้องนอนกี่ห้องน้ำ?`,
+      answer: `มี ${property.bedrooms} ห้องนอน ${property.bathrooms ? `และ ${property.bathrooms} ห้องน้ำ` : ''}`
+    })
+  }
+  if (property.location) {
+    faqItems.push({
+      question: `ทรัพย์นี้อยู่ที่ไหน?`,
+      answer: `ตั้งอยู่ที่ ${property.address || property.location} ${property.province || ''}`
+    })
+  }
+  
+  const faqSchema = generateFAQSchema(faqItems)
+
+  const breadcrumbItems = [
+    { name: 'หน้าแรก', href: '/' },
+    { name: 'ทรัพย์ทั้งหมด', href: '/properties' },
+    { name: property.title, href: `/properties/${property.slug}` }
+  ]
+
   return (
     <>
+      <JsonLd data={schema} />
+      {faqSchema && <JsonLd data={faqSchema} />}
       <Navbar />
       <main className="min-h-screen pt-16">
         <div className="bg-white border-b border-gray-100">
-          <div className="container-main py-3">
-            <div className="flex items-center gap-2 text-sm text-gray-500">
-              <Link href="/" className="hover:text-forest-600 transition-colors">หน้าแรก</Link>
-              <span>/</span>
-              <Link href="/properties" className="hover:text-forest-600 transition-colors">ทรัพย์ทั้งหมด</Link>
-              <span>/</span>
-              <span className="text-gray-900 font-medium truncate">{property.title}</span>
-            </div>
+          <div className="container-main">
+            <Breadcrumbs items={breadcrumbItems} />
           </div>
         </div>
 
@@ -194,6 +223,24 @@ export default async function PropertyDetailPage({ params }: Props) {
                       </div>
                     </div>
                   )}
+                </div>
+              </div>
+
+              {/* AEO Summary Block */}
+              <div className="bg-forest-50/50 rounded-2xl border border-forest-100 p-6">
+                <h2 className="font-bold text-forest-800 text-lg mb-4">สรุปข้อมูลทรัพย์</h2>
+                <div className="text-gray-700 leading-relaxed text-sm space-y-2">
+                  <p><strong>{property.property_type}</strong> ตั้งอยู่ที่ <strong>{property.address || property.location} {property.province}</strong></p>
+                  <p>
+                    {(property.price || 0) > 0 ? `เสนอขายในราคา ${formatPriceRaw(property.price)} บาท ` : ''}
+                    {(property.rent_price || 0) > 0 ? `เสนอให้เช่าในราคา ${formatPriceRaw(property.rent_price || 0)} บาท/เดือน ` : ''}
+                  </p>
+                  <p>
+                    {property.bedrooms ? `ขนาด ${property.bedrooms} ห้องนอน ` : ''}
+                    {property.bathrooms ? `${property.bathrooms} ห้องน้ำ ` : ''}
+                    {property.land_size && property.land_size !== '-' ? `ที่ดิน ${property.land_size} ` : ''}
+                    {property.usable_area && property.usable_area !== '-' ? `พื้นที่ใช้สอย ${property.usable_area}` : ''}
+                  </p>
                 </div>
               </div>
 
