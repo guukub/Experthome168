@@ -21,6 +21,7 @@ const propertySchema = new mongoose.Schema({
   bedrooms: { type: Number },
   bathrooms: { type: Number },
   parking: { type: Number },
+  direction: { type: String },
   description: { type: String },
   video_url: { type: String },
   map_url: { type: String },
@@ -28,6 +29,23 @@ const propertySchema = new mongoose.Schema({
   is_featured: { type: Boolean, default: false },
   is_visible: { type: Boolean, default: true },
   images: [{ type: String }],
+  negotiable_price: { type: Number },
+  appraisal_price: { type: Number },
+  listing_date: { type: String },
+  marketing_stats: {
+    living_insider_views: { type: Number, default: 0 },
+    living_insider_leads: { type: Number, default: 0 },
+    ddproperty_views: { type: Number, default: 0 },
+    ddproperty_leads: { type: Number, default: 0 },
+    propertyhub_views: { type: Number, default: 0 },
+    propertyhub_leads: { type: Number, default: 0 },
+  },
+  agent_info: {
+    name: { type: String },
+    phone: { type: String },
+    line_id: { type: String },
+    image_url: { type: String },
+  }
 }, {
   timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } // map to typescript interface
 })

@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
-import { Plus, Edit, Trash2, Eye, EyeOff, Star, StarOff, Search, MapPin, ExternalLink } from 'lucide-react'
+import { Plus, Edit, Trash2, Eye, EyeOff, Star, StarOff, Search, MapPin, ExternalLink, FileText, History } from 'lucide-react'
 import { Property } from '@/types/property'
 import { formatPrice } from '@/lib/utils'
 import { getPropertiesAction, deletePropertyAction, updatePropertyStatusAction, togglePropertyVisibleAction, togglePropertyFeaturedAction } from '@/app/actions'
@@ -176,6 +176,20 @@ export default function AdminPropertiesPage() {
                       >
                         <ExternalLink size={16} />
                       </a>
+                      <Link
+                        href={`/admin/properties/${property.id}/history`}
+                        className="p-2 text-indigo-600 bg-indigo-50 hover:bg-indigo-100 rounded-lg transition-colors"
+                        title="ดูประวัติทั้งหมด"
+                      >
+                        <History size={16} />
+                      </Link>
+                      <Link
+                        href={`/admin/properties/${property.id}/report`}
+                        className="p-2 text-purple-600 bg-purple-50 hover:bg-purple-100 rounded-lg transition-colors"
+                        title="ดูรายงาน"
+                      >
+                        <FileText size={16} />
+                      </Link>
                       <Link
                         href={`/admin/properties/${property.id}/edit`}
                         className="p-2 text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors"

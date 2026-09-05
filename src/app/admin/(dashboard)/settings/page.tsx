@@ -17,6 +17,7 @@ export default function SettingsPage() {
     workingHours: '',
     logoUrl: '',
     faviconUrl: '',
+    agentProfileUrl: '',
     heroBgUrl: '',
     portfolioImages: [] as string[],
     propertyTypes: [] as string[]
@@ -87,6 +88,30 @@ export default function SettingsPage() {
       if (res.ok) {
         const data = await res.json()
         set('faviconUrl', data.url)
+      } else {
+        alert('อัพโหลดรูปล้มเหลว')
+      }
+    } catch (err) {
+      alert('เกิดข้อผิดพลาดในการอัพโหลด')
+    } finally {
+      setUploading(false)
+      if (e.target) e.target.value = ''
+    }
+  }
+
+  const handleAgentProfileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    setUploading(true)
+    const formData = new FormData()
+    formData.append('file', file)
+
+    try {
+      const res = await fetch('/api/upload', { method: 'POST', body: formData })
+      if (res.ok) {
+        const data = await res.json()
+        set('agentProfileUrl', data.url)
       } else {
         alert('อัพโหลดรูปล้มเหลว')
       }
@@ -171,7 +196,7 @@ export default function SettingsPage() {
                   />
                   <label className="btn-secondary whitespace-nowrap cursor-pointer">
                     {uploading ? 'กำลังอัพโหลด...' : 'อัพโหลดไฟล์'}
-                    <input type="file" accept="image/*" className="hidden" onChange={handleLogoUpload} disabled={uploading} />
+                    <input type="file" accept="image/*" className="hidden" onChange={(e) => handleImageUpload(e, 'logoUrl')} disabled={uploading} />
                   </label>
                 </div>
               </div>
@@ -208,6 +233,42 @@ export default function SettingsPage() {
                   <label className="btn-secondary whitespace-nowrap cursor-pointer">
                     {uploading ? 'กำลังอัพโหลด...' : 'อัพโหลดไฟล์'}
                     <input type="file" accept="image/*" className="hidden" onChange={handleFaviconUpload} disabled={uploading} />
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Agent Profile Section */}
+          <div className="space-y-4 md:col-span-2 border-b border-gray-100 pb-8">
+            <h2 className="text-lg font-bold text-gray-800 flex items-center gap-2">
+              <ImageIcon size={20} className="text-forest-600" />
+              รูปภาพโปรไฟล์ Agent (ใช้ในรายงาน)
+            </h2>
+            <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
+              {form.agentProfileUrl ? (
+                <div className="w-24 h-24 bg-gray-50 rounded-full border-2 border-forest-200 flex items-center justify-center shrink-0 overflow-hidden">
+                  <img src={form.agentProfileUrl} alt="Agent Profile" className="w-full h-full object-cover" />
+                </div>
+              ) : (
+                <div className="w-24 h-24 bg-gray-50 rounded-full border-2 border-gray-200 border-dashed flex flex-col items-center justify-center text-gray-400 shrink-0">
+                  <ImageIcon size={24} className="mb-1" />
+                  <span className="text-[10px]">No Profile</span>
+                </div>
+              )}
+              <div className="flex-1 space-y-2 w-full">
+                <label className="label">อัพโหลดรูปโปรไฟล์ที่ต้องการให้แสดงในมุมขวาล่างของหน้ารายงาน</label>
+                <div className="flex gap-2">
+                  <input
+                    type="url"
+                    value={form.agentProfileUrl || ''}
+                    onChange={e => set('agentProfileUrl', e.target.value)}
+                    placeholder="https://..."
+                    className="input flex-1"
+                  />
+                  <label className="btn-secondary whitespace-nowrap cursor-pointer">
+                    {uploading ? 'กำลังอัพโหลด...' : 'อัพโหลดไฟล์'}
+                    <input type="file" accept="image/*" className="hidden" onChange={handleAgentProfileUpload} disabled={uploading} />
                   </label>
                 </div>
               </div>

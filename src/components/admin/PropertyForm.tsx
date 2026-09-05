@@ -37,6 +37,7 @@ const EMPTY_FORM = {
   bedrooms: '',
   bathrooms: '',
   parking: '',
+  direction: '',
   description: '',
   video_url: '',
   map_url: '',
@@ -466,6 +467,10 @@ export default function PropertyForm({ initialData, isEdit = false, propertyType
             <div>
               <label className="label" htmlFor="prop-park">ที่จอดรถ</label>
               <input id="prop-park" type="number" value={form.parking} onChange={e => set('parking', e.target.value)} placeholder="2" className="input" min="0" />
+            </div>
+            <div>
+              <label className="label" htmlFor="prop-direction">ทิศ</label>
+              <input id="prop-direction" type="text" value={form.direction || ''} onChange={e => set('direction', e.target.value)} placeholder="เช่น เหนือ, ใต้" className="input" />
             </div>
           </div>
         </div>

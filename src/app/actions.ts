@@ -4,7 +4,9 @@ import { Property as PropertyType } from '@/types/property'
 import { revalidatePath } from 'next/cache'
 import connectToDatabase from '@/lib/mongodb'
 import PropertyModel from '@/models/Property'
-
+import PropertyLeadModel from '@/models/PropertyLead'
+import PropertyMonthlyStatModel from '@/models/PropertyMonthlyStat'
+import { PropertyLead, PropertyMonthlyStat } from '@/types/property'
 // Helper to convert Mongoose document to plain plain object for Next.js actions
 const toPlainObject = (doc: any) => {
   if (!doc) return null;
@@ -121,6 +123,12 @@ export async function getPropertiesAction() {
     return properties.map(toPlainObject) as PropertyType[]
   }
 
+export async function getPropertyByIdAction(id: string) {
+  await connectToDatabase()
+  const property = await PropertyModel.findById(id)
+  return toPlainObject(property) as PropertyType | null
+}
+
 export async function getSettingsAction() {
   await connectToDatabase()
   const { default: Settings } = await import('@/models/Settings')
@@ -155,3 +163,53 @@ export async function getSettingsAction() {
     return null
   }
 }
+
+export async function getPropertyLeadsAction(propertyId: string) {
+  await connectToDatabase()
+  const leads = await PropertyLeadModel.find({ property_id: propertyId }).sort({ contact_date: -1 })
+  return leads.map(toPlainObject) as PropertyLead[]
+}
+
+export async function savePropertyLeadAction(data: any) {
+  await connectToDatabase()
+  if (data.id) {
+    await PropertyLeadModel.findByIdAndUpdate(data.id, data)
+  } else {
+    const newLead = new PropertyLeadModel(data)
+    await newLead.save()
+  }
+  revalidatePath('/', 'layout')
+}
+
+export async function deletePropertyLeadAction(id: string) {
+  await connectToDatabase()
+  await PropertyLeadModel.findByIdAndDelete(id)
+  revalidatePath('/', 'layout')
+}
+
+export async function getMonthlyStatAction(propertyId: string, month: string) {
+  await connectToDatabase()
+  const stat = await PropertyMonthlyStatModel.findOne({ property_id: propertyId, month })
+  return toPlainObject(stat) as PropertyMonthlyStat | null
+}
+
+export async function saveMonthlyStatAction(propertyId: string, month: string, data: any) {
+  await connectToDatabase()
+  const filter = { property_id: propertyId, month }
+  const update = { ...data, property_id: propertyId, month }
+  
+  await PropertyMonthlyStatModel.findOneAndUpdate(filter, update, {
+    upsert: true,
+    new: true,
+    setDefaultsOnInsert: true
+  })
+  
+  revalidatePath('/', 'layout')
+}
+
+export async function getAllMonthlyStatsAction(propertyId: string) {
+  await connectToDatabase()
+  const stats = await PropertyMonthlyStatModel.find({ property_id: propertyId }).sort({ month: -1 })
+  return stats.map(toPlainObject) as PropertyMonthlyStat[]
+}
+

@@ -10,6 +10,7 @@ const SettingsSchema = new mongoose.Schema({
   tiktokUrl: { type: String, default: 'https://www.tiktok.com/@teebangbon' },
   logoUrl: { type: String, default: '' },
   faviconUrl: { type: String, default: '' },
+  agentProfileUrl: { type: String, default: '' },
   portfolioImages: [{ type: String }],
   email: { type: String, default: 'info@teebangbon.com' },
   address: { type: String, default: 'บางบอน กรุงเทพมหานคร และพื้นที่ใกล้เคียง (หนองแขม · พุทธบูชา · บางแค · อ้อมน้อย)' },
