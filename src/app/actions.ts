@@ -27,7 +27,7 @@ export async function savePropertyAction(data: PropertyType, isEdit: boolean) {
   await connectToDatabase()
   
   if (isEdit && data.id) {
-    await PropertyModel.findByIdAndUpdate(data.id, data, { new: true })
+    await PropertyModel.findByIdAndUpdate(data.id, data, { returnDocument: 'after' })
   } else {
     // New property
     // Generate a unique slug if not provided, or ensure uniqueness
@@ -200,7 +200,7 @@ export async function saveMonthlyStatAction(propertyId: string, month: string, d
   
   await PropertyMonthlyStatModel.findOneAndUpdate(filter, update, {
     upsert: true,
-    new: true,
+    returnDocument: 'after',
     setDefaultsOnInsert: true
   })
   

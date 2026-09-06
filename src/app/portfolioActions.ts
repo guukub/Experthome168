@@ -30,7 +30,7 @@ export async function savePortfolioAction(data: PortfolioItemData, isEdit: boole
   await connectToDatabase()
   
   if (isEdit && data.id) {
-    await PortfolioModel.findByIdAndUpdate(data.id, data, { new: true })
+    await PortfolioModel.findByIdAndUpdate(data.id, data, { returnDocument: 'after' })
   } else {
     const newItem = new PortfolioModel({
       ...data,

@@ -6,6 +6,7 @@ import Footer from '@/components/public/Footer'
 import PropertyCard from '@/components/public/PropertyCard'
 
 import { getPropertiesAction, getSettingsAction } from '@/app/actions'
+import { getPortfoliosAction } from '@/app/portfolioActions'
 import { ArrowRight, Search, MapPin, Home, Wallet, ChevronDown, Calendar, Building, Landmark, CheckCircle2, Megaphone, CheckCircle, Shield, Users, TrendingUp, Clock } from 'lucide-react'
 import HeroSearch from '@/components/public/HeroSearch'
 
@@ -34,7 +35,8 @@ interface HomePageProps {
 export default async function HomePage({ searchParams }: HomePageProps) {
   const allProps = await getPropertiesAction()
   const settings = await getSettingsAction()
-  const portfolioImages = settings?.portfolioImages || []
+  const portfolios = await getPortfoliosAction()
+  const portfolioImages = portfolios.filter(p => p.is_visible).map(p => p.imageUrl)
   let filtered = allProps.filter(p => p.is_visible)
 
   // Extract unique project names and titles for search suggestions
