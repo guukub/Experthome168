@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname, useSearchParams } from 'next/navigation'
 import { useState, useEffect, Suspense } from 'react'
 import { Menu, X, Phone, MessageCircle } from 'lucide-react'
@@ -55,8 +56,8 @@ function NavbarContent() {
           {/* Logo */}
           <Link href="/" className="flex items-center gap-3 group">
             {settings.logoUrl ? (
-              <div className="w-12 h-12 flex items-center justify-center shrink-0 rounded-2xl overflow-hidden bg-white shadow-sm">
-                <img src={settings.logoUrl} alt="Logo" className="w-full h-full object-cover" />
+              <div className="relative w-12 h-12 flex items-center justify-center shrink-0 rounded-2xl overflow-hidden bg-white shadow-sm">
+                <Image src={settings.logoUrl} alt="Logo" fill className="object-cover" sizes="48px" />
               </div>
             ) : (
               <div className="w-12 h-12 bg-forest-700 rounded-2xl flex items-center justify-center shadow-sm group-hover:bg-forest-800 transition-colors shrink-0">

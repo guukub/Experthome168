@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Save, Image as ImageIcon, Upload, X, ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
+import { compressImageToWebp } from '@/lib/imageUtils'
 import { PortfolioItemData, savePortfolioAction } from '@/app/portfolioActions'
 
 interface GalleryFormProps {
@@ -39,11 +40,12 @@ export default function GalleryForm({ initialData, isEdit = false }: GalleryForm
   const set = (key: keyof PortfolioItemData, value: any) => setForm(f => ({ ...f, [key]: value }))
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
+    const originalFile = e.target.files?.[0]
+    if (!originalFile) return
 
     setUploading(true)
     try {
+      const file = await compressImageToWebp(originalFile)
       const formData = new FormData()
       formData.append('file', file)
       const res = await fetch('/api/upload', { method: 'POST', body: formData })

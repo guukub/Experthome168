@@ -2,6 +2,7 @@
 
 import { Phone, MessageCircle, Facebook } from 'lucide-react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { useState, useEffect } from 'react'
 
 export default function Footer() {
@@ -29,8 +30,8 @@ export default function Footer() {
           <div className="flex flex-col sm:flex-row items-center sm:items-start lg:items-center gap-4 text-center sm:text-left">
             <div className="flex items-center gap-3">
               {settings.logoUrl ? (
-                <div className="w-12 h-12 flex items-center justify-center shrink-0 rounded-2xl overflow-hidden bg-white shadow-sm">
-                  <img src={settings.logoUrl} alt="Logo" className="w-full h-full object-cover" />
+                <div className="relative w-12 h-12 flex items-center justify-center shrink-0 rounded-2xl overflow-hidden bg-white shadow-sm">
+                  <Image src={settings.logoUrl} alt="Logo" fill className="object-cover" sizes="48px" />
                 </div>
               ) : (
                 <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center shrink-0">

@@ -19,8 +19,9 @@ export default function MarketingChart({ chartData }: MarketingChartProps) {
             <YAxis tick={{ fontSize: 12 }} axisLine={false} tickLine={false} />
             <Tooltip />
             <Legend verticalAlign="top" height={36} iconType="square" wrapperStyle={{ top: -20, fontSize: '12px' }}/>
-            <Line type="monotone" dataKey="ลูกค้าที่ติดต่อ (ราย)" stroke="#065f46" strokeWidth={3} dot={{ r: 4 }} activeDot={{ r: 6 }} />
-            <Line type="monotone" dataKey="สนใจ (ราย)" stroke="#d97706" strokeWidth={3} dot={{ r: 4 }} />
+            <Line type="monotone" dataKey="LivingInsider" stroke="#1e40af" strokeWidth={3} dot={{ r: 4 }} activeDot={{ r: 6 }} />
+            <Line type="monotone" dataKey="DDproperty" stroke="#ef4444" strokeWidth={3} dot={{ r: 4 }} />
+            <Line type="monotone" dataKey="propertyhub" stroke="#60a5fa" strokeWidth={3} dot={{ r: 4 }} />
           </LineChart>
         </ResponsiveContainer>
       </div>

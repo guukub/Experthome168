@@ -6,11 +6,12 @@ import { PropertyMonthlyStat } from '@/types/property'
 interface WebStatsTableProps {
   propertyId: string
   monthlyStat: PropertyMonthlyStat | null
+  settings?: any
   isSavingImage: boolean
   handleInlineStatChange: (field: string, value: number) => Promise<void>
 }
 
-export default function WebStatsTable({ propertyId, monthlyStat, isSavingImage, handleInlineStatChange }: WebStatsTableProps) {
+export default function WebStatsTable({ propertyId, monthlyStat, settings, isSavingImage, handleInlineStatChange }: WebStatsTableProps) {
   const totalViews = (monthlyStat?.living_insider_views || 0) + (monthlyStat?.ddproperty_views || 0) + (monthlyStat?.propertyhub_views || 0)
   const totalLeads = (monthlyStat?.living_insider_leads || 0) + (monthlyStat?.ddproperty_leads || 0) + (monthlyStat?.propertyhub_leads || 0)
 
@@ -34,15 +35,21 @@ export default function WebStatsTable({ propertyId, monthlyStat, isSavingImage, 
           <thead>
             <tr className="border-b bg-gray-50/50">
               <th className="py-3 font-medium text-gray-600">เว็บไซต์</th>
-              <th className="py-3 font-medium text-gray-600">เข้าดูประกาศ<br/><span className="text-xs font-normal">(ครั้ง)</span></th>
-              <th className="py-3 font-medium text-gray-600">ผู้สนใจ / แชท<br/><span className="text-xs font-normal">(ราย)</span></th>
-              <th className="py-3 font-medium text-gray-600">นัดดูเป็น<br/>ลูกค้า (ราย)</th>
+              <th className="py-3 font-medium text-gray-600">เห็นประกาศ</th>
+              <th className="py-3 font-medium text-gray-600">เข้าดูประกาศ</th>
             </tr>
           </thead>
           <tbody>
             <tr className="border-b">
               <td className="py-3 font-medium text-blue-600 text-left pl-4 flex items-center gap-2 h-10">
-                <div className="w-4 h-4 bg-blue-500 rounded-sm"></div> LivingInsider
+                {settings?.livingInsiderLogoUrl ? (
+                  <img src={settings.livingInsiderLogoUrl} alt="LivingInsider" className="h-7 max-w-[120px] object-contain" />
+                ) : (
+                  <>
+                    <div className="w-4 h-4 bg-blue-500 rounded-sm"></div>
+                    LivingInsider
+                  </>
+                )}
               </td>
               <td className="p-0 border-l print:border-l-gray-300">
                 {isSavingImage ? (
@@ -66,11 +73,17 @@ export default function WebStatsTable({ propertyId, monthlyStat, isSavingImage, 
                   />
                 )}
               </td>
-              <td className="border-l print:border-l-gray-300">0</td>
             </tr>
             <tr className="border-b">
               <td className="py-3 font-medium text-red-500 text-left pl-4 flex items-center gap-2 h-10">
-                <div className="w-4 h-4 bg-red-500 rounded-sm"></div> DDproperty
+                {settings?.ddpropertyLogoUrl ? (
+                  <img src={settings.ddpropertyLogoUrl} alt="DDproperty" className="h-7 max-w-[120px] object-contain" />
+                ) : (
+                  <>
+                    <div className="w-4 h-4 bg-red-500 rounded-sm"></div>
+                    DDproperty
+                  </>
+                )}
               </td>
               <td className="p-0 border-l print:border-l-gray-300">
                 {isSavingImage ? (
@@ -94,11 +107,17 @@ export default function WebStatsTable({ propertyId, monthlyStat, isSavingImage, 
                   />
                 )}
               </td>
-              <td className="border-l print:border-l-gray-300">0</td>
             </tr>
             <tr className="border-b">
               <td className="py-3 font-medium text-blue-400 text-left pl-4 flex items-center gap-2 h-10">
-                <div className="w-4 h-4 bg-blue-400 rounded-sm"></div> propertyhub
+                {settings?.propertyhubLogoUrl ? (
+                  <img src={settings.propertyhubLogoUrl} alt="PropertyHub" className="h-7 max-w-[120px] object-contain" />
+                ) : (
+                  <>
+                    <div className="w-4 h-4 bg-blue-400 rounded-sm"></div>
+                    propertyhub
+                  </>
+                )}
               </td>
               <td className="p-0 border-l print:border-l-gray-300">
                 {isSavingImage ? (
@@ -122,7 +141,6 @@ export default function WebStatsTable({ propertyId, monthlyStat, isSavingImage, 
                   />
                 )}
               </td>
-              <td className="border-l print:border-l-gray-300">0</td>
             </tr>
           </tbody>
           <tfoot>
@@ -130,7 +148,6 @@ export default function WebStatsTable({ propertyId, monthlyStat, isSavingImage, 
               <td className="py-3 text-right pr-4">รวม</td>
               <td className="py-3 border-l">{totalViews}</td>
               <td className="py-3 border-l">{totalLeads}</td>
-              <td className="py-3 border-l">0</td>
             </tr>
           </tfoot>
         </table>

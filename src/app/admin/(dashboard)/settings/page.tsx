@@ -1,7 +1,8 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Save, Phone, MessageCircle, Facebook, Image as ImageIcon, Upload, X, Home, Video } from 'lucide-react'
+import { Save, Phone, MessageCircle, Facebook, Image as ImageIcon, Upload, X, Home, Video, BarChart } from 'lucide-react'
+import { compressImageToWebp } from '@/lib/imageUtils'
 
 export default function SettingsPage() {
   const [form, setForm] = useState({
@@ -19,7 +20,9 @@ export default function SettingsPage() {
     faviconUrl: '',
     agentProfileUrl: '',
     heroBgUrl: '',
-    portfolioImages: [] as string[],
+    livingInsiderLogoUrl: '',
+    ddpropertyLogoUrl: '',
+    propertyhubLogoUrl: '',
     propertyTypes: [] as string[]
   })
   const [newPropertyType, setNewPropertyType] = useState('')
@@ -52,10 +55,11 @@ export default function SettingsPage() {
   const set = (key: string, value: string) => setForm(f => ({ ...f, [key]: value }))
 
   const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
+    const originalFile = e.target.files?.[0]
+    if (!originalFile) return
 
     setUploading(true)
+    const file = await compressImageToWebp(originalFile)
     const formData = new FormData()
     formData.append('file', file)
 
@@ -76,10 +80,11 @@ export default function SettingsPage() {
   }
 
   const handleFaviconUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
+    const originalFile = e.target.files?.[0]
+    if (!originalFile) return
 
     setUploading(true)
+    const file = await compressImageToWebp(originalFile, 256) // smaller for favicon
     const formData = new FormData()
     formData.append('file', file)
 
@@ -100,10 +105,11 @@ export default function SettingsPage() {
   }
 
   const handleAgentProfileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
+    const originalFile = e.target.files?.[0]
+    if (!originalFile) return
 
     setUploading(true)
+    const file = await compressImageToWebp(originalFile)
     const formData = new FormData()
     formData.append('file', file)
 
@@ -124,10 +130,11 @@ export default function SettingsPage() {
   }
 
   const handleHeroBgUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
+    const originalFile = e.target.files?.[0]
+    if (!originalFile) return
 
     setUploading(true)
+    const file = await compressImageToWebp(originalFile)
     const formData = new FormData()
     formData.append('file', file)
 
@@ -136,6 +143,31 @@ export default function SettingsPage() {
       if (res.ok) {
         const data = await res.json()
         set('heroBgUrl', data.url)
+      } else {
+        alert('อัพโหลดรูปล้มเหลว')
+      }
+    } catch (err) {
+      alert('เกิดข้อผิดพลาดในการอัพโหลด')
+    } finally {
+      setUploading(false)
+      if (e.target) e.target.value = ''
+    }
+  }
+
+  const handleGenericUpload = async (e: React.ChangeEvent<HTMLInputElement>, field: string) => {
+    const originalFile = e.target.files?.[0]
+    if (!originalFile) return
+
+    setUploading(true)
+    const file = await compressImageToWebp(originalFile)
+    const formData = new FormData()
+    formData.append('file', file)
+
+    try {
+      const res = await fetch('/api/upload', { method: 'POST', body: formData })
+      if (res.ok) {
+        const data = await res.json()
+        set(field, data.url)
       } else {
         alert('อัพโหลดรูปล้มเหลว')
       }
@@ -451,6 +483,68 @@ export default function SettingsPage() {
                 className="input"
                 required
               />
+            </div>
+          </div>
+
+          {/* Web Stats Logos */}
+          <div className="space-y-4 md:col-span-2 border-t border-gray-100 pt-8">
+            <h2 className="text-lg font-bold text-gray-800 flex items-center gap-2">
+              <BarChart size={20} className="text-purple-600" />
+              โลโก้เว็บไซต์พันธมิตร (สำหรับหน้ารายงาน)
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              
+              <div className="bg-gray-50 rounded-xl p-4 border border-gray-100 flex flex-col items-center">
+                <label className="label mb-2">LivingInsider Logo</label>
+                <div className="w-full aspect-video bg-white rounded-lg border border-gray-200 flex items-center justify-center overflow-hidden mb-3 relative group">
+                  {form.livingInsiderLogoUrl ? (
+                    <img src={form.livingInsiderLogoUrl} alt="LivingInsider" className="max-w-[80%] max-h-[80%] object-contain" />
+                  ) : (
+                    <div className="w-8 h-8 bg-blue-500 rounded-sm opacity-50"></div>
+                  )}
+                  <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                    <label className="cursor-pointer bg-white text-gray-800 px-3 py-1.5 rounded-lg text-sm font-medium hover:bg-gray-100 transition-colors flex items-center gap-2">
+                      <Upload size={14} /> อัพโหลดใหม่
+                      <input type="file" className="hidden" accept="image/*" onChange={(e) => handleGenericUpload(e, 'livingInsiderLogoUrl')} disabled={uploading} />
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-gray-50 rounded-xl p-4 border border-gray-100 flex flex-col items-center">
+                <label className="label mb-2">DDproperty Logo</label>
+                <div className="w-full aspect-video bg-white rounded-lg border border-gray-200 flex items-center justify-center overflow-hidden mb-3 relative group">
+                  {form.ddpropertyLogoUrl ? (
+                    <img src={form.ddpropertyLogoUrl} alt="DDproperty" className="max-w-[80%] max-h-[80%] object-contain" />
+                  ) : (
+                    <div className="w-8 h-8 bg-red-500 rounded-sm opacity-50"></div>
+                  )}
+                  <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                    <label className="cursor-pointer bg-white text-gray-800 px-3 py-1.5 rounded-lg text-sm font-medium hover:bg-gray-100 transition-colors flex items-center gap-2">
+                      <Upload size={14} /> อัพโหลดใหม่
+                      <input type="file" className="hidden" accept="image/*" onChange={(e) => handleGenericUpload(e, 'ddpropertyLogoUrl')} disabled={uploading} />
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-gray-50 rounded-xl p-4 border border-gray-100 flex flex-col items-center">
+                <label className="label mb-2">PropertyHub Logo</label>
+                <div className="w-full aspect-video bg-white rounded-lg border border-gray-200 flex items-center justify-center overflow-hidden mb-3 relative group">
+                  {form.propertyhubLogoUrl ? (
+                    <img src={form.propertyhubLogoUrl} alt="PropertyHub" className="max-w-[80%] max-h-[80%] object-contain" />
+                  ) : (
+                    <div className="w-8 h-8 bg-blue-400 rounded-sm opacity-50"></div>
+                  )}
+                  <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                    <label className="cursor-pointer bg-white text-gray-800 px-3 py-1.5 rounded-lg text-sm font-medium hover:bg-gray-100 transition-colors flex items-center gap-2">
+                      <Upload size={14} /> อัพโหลดใหม่
+                      <input type="file" className="hidden" accept="image/*" onChange={(e) => handleGenericUpload(e, 'propertyhubLogoUrl')} disabled={uploading} />
+                    </label>
+                  </div>
+                </div>
+              </div>
+
             </div>
           </div>
 

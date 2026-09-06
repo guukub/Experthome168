@@ -7,6 +7,7 @@ import { PROPERTY_TYPES, PROPERTY_STATUSES, generateSlug } from '@/lib/utils'
 import locationsData from '@/lib/locations.json'
 import { Plus, X, Upload, Save, ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
+import { compressImageToWebp } from '@/lib/imageUtils'
 import AutocompleteSelect from './AutocompleteSelect'
 import PostcodeAutocomplete from './PostcodeAutocomplete'
 
@@ -148,7 +149,8 @@ export default function PropertyForm({ initialData, isEdit = false, propertyType
     try {
       let errorMessage = ''
       
-      const uploadPromises = Array.from(files).map(async (file) => {
+      const uploadPromises = Array.from(files).map(async (originalFile) => {
+        const file = await compressImageToWebp(originalFile)
         const formData = new FormData()
         formData.append('file', file)
         

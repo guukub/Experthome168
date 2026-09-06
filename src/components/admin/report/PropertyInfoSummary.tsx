@@ -55,7 +55,7 @@ export default function PropertyInfoSummary({ property }: PropertyInfoSummaryPro
           </div>
           <div className="grid grid-cols-3">
             <span className="font-bold text-gray-600">รหัสทรัพย์</span>
-            <span className="col-span-2 text-gray-800 font-bold">: {property.id}</span>
+            <span className="col-span-2 text-gray-800 font-bold">: {property.property_code || `TBB-${property.id.substring(property.id.length - 6).toUpperCase()}`}</span>
           </div>
         </div>
       </div>

@@ -5,7 +5,7 @@ import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { ArrowLeft, Plus, Download, Printer } from 'lucide-react'
 import { Property, PropertyLead, PropertyMonthlyStat } from '@/types/property'
-import { getPropertyByIdAction, getPropertyLeadsAction, savePropertyLeadAction, deletePropertyLeadAction, getSettingsAction, getMonthlyStatAction, saveMonthlyStatAction } from '@/app/actions'
+import { getPropertyByIdAction, getPropertyLeadsAction, savePropertyLeadAction, deletePropertyLeadAction, getSettingsAction, getMonthlyStatAction, saveMonthlyStatAction, getAllMonthlyStatsAction } from '@/app/actions'
 import html2canvas from 'html2canvas'
 
 import ReportHeader from '@/components/admin/report/ReportHeader'
@@ -30,6 +30,7 @@ export default function PropertyReportPage() {
   // Monthly Stat states
   const [selectedMonth, setSelectedMonth] = useState(new Date().toISOString().slice(0, 7))
   const [monthlyStat, setMonthlyStat] = useState<PropertyMonthlyStat | null>(null)
+  const [allMonthlyStats, setAllMonthlyStats] = useState<PropertyMonthlyStat[]>([])
 
   const [loading, setLoading] = useState(true)
   const [isSavingImage, setIsSavingImage] = useState(false)
@@ -47,16 +48,17 @@ export default function PropertyReportPage() {
   const followingUp = currentMonthLeads.filter(l => l.status === 'อยู่ระหว่างติดตาม').length
   const notInterested = currentMonthLeads.filter(l => l.status === 'ไม่สนใจ').length
   
-  // Real chart data calculation from all leads (last 6 months)
+  // Real chart data calculation from all monthly stats (last 6 months)
   const chartData = Array.from({ length: 6 }).map((_, i) => {
     const d = new Date()
     d.setMonth(d.getMonth() - (5 - i))
     const monthStr = d.toISOString().slice(0, 7)
-    const mLeads = leads.filter(l => l.contact_date.startsWith(monthStr))
+    const mStat = allMonthlyStats.find(s => s.month === monthStr)
     return {
       name: `${MONTHS[d.getMonth()]} ${d.getFullYear() + 543}`.slice(0, 8),
-      'ลูกค้าที่ติดต่อ (ราย)': mLeads.length,
-      'สนใจ (ราย)': mLeads.filter(l => l.status === 'สนใจ').length,
+      LivingInsider: mStat?.living_insider_views || 0,
+      DDproperty: mStat?.ddproperty_views || 0,
+      propertyhub: mStat?.propertyhub_views || 0,
     }
   })
 
@@ -75,6 +77,9 @@ export default function PropertyReportPage() {
 
         const settingsData = await getSettingsAction()
         setSettings(settingsData)
+
+        const statsData = await getAllMonthlyStatsAction(propertyId)
+        setAllMonthlyStats(statsData)
       } catch (err) {
         console.error(err)
       } finally {
@@ -97,7 +102,7 @@ export default function PropertyReportPage() {
     const newLead: Partial<PropertyLead> = {
       property_id: propertyId,
       contact_date: selectedMonth + '-01',
-      customer_info: '',
+      customer_info: '-',
       interest_level: 3,
       status: 'อยู่ระหว่างติดตาม',
       notes: ''
@@ -108,7 +113,7 @@ export default function PropertyReportPage() {
       id: Date.now().toString(),
       property_id: propertyId,
       contact_date: selectedMonth + '-01',
-      customer_info: '',
+      customer_info: '-',
       interest_level: 3,
       status: 'อยู่ระหว่างติดตาม',
       notes: '',
@@ -149,6 +154,10 @@ export default function PropertyReportPage() {
     const updatedStat = { ...monthlyStat, [field]: value }
     setMonthlyStat(updatedStat)
     await saveMonthlyStatAction(propertyId, selectedMonth, updatedStat)
+    
+    // Refresh all stats for chart
+    const refreshedAll = await getAllMonthlyStatsAction(propertyId)
+    setAllMonthlyStats(refreshedAll)
   }
 
   const handleSaveAsImage = async () => {
@@ -272,6 +281,7 @@ export default function PropertyReportPage() {
               <WebStatsTable 
                 propertyId={propertyId}
                 monthlyStat={monthlyStat}
+                settings={settings}
                 isSavingImage={isSavingImage}
                 handleInlineStatChange={handleInlineStatChange}
               />

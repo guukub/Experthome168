@@ -1,6 +1,7 @@
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
+import Image from 'next/image'
 import { MapPin, Bed, Bath, Car, Maximize, ArrowLeft, Phone, MessageCircle, Facebook, CheckCircle, Calendar, Play, Video } from 'lucide-react'
 import Navbar from '@/components/public/Navbar'
 import Footer from '@/components/public/Footer'
@@ -492,7 +493,7 @@ function RelatedProperties({ properties }: { properties: any[] }) {
           <Link key={property.id} href={`/properties/${property.slug}`} className="card card-hover group block">
             <div className="relative h-44 overflow-hidden">
               {mainImage && (
-                <img src={mainImage} alt={property.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                <Image src={mainImage} alt={property.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" />
               )}
               <div className="absolute top-2 left-2">
                 <span className={`badge text-xs ${getStatusColor(property.status)}`}>
