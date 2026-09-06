@@ -1,6 +1,7 @@
 'use client'
 
 import { Phone, MessageCircle, Facebook } from 'lucide-react'
+import Link from 'next/link'
 import { useState, useEffect } from 'react'
 
 export default function Footer() {
@@ -42,9 +43,14 @@ export default function Footer() {
               </div>
             </div>
             <div className="hidden sm:block w-px h-12 bg-forest-600 mx-2 shrink-0"></div>
-            <p className="text-sm text-forest-100 max-w-xs leading-relaxed shrink-0">
-              ศูนย์รวมบ้านมือสองคุณภาพ คัดสรรทุกหลัง<br/>ด้วยความใส่ใจ เพื่อให้คุณได้บ้านที่ใช่
-            </p>
+            <div className="flex flex-col gap-3 max-w-xs shrink-0 text-left">
+              <p className="text-sm text-forest-100 leading-relaxed">
+                ศูนย์รวมบ้านมือสองคุณภาพ คัดสรรทุกหลัง<br/>ด้วยความใส่ใจ เพื่อให้คุณได้บ้านที่ใช่
+              </p>
+              <Link href="/services/sell-property" className="text-gold-400 hover:text-gold-300 font-semibold text-sm transition-colors w-fit">
+                รับฝากขายบ้าน คอนโด และที่ดิน
+              </Link>
+            </div>
           </div>
 
           {/* Contacts */}

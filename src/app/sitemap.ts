@@ -10,6 +10,7 @@ const STATIC_PAGES: { route: string; priority: number; changeFrequency: 'daily' 
   { route: '/properties', priority: 0.9, changeFrequency: 'daily' },
   { route: '/portfolio', priority: 0.7, changeFrequency: 'weekly' },
   { route: '/contact', priority: 0.6, changeFrequency: 'monthly' },
+  { route: '/services/sell-property', priority: 0.8, changeFrequency: 'monthly' },
 ]
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {

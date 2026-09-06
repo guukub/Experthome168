@@ -77,6 +77,7 @@ function NavbarContent() {
             <Link href="/properties?type=คอนโด" className={getLinkClass('/properties', 'type', 'คอนโด')}>คอนโด</Link>
             <Link href="/properties?type=ที่ดิน" className={getLinkClass('/properties', 'type', 'ที่ดิน')}>ที่ดิน</Link>
             <Link href="/portfolio" className={getLinkClass('/portfolio')}>ผลงาน</Link>
+            <Link href="/services/sell-property" className={getLinkClass('/services/sell-property')}>ฝากขาย</Link>
             <Link href="/contact" className={getLinkClass('/contact')}>ติดต่อเรา</Link>
           </div>
 
@@ -132,6 +133,9 @@ function NavbarContent() {
             </Link>
             <Link href="/portfolio" className={getMobileLinkClass('/portfolio')} onClick={() => setIsOpen(false)}>
               ผลงาน
+            </Link>
+            <Link href="/services/sell-property" className={getMobileLinkClass('/services/sell-property')} onClick={() => setIsOpen(false)}>
+              ฝากขาย
             </Link>
             <Link href="/contact" className={getMobileLinkClass('/contact')} onClick={() => setIsOpen(false)}>
               ติดต่อเรา
