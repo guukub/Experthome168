@@ -1,6 +1,8 @@
 import { MetadataRoute } from 'next'
 import { getPropertiesAction } from './actions'
 
+export const dynamic = 'force-dynamic'
+
 const BASE_URL = 'https://experthome168.com'
 
 // Static pages with approximate last-changed dates

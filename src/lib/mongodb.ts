@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import dns from 'node:dns';
+dns.setDefaultResultOrder('ipv4first');
 
 const MONGODB_URI = process.env.MONGODB_URI;
 
