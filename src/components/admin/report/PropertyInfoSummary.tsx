@@ -31,7 +31,7 @@ export default function PropertyInfoSummary({ property }: PropertyInfoSummaryPro
           </div>
           <div className="grid grid-cols-3">
             <span className="font-bold text-gray-600">ประเภท</span>
-            <span className="col-span-2 text-gray-800 font-medium">: {property.type}</span>
+            <span className="col-span-2 text-gray-800 font-medium">: {property.property_type}</span>
           </div>
           <div className="grid grid-cols-3">
             <span className="font-bold text-gray-600">ที่ดิน</span>
@@ -51,7 +51,7 @@ export default function PropertyInfoSummary({ property }: PropertyInfoSummaryPro
           </div>
           <div className="grid grid-cols-3">
             <span className="font-bold text-gray-600">ทิศ</span>
-            <span className="col-span-2 text-gray-800 font-medium">: {property.facing_direction}</span>
+            <span className="col-span-2 text-gray-800 font-medium">: {property.direction}</span>
           </div>
           <div className="grid grid-cols-3">
             <span className="font-bold text-gray-600">รหัสทรัพย์</span>

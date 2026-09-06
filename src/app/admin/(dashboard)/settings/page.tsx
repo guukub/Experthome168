@@ -196,7 +196,7 @@ export default function SettingsPage() {
                   />
                   <label className="btn-secondary whitespace-nowrap cursor-pointer">
                     {uploading ? 'กำลังอัพโหลด...' : 'อัพโหลดไฟล์'}
-                    <input type="file" accept="image/*" className="hidden" onChange={(e) => handleImageUpload(e, 'logoUrl')} disabled={uploading} />
+                    <input type="file" accept="image/*" className="hidden" onChange={(e) => handleLogoUpload(e)} disabled={uploading} />
                   </label>
                 </div>
               </div>

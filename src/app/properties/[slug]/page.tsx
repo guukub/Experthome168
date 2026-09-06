@@ -119,28 +119,43 @@ export default async function PropertyDetailPage({ params }: Props) {
 
   const schema = generateRealEstateListingSchema(property)
   
-  // Setup standard FAQ for AEO based on deterministic property data
-  const faqItems = []
+  // FAQ items — only property-specific questions with real answers
+  const faqItems: { question: string; answer: string }[] = []
+
   if (property.price || property.rent_price) {
+    const priceAnswer = property.price
+      ? `ราคาขายอยู่ที่ ${formatPriceRaw(property.price)} บาท${property.original_price && property.original_price > property.price ? ` (ลดจาก ${formatPriceRaw(property.original_price)} บาท)` : ''}`
+      : `ราคาเช่าอยู่ที่ ${formatPriceRaw(property.rent_price || 0)} บาท/เดือน`
     faqItems.push({
-      question: `ทรัพย์นี้ราคาเท่าไร?`,
-      answer: property.price ? `ราคาขายอยู่ที่ ${formatPriceRaw(property.price)} บาท` : `ราคาเช่าอยู่ที่ ${formatPriceRaw(property.rent_price || 0)} บาท/เดือน`
+      question: `${property.title} ราคาเท่าไร?`,
+      answer: priceAnswer
     })
   }
-  if (property.bedrooms) {
+
+  if (property.bedrooms && property.bedrooms > 0) {
     faqItems.push({
-      question: `มีกี่ห้องนอนกี่ห้องน้ำ?`,
-      answer: `มี ${property.bedrooms} ห้องนอน ${property.bathrooms ? `และ ${property.bathrooms} ห้องน้ำ` : ''}`
+      question: `${property.title} มีกี่ห้องนอน?`,
+      answer: `มี ${property.bedrooms} ห้องนอน${property.bathrooms ? ` และ ${property.bathrooms} ห้องน้ำ` : ''}${property.parking && property.parking > 0 ? ` ที่จอดรถ ${property.parking} คัน` : ''}`
     })
   }
+
   if (property.location) {
+    const locationAnswer = [property.address, property.location, property.district, property.province]
+      .filter(Boolean).join(' ')
     faqItems.push({
-      question: `ทรัพย์นี้อยู่ที่ไหน?`,
-      answer: `ตั้งอยู่ที่ ${property.address || property.location} ${property.province || ''}`
+      question: `${property.title} ตั้งอยู่ที่ไหน?`,
+      answer: `ตั้งอยู่ที่ ${locationAnswer}`
     })
   }
-  
+
+  // Contact FAQ — always answerable from settings
+  faqItems.push({
+    question: `จะนัดชม ${property.property_type || 'ทรัพย์'}นี้ได้อย่างไร?`,
+    answer: `ติดต่อตี๋บางบอน Experthome168 โทรหรือแชท LINE เพื่อนัดชมทรัพย์ พร้อมให้บริการทุกวัน 8:00–20:00 น.`
+  })
+
   const faqSchema = generateFAQSchema(faqItems)
+
 
   const breadcrumbItems = [
     { name: 'หน้าแรก', href: '/' },
@@ -380,12 +395,6 @@ export default async function PropertyDetailPage({ params }: Props) {
                     <div>
                       <div className="font-bold text-gray-900">ตี๋บางบอน</div>
                       <div className="text-sm text-gray-500">นายหน้าอสังหาริมทรัพย์</div>
-                      <div className="flex items-center gap-1 mt-0.5">
-                        {[...Array(5)].map((_, i) => (
-                          <span key={i} className="text-gold-400 text-xs">★</span>
-                        ))}
-                        <span className="text-xs text-gray-500 ml-1">5.0</span>
-                      </div>
                     </div>
                   </div>
 

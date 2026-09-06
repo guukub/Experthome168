@@ -7,8 +7,11 @@ import { Phone, MessageCircle, Facebook, MapPin, Clock, Mail, Send, Video } from
 export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
-  title: 'ติดต่อเรา',
-  description: 'ติดต่อตี๋บางบอน นายหน้าอสังหาริมทรัพย์ โทร ไลน์ เฟซบุ๊ก หรือกรอกฟอร์ม',
+  title: 'ติดต่อนายหน้าอสังหาริมทรัพย์ | ตี๋บางบอน Experthome168',
+  description: 'ติดต่อตี๋บางบอน นายหน้าอสังหาริมทรัพย์ โทร LINE Facebook หรือส่งข้อความ พร้อมให้บริการทุกวัน 8:00–20:00 น. ปรึกษาฟรี ไม่มีค่าใช้จ่าย',
+  alternates: {
+    canonical: 'https://experthome168.com/contact',
+  },
 }
 
 export default async function ContactPage() {

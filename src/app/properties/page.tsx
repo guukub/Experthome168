@@ -11,8 +11,11 @@ import { SearchFilters } from '@/types/property'
 export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
-  title: 'ทรัพย์ทั้งหมด',
-  description: 'ค้นหาบ้านเดี่ยว ทาวน์เฮ้าส์ คอนโด ที่ดิน ในย่านบางบอนและพื้นที่ใกล้เคียง',
+  title: 'ทรัพย์ทั้งหมด | บ้าน คอนโด ทาวน์เฮ้าส์ ที่ดิน — Experthome168',
+  description: 'รวมทรัพย์สำหรับซื้อ-ขาย บ้านเดี่ยว ทาวน์เฮ้าส์ คอนโด ที่ดิน และอาคารพาณิชย์ ราคาหลากหลาย พร้อมขาย พร้อมโอน ค้นหาและกรองตามความต้องการของคุณได้เลย',
+  alternates: {
+    canonical: 'https://experthome168.com/properties',
+  },
 }
 
 interface PropertiesPageProps {

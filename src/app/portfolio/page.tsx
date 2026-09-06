@@ -1,12 +1,34 @@
 import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { Metadata } from 'next';
 import { MapPin, Calendar, Home, CheckCircle, ChevronDown, ArrowRight, Building2, Trees, Settings, Users, ArrowRightCircle, MessageSquare } from 'lucide-react';
 import Navbar from '@/components/public/Navbar';
 import Footer from '@/components/public/Footer';
 import { getPortfoliosAction } from '@/app/portfolioActions';
 
 export const dynamic = 'force-dynamic';
+
+export const metadata: Metadata = {
+  title: 'แกลลอรีผลงาน | ตี๋บางบอน Experthome168',
+  description: 'รวมผลงานการซื้อขาย ฝากขาย อสังหาริมทรัพย์ของ Experthome168 ตี๋บางบอน บ้านเดี่ยว ทาวน์โฮม คอนโด ที่ดิน ดูแลทุกขั้นตอนจนปิดการขาย',
+  alternates: {
+    canonical: 'https://experthome168.com/portfolio',
+  },
+  openGraph: {
+    title: 'แกลลอรีผลงาน | ตี๋บางบอน Experthome168',
+    description: 'รวมผลงานการซื้อขาย ฝากขาย อสังหาริมทรัพย์ของ Experthome168 ตี๋บางบอน บ้านเดี่ยว ทาวน์โฮม คอนโด ที่ดิน ดูแลทุกขั้นตอนจนปิดการขาย',
+    url: 'https://experthome168.com/portfolio',
+    type: 'website',
+    siteName: 'Experthome168',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'แกลลอรีผลงาน | ตี๋บางบอน Experthome168',
+    description: 'รวมผลงานการซื้อขาย ฝากขาย อสังหาริมทรัพย์ของ Experthome168 ตี๋บางบอน',
+  },
+};
+
 
 const CATEGORIES = [
   { id: 'ทั้งหมด', label: 'ทั้งหมด', icon: <CheckCircle size={16} /> },

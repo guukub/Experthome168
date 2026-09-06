@@ -12,8 +12,11 @@ import HeroSearch from '@/components/public/HeroSearch'
 export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
-  title: 'หน้าแรก | ตี๋บางบอน อสังหาริมทรัพย์',
-  description: 'ตี๋บางบอน — ผู้เชี่ยวชาญอสังหาริมทรัพย์ย่านบางบอน หนองแขม พุทธบูชา บ้านเดี่ยว ทาวน์เฮ้าส์ ที่ดิน ราคาดี พร้อมให้บริการ',
+  title: 'ซื้อ ขาย ฝากขาย บ้าน คอนโด อสังหาริมทรัพย์ | Experthome168 ตี๋บางบอน',
+  description: 'Experthome168 ตี๋บางบอน — บริการซื้อ ขาย ฝากขาย บ้านเดี่ยว ทาวน์เฮ้าส์ คอนโด และที่ดิน ดูแลทุกขั้นตอน พร้อมให้คำปรึกษาฟรี นัดชมได้ทุกวัน',
+  alternates: {
+    canonical: 'https://experthome168.com',
+  },
 }
 
 interface HomePageProps {
@@ -83,18 +86,19 @@ export default async function HomePage({ searchParams }: HomePageProps) {
         <section className="relative pt-[calc(58vw+72px)] sm:pt-[calc(45vw+72px)] md:pt-32 pb-0 md:pb-24 bg-[#0a150f]">
           {/* Background */}
           <div
+            aria-hidden="true"
             className="absolute inset-0 top-[72px] md:top-0 bg-[length:100%_auto] md:bg-cover bg-top md:bg-center bg-no-repeat"
             style={{
               backgroundImage: `url('${settings?.heroBgUrl || 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1600&q=80'}')`,
             }}
           />
           {/* Overlay - Clear at top on mobile, dark at bottom for text. Uniform on desktop */}
-          <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-[#0a150f]/95 to-[#0a150f] md:bg-black/40" />
+          <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-b from-black/10 via-[#0a150f]/95 to-[#0a150f] md:bg-black/40" />
 
           <div className="relative z-10 container-main flex flex-col items-center text-center">
-            {/* Desktop Only Title */}
-            <h1 className="hidden md:block text-4xl sm:text-5xl md:text-6xl font-bold text-white leading-tight mb-4 drop-shadow-md">
-              ค้นหาบ้านที่ใช่ สำหรับคุณ
+            {/* Primary Heading - visible on all screens for SEO, styled per device */}
+            <h1 className="sr-only md:not-sr-only text-4xl sm:text-5xl md:text-6xl font-bold text-white leading-tight mb-4 drop-shadow-md">
+              ซื้อ ขาย ฝากขาย บ้าน คอนโด อสังหาริมทรัพย์ กับ Experthome168
             </h1>
             
             <div className="hidden md:flex items-center gap-3 mb-4">

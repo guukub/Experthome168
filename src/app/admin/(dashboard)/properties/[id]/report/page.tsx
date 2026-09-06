@@ -102,10 +102,20 @@ export default function PropertyReportPage() {
       status: 'อยู่ระหว่างติดตาม',
       notes: ''
     }
-    const saved = await savePropertyLeadAction(newLead)
-    if (saved) {
-      setLeads([...leads, saved])
+    await savePropertyLeadAction(newLead)
+    // Refresh leads from state by re-adding optimistically
+    const tempLead: PropertyLead = {
+      id: Date.now().toString(),
+      property_id: propertyId,
+      contact_date: selectedMonth + '-01',
+      customer_info: '',
+      interest_level: 3,
+      status: 'อยู่ระหว่างติดตาม',
+      notes: '',
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
     }
+    setLeads([...leads, tempLead])
   }
 
   const handleLeadChange = async (id: string, field: keyof PropertyLead, value: any) => {
@@ -119,10 +129,8 @@ export default function PropertyReportPage() {
 
   const handleDeleteLead = async (id: string) => {
     if (!confirm('ยืนยันการลบลูกค้ารายนี้?')) return
-    const success = await deletePropertyLeadAction(id)
-    if (success) {
-      setLeads(leads.filter(l => l.id !== id))
-    }
+    await deletePropertyLeadAction(id)
+    setLeads(leads.filter(l => l.id !== id))
   }
 
   const handleInlineStatChange = async (field: string, value: number) => {
@@ -132,14 +140,15 @@ export default function PropertyReportPage() {
         month: selectedMonth,
         [field]: value
       }
-      const saved = await saveMonthlyStatAction(newStat)
-      if (saved) setMonthlyStat(saved)
+      await saveMonthlyStatAction(propertyId, selectedMonth, newStat)
+      const refreshed = await getMonthlyStatAction(propertyId, selectedMonth)
+      if (refreshed) setMonthlyStat(refreshed)
       return
     }
     
     const updatedStat = { ...monthlyStat, [field]: value }
     setMonthlyStat(updatedStat)
-    await saveMonthlyStatAction(updatedStat)
+    await saveMonthlyStatAction(propertyId, selectedMonth, updatedStat)
   }
 
   const handleSaveAsImage = async () => {
