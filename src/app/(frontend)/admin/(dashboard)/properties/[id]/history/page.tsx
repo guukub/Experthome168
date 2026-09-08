@@ -6,7 +6,7 @@ import Link from 'next/link'
 import { ArrowLeft, Save, Plus } from 'lucide-react'
 import { Trash2 } from 'lucide-react'
 import { Property, PropertyMonthlyStat, PropertyLead } from '@/types/property'
-import { getPropertyByIdAction, getAllMonthlyStatsAction, saveMonthlyStatAction, getPropertyLeadsAction, savePropertyLeadAction, deletePropertyLeadAction } from '@/app/actions'
+import { getPropertyByIdAction, getAllMonthlyStatsAction, saveMonthlyStatAction, getPropertyLeadsAction, savePropertyLeadAction, deletePropertyLeadAction, savePropertyPriceChangesAction } from '@/app/actions'
 
 const MONTHS = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.']
 
@@ -20,6 +20,7 @@ export default function HistoryStatsPage() {
   const [leads, setLeads] = useState<PropertyLead[]>([])
   const [loading, setLoading] = useState(true)
   const [savingStatus, setSavingStatus] = useState<string>('')
+  const [priceChanges, setPriceChanges] = useState<{ date: string, price: string }[]>([])
 
   useEffect(() => {
     const loadData = async () => {
@@ -30,6 +31,9 @@ export default function HistoryStatsPage() {
           return
         }
         setProperty(propData)
+        if (propData.price_changes) {
+          setPriceChanges(propData.price_changes)
+        }
         
         const statsData = await getAllMonthlyStatsAction(propertyId)
         setStats(statsData)
@@ -165,6 +169,53 @@ export default function HistoryStatsPage() {
       const leadsData = await getPropertyLeadsAction(propertyId)
       leadsData.sort((a, b) => new Date(a.contact_date).getTime() - new Date(b.contact_date).getTime())
       setLeads(leadsData)
+      setSavingStatus('ลบสำเร็จ')
+      setTimeout(() => setSavingStatus(''), 2000)
+    } catch (err) {
+      console.error(err)
+      setSavingStatus('ลบล้มเหลว')
+    }
+  }
+
+  const handlePriceChange = async (index: number, field: 'date' | 'price', value: string) => {
+    const updated = [...priceChanges]
+    updated[index] = { ...updated[index], [field]: value }
+    setPriceChanges(updated)
+    
+    setSavingStatus('กำลังบันทึก...')
+    try {
+      await savePropertyPriceChangesAction(propertyId, updated)
+      setSavingStatus('บันทึกสำเร็จ')
+      setTimeout(() => setSavingStatus(''), 2000)
+    } catch (err) {
+      console.error(err)
+      setSavingStatus('บันทึกล้มเหลว')
+    }
+  }
+
+  const handleAddPriceChange = async () => {
+    const updated = [...priceChanges, { date: new Date().toISOString().split('T')[0], price: '' }]
+    setPriceChanges(updated)
+    
+    setSavingStatus('กำลังสร้าง...')
+    try {
+      await savePropertyPriceChangesAction(propertyId, updated)
+      setSavingStatus('บันทึกสำเร็จ')
+      setTimeout(() => setSavingStatus(''), 2000)
+    } catch (err) {
+      console.error(err)
+      setSavingStatus('บันทึกล้มเหลว')
+    }
+  }
+
+  const handleDeletePriceChange = async (index: number) => {
+    if (!confirm('ยืนยันการลบประวัติราคานี้?')) return
+    const updated = priceChanges.filter((_, i) => i !== index)
+    setPriceChanges(updated)
+    
+    setSavingStatus('กำลังลบ...')
+    try {
+      await savePropertyPriceChangesAction(propertyId, updated)
       setSavingStatus('ลบสำเร็จ')
       setTimeout(() => setSavingStatus(''), 2000)
     } catch (err) {
@@ -378,9 +429,60 @@ export default function HistoryStatsPage() {
           </tbody>
         </table>
       </div>
-      
+
+      <div className="flex items-center justify-between mt-12 mb-4">
+        <h2 className="text-xl font-bold text-gray-800">ประวัติการเปลี่ยนแปลงราคา</h2>
+        <button onClick={handleAddPriceChange} className="flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 font-bold shadow-sm">
+          <Plus size={18} /> เพิ่มประวัติราคา
+        </button>
+      </div>
+
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-x-auto mb-8">
+        <table className="w-full text-sm text-center">
+          <thead>
+            <tr>
+              <th className="border-b border-r bg-gray-100 py-3 px-4 font-bold w-1/3">วันที่</th>
+              <th className="border-b border-r bg-gray-100 py-3 px-4 font-bold w-1/2">ราคาที่เปลี่ยนแปลง</th>
+              <th className="border-b bg-gray-100 py-3 px-4 font-bold w-16">ลบ</th>
+            </tr>
+          </thead>
+          <tbody>
+            {priceChanges.length === 0 ? (
+              <tr>
+                <td colSpan={3} className="py-8 text-gray-500">ยังไม่มีประวัติการเปลี่ยนแปลงราคา กรุณากดปุ่ม "เพิ่มประวัติราคา"</td>
+              </tr>
+            ) : priceChanges.map((pc, idx) => (
+              <tr key={idx} className="hover:bg-gray-50 transition-colors">
+                <td className="border-b border-r p-0">
+                  <input 
+                    type="date" value={pc.date || ''} 
+                    onChange={e => handlePriceChange(idx, 'date', e.target.value)}
+                    className="w-full h-full py-3 px-2 text-center bg-transparent focus:bg-blue-50 focus:outline-none focus:ring-1 focus:ring-blue-400"
+                  />
+                </td>
+                <td className="border-b border-r p-0">
+                  <input 
+                    type="text" value={pc.price || ''} placeholder="ระบุราคา"
+                    onChange={e => handlePriceChange(idx, 'price', e.target.value)}
+                    className="w-full h-full py-3 px-3 text-center bg-transparent focus:bg-blue-50 focus:outline-none focus:ring-1 focus:ring-blue-400"
+                  />
+                </td>
+                <td className="border-b p-0 text-center">
+                  <button 
+                    onClick={() => handleDeletePriceChange(idx)}
+                    className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded transition-colors"
+                  >
+                    <Trash2 size={16} />
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
       <div className="mt-4 text-sm text-gray-500 flex items-center gap-2 mb-12">
-        <Save size={16} /> ข้อมูลทั้ง 2 ตารางจะถูกบันทึกอัตโนมัติเมื่อมีการเปลี่ยนแปลง
+        <Save size={16} /> ข้อมูลทั้ง 3 ตารางจะถูกบันทึกอัตโนมัติเมื่อมีการเปลี่ยนแปลง
       </div>
     </div>
   )

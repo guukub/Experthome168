@@ -48,6 +48,10 @@ export interface Property {
     line_id?: string
     image_url?: string
   }
+  price_changes?: {
+    date: string
+    price: string
+  }[]
   created_at: string
   updated_at: string
 }

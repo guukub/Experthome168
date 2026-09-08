@@ -1,15 +1,107 @@
-import React from 'react'
+'use client'
+
+import React, { useState, useEffect } from 'react'
 import { Phone } from 'lucide-react'
 import { Property } from '@/types/property'
+import { savePropertyPriceChangesAction } from '@/app/actions'
 
 interface AgentFooterProps {
   property: Property
   settings: any
+  isSavingImage?: boolean
 }
 
-export default function AgentFooter({ property, settings }: AgentFooterProps) {
+export default function AgentFooter({ property, settings, isSavingImage = false }: AgentFooterProps) {
+  const [priceChanges, setPriceChanges] = useState(() => {
+    if (property.price_changes && property.price_changes.length > 0) {
+      const existing = property.price_changes.map(pc => ({ date: pc.date || '', price: pc.price || '' }))
+      while (existing.length < 3) existing.push({ date: '', price: '' })
+      return existing
+    }
+    return [
+      { date: '', price: '' },
+      { date: '', price: '' },
+      { date: '', price: '' }
+    ]
+  })
+
+  const handlePriceChange = (index: number, field: 'date' | 'price', value: string) => {
+    const newChanges = [...priceChanges]
+    newChanges[index][field] = value
+    setPriceChanges(newChanges)
+  }
+
+  const handleBlur = async () => {
+    try {
+      if (property?.id) {
+        await savePropertyPriceChangesAction(property.id, priceChanges)
+      }
+    } catch (error) {
+      console.error('Failed to auto-save price changes', error)
+    }
+  }
+
+  const formatDate = (dateString: string) => {
+    if (!dateString) return ''
+    const parts = dateString.split('-')
+    if (parts.length === 3) {
+      const [year, month, day] = parts
+      return `${day}/${month}/${parseInt(year) + 543}`
+    }
+    return dateString
+  }
+
   return (
     <div className="grid grid-cols-12 gap-6 mt-6">
+      {/* Price Changes Table */}
+      <div className="col-span-7 border border-gray-200 rounded-xl overflow-hidden bg-white h-fit">
+        <table className="w-full text-center text-sm border-collapse">
+          <thead>
+            <tr>
+              <th colSpan={3} className="py-3 border-b border-gray-200 font-bold text-gray-800 text-base">เปลี่ยนแปลงราคาขาย</th>
+            </tr>
+            <tr className="bg-gray-50/50">
+              <th className="py-2 border-b border-r border-gray-200 font-medium text-gray-600 w-[10%]">ลำดับ</th>
+              <th className="py-2 border-b border-r border-gray-200 font-medium text-gray-600 w-[30%]">วันที่</th>
+              <th className="py-2 border-b border-gray-200 font-medium text-gray-600 w-[60%]">ราคาที่เปลี่ยนแปลง</th>
+            </tr>
+          </thead>
+          <tbody>
+            {priceChanges.map((row, index) => (
+              <tr key={index} className="border-b border-gray-200 last:border-b-0">
+                <td className="py-0 h-10 border-r border-gray-200 text-gray-500 font-medium">{index + 1}</td>
+                <td className="py-0 border-r border-gray-200">
+                  {isSavingImage ? (
+                    <div className="w-full h-full py-3 px-2">{formatDate(row.date)}</div>
+                  ) : (
+                    <input 
+                      type="date" 
+                      value={row.date}
+                      onChange={(e) => handlePriceChange(index, 'date', e.target.value)}
+                      onBlur={handleBlur}
+                      className="w-full h-full min-h-[40px] px-2 text-center bg-transparent focus:bg-blue-50 focus:outline-none print:appearance-none"
+                    />
+                  )}
+                </td>
+                <td className="py-0">
+                  {isSavingImage ? (
+                    <div className="w-full h-full py-3 px-2">{row.price}</div>
+                  ) : (
+                    <input 
+                      type="text" 
+                      value={row.price}
+                      onChange={(e) => handlePriceChange(index, 'price', e.target.value)}
+                      onBlur={handleBlur}
+                      className="w-full h-full min-h-[40px] px-2 text-center bg-transparent focus:bg-blue-50 focus:outline-none print:appearance-none"
+                    />
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
       <div className="col-start-9 col-span-4 border-2 border-emerald-100 rounded-xl p-4 bg-white relative overflow-hidden">
         <div className="absolute right-0 bottom-0 opacity-10 pointer-events-none w-32 h-32">
           <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">

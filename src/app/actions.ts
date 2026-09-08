@@ -71,6 +71,13 @@ export async function updatePropertyStatusAction(id: string, status: PropertyTyp
   revalidatePath('/', 'layout')
 }
 
+export async function savePropertyPriceChangesAction(id: string, priceChanges: any[]) {
+  await connectToDatabase()
+  await PropertyModel.findByIdAndUpdate(id, { price_changes: priceChanges })
+  
+  revalidatePath('/', 'layout')
+}
+
 export async function togglePropertyVisibleAction(id: string) {
   await connectToDatabase()
   const prop = await PropertyModel.findById(id)

@@ -179,3 +179,21 @@
 .gallery-thumb.active {
   @apply border-forest-600;
 }
+
+/* Print Styles for A4 Reports */
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 0.5cm; /* Small margin to prevent edge cutoffs */
+  }
+
+  /* Force the body width to match the report container so the browser scales it down correctly */
+  html, body {
+    width: 1200px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: white !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+}

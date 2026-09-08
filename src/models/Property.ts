@@ -45,7 +45,11 @@ const propertySchema = new mongoose.Schema({
     phone: { type: String },
     line_id: { type: String },
     image_url: { type: String },
-  }
+  },
+  price_changes: [{
+    date: String,
+    price: String
+  }]
 }, {
   timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } // map to typescript interface
 })

@@ -199,60 +199,64 @@ export default function PropertyReportPage() {
     <div className="min-h-screen bg-gray-100 pb-20">
       {/* Top Bar - Not printed */}
       <div className="bg-white border-b sticky top-0 z-50 print:hidden">
-        <div className="max-w-[1200px] mx-auto px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Link href="/admin/properties" className="p-2 hover:bg-gray-100 rounded-full transition-colors">
+        <div className="max-w-[1200px] mx-auto px-4 md:px-6 py-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+          <div className="flex items-center gap-4 w-full md:w-auto">
+            <Link href="/admin/properties" className="p-2 hover:bg-gray-100 rounded-full transition-colors shrink-0">
               <ArrowLeft size={24} className="text-gray-600" />
             </Link>
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">รายงานผลการทำงาน</h1>
-              <p className="text-sm text-gray-500">{property.title}</p>
+            <div className="overflow-hidden">
+              <h1 className="text-xl md:text-2xl font-bold text-gray-900 truncate">รายงานผลการทำงาน</h1>
+              <p className="text-xs md:text-sm text-gray-500 truncate">{property.title}</p>
             </div>
           </div>
           
-          <div className="flex items-center gap-4">
+          <div className="flex flex-wrap items-center gap-2 w-full md:w-auto">
             <input 
               type="month" 
               value={selectedMonth}
               onChange={(e) => setSelectedMonth(e.target.value)}
-              className="border border-gray-300 rounded-lg px-4 py-2 font-medium focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="border border-gray-300 rounded-lg px-3 py-2 text-sm md:text-base font-medium focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shrink-0"
             />
             
             <button 
               onClick={handleAddLead}
-              className="flex items-center gap-2 bg-forest-600 hover:bg-forest-700 text-white px-4 py-2 rounded-lg font-bold transition-colors shadow-sm"
+              className="flex items-center gap-1 md:gap-2 bg-forest-600 hover:bg-forest-700 text-white px-3 md:px-4 py-2 rounded-lg text-sm md:text-base font-bold transition-colors shadow-sm"
             >
               <Plus size={18} />
-              เพิ่มลูกค้าติดต่อ
+              <span className="hidden sm:inline">เพิ่มลูกค้า</span>
             </button>
 
             <button
               onClick={handleSaveAsImage}
               disabled={isSavingImage}
-              className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-bold transition-colors shadow-sm disabled:opacity-50"
+              className="flex items-center gap-1 md:gap-2 bg-blue-600 hover:bg-blue-700 text-white px-3 md:px-4 py-2 rounded-lg text-sm md:text-base font-bold transition-colors shadow-sm disabled:opacity-50"
             >
               <Download size={18} />
-              {isSavingImage ? 'กำลังบันทึก...' : 'บันทึกเป็นรูปภาพ'}
+              <span className="hidden sm:inline">{isSavingImage ? 'กำลังบันทึก...' : 'บันทึกรูปภาพ'}</span>
             </button>
 
             <button 
               onClick={() => window.print()}
-              className="flex items-center gap-2 bg-gray-800 hover:bg-gray-900 text-white px-4 py-2 rounded-lg font-bold transition-colors shadow-sm"
+              className="flex items-center gap-1 md:gap-2 bg-gray-800 hover:bg-gray-900 text-white px-3 md:px-4 py-2 rounded-lg text-sm md:text-base font-bold transition-colors shadow-sm"
             >
               <Printer size={18} />
-              พิมพ์รายงาน
+              <span className="hidden sm:inline">พิมพ์รายงาน</span>
             </button>
           </div>
         </div>
       </div>
 
-      {/* Main Report A4 Container */}
-      <div className="max-w-[1200px] mx-auto mt-8 print:mt-0 print:max-w-none">
-        <div 
-          ref={reportRef} 
-          className="bg-white shadow-xl print:shadow-none mx-auto overflow-hidden relative"
-          style={{ width: '1200px', minHeight: '1697px' }}
-        >
+      {/* Main Report A4 Container Wrapper with horizontal scroll for mobile */}
+      <div className="w-full overflow-x-auto pb-8 pt-4 md:pt-8 print:p-0 print:overflow-visible">
+        <div className="w-[1200px] mx-auto print:w-full px-4 md:px-0">
+          <div className="text-center md:hidden mb-4 text-gray-500 text-sm print:hidden">
+            👈 เลื่อนซ้ายขวาเพื่อดูรายงาน หรือดูในแนวนอน 👉
+          </div>
+          <div 
+            ref={reportRef} 
+            className="bg-white shadow-xl print:shadow-none mx-auto overflow-hidden relative"
+            style={{ width: '1200px', minHeight: '1697px' }}
+          >
           <ReportHeader 
             property={property}
             settings={settings}
@@ -291,9 +295,11 @@ export default function PropertyReportPage() {
             <AgentFooter 
               property={property}
               settings={settings}
+              isSavingImage={isSavingImage}
             />
           </div>
         </div>
+      </div>
       </div>
     </div>
   )

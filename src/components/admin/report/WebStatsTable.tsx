@@ -41,19 +41,21 @@ export default function WebStatsTable({ propertyId, monthlyStat, settings, isSav
           </thead>
           <tbody>
             <tr className="border-b">
-              <td className="py-3 font-medium text-blue-600 text-left pl-4 flex items-center gap-2 h-10">
-                {settings?.livingInsiderLogoUrl ? (
-                  <img src={settings.livingInsiderLogoUrl} alt="LivingInsider" className="h-7 max-w-[120px] object-contain" />
-                ) : (
-                  <>
-                    <div className="w-4 h-4 bg-blue-500 rounded-sm"></div>
-                    LivingInsider
-                  </>
-                )}
+              <td className="py-3 font-medium text-blue-600 h-[60px]">
+                <div className="w-full h-full flex items-center justify-center gap-2">
+                  {settings?.livingInsiderLogoUrl ? (
+                    <img src={settings.livingInsiderLogoUrl} alt="LivingInsider" className="h-8 max-w-[120px] object-contain" />
+                  ) : (
+                    <>
+                      <div className="w-4 h-4 bg-blue-500 rounded-sm"></div>
+                      LivingInsider
+                    </>
+                  )}
+                </div>
               </td>
               <td className="p-0 border-l print:border-l-gray-300">
                 {isSavingImage ? (
-                  <div className="w-full h-10 leading-[40px] text-center">{monthlyStat?.living_insider_views || 0}</div>
+                  <div className="w-full h-full py-3 text-center bg-transparent">{monthlyStat?.living_insider_views || 0}</div>
                 ) : (
                   <input 
                     type="number" min="0" value={monthlyStat?.living_insider_views || ''} 
@@ -64,7 +66,7 @@ export default function WebStatsTable({ propertyId, monthlyStat, settings, isSav
               </td>
               <td className="p-0 border-l print:border-l-gray-300">
                 {isSavingImage ? (
-                  <div className="w-full h-10 leading-[40px] text-center">{monthlyStat?.living_insider_leads || 0}</div>
+                  <div className="w-full h-full py-3 text-center bg-transparent">{monthlyStat?.living_insider_leads || 0}</div>
                 ) : (
                   <input 
                     type="number" min="0" value={monthlyStat?.living_insider_leads || ''} 
@@ -75,19 +77,21 @@ export default function WebStatsTable({ propertyId, monthlyStat, settings, isSav
               </td>
             </tr>
             <tr className="border-b">
-              <td className="py-3 font-medium text-red-500 text-left pl-4 flex items-center gap-2 h-10">
-                {settings?.ddpropertyLogoUrl ? (
-                  <img src={settings.ddpropertyLogoUrl} alt="DDproperty" className="h-7 max-w-[120px] object-contain" />
-                ) : (
-                  <>
-                    <div className="w-4 h-4 bg-red-500 rounded-sm"></div>
-                    DDproperty
-                  </>
-                )}
+              <td className="py-3 font-medium text-red-500 h-[60px]">
+                <div className="w-full h-full flex items-center justify-center gap-2">
+                  {settings?.ddpropertyLogoUrl ? (
+                    <img src={settings.ddpropertyLogoUrl} alt="DDproperty" className="h-8 max-w-[120px] object-contain" />
+                  ) : (
+                    <>
+                      <div className="w-4 h-4 bg-red-500 rounded-sm"></div>
+                      DDproperty
+                    </>
+                  )}
+                </div>
               </td>
               <td className="p-0 border-l print:border-l-gray-300">
                 {isSavingImage ? (
-                  <div className="w-full h-10 leading-[40px] text-center">{monthlyStat?.ddproperty_views || 0}</div>
+                  <div className="w-full h-full py-3 text-center bg-transparent">{monthlyStat?.ddproperty_views || 0}</div>
                 ) : (
                   <input 
                     type="number" min="0" value={monthlyStat?.ddproperty_views || ''} 
@@ -98,7 +102,7 @@ export default function WebStatsTable({ propertyId, monthlyStat, settings, isSav
               </td>
               <td className="p-0 border-l print:border-l-gray-300">
                 {isSavingImage ? (
-                  <div className="w-full h-10 leading-[40px] text-center">{monthlyStat?.ddproperty_leads || 0}</div>
+                  <div className="w-full h-full py-3 text-center bg-transparent">{monthlyStat?.ddproperty_leads || 0}</div>
                 ) : (
                   <input 
                     type="number" min="0" value={monthlyStat?.ddproperty_leads || ''} 
@@ -109,19 +113,21 @@ export default function WebStatsTable({ propertyId, monthlyStat, settings, isSav
               </td>
             </tr>
             <tr className="border-b">
-              <td className="py-3 font-medium text-blue-400 text-left pl-4 flex items-center gap-2 h-10">
-                {settings?.propertyhubLogoUrl ? (
-                  <img src={settings.propertyhubLogoUrl} alt="PropertyHub" className="h-7 max-w-[120px] object-contain" />
-                ) : (
-                  <>
-                    <div className="w-4 h-4 bg-blue-400 rounded-sm"></div>
-                    propertyhub
-                  </>
-                )}
+              <td className="py-3 font-medium text-blue-400 h-[60px]">
+                <div className="w-full h-full flex items-center justify-center gap-2">
+                  {settings?.propertyhubLogoUrl ? (
+                    <img src={settings.propertyhubLogoUrl} alt="PropertyHub" className="h-8 max-w-[120px] object-contain" />
+                  ) : (
+                    <>
+                      <div className="w-4 h-4 bg-blue-400 rounded-sm"></div>
+                      propertyhub
+                    </>
+                  )}
+                </div>
               </td>
               <td className="p-0 border-l print:border-l-gray-300">
                 {isSavingImage ? (
-                  <div className="w-full h-10 leading-[40px] text-center">{monthlyStat?.propertyhub_views || 0}</div>
+                  <div className="w-full h-full py-3 text-center bg-transparent">{monthlyStat?.propertyhub_views || 0}</div>
                 ) : (
                   <input 
                     type="number" min="0" value={monthlyStat?.propertyhub_views || ''} 
@@ -132,7 +138,7 @@ export default function WebStatsTable({ propertyId, monthlyStat, settings, isSav
               </td>
               <td className="p-0 border-l print:border-l-gray-300">
                 {isSavingImage ? (
-                  <div className="w-full h-10 leading-[40px] text-center">{monthlyStat?.propertyhub_leads || 0}</div>
+                  <div className="w-full h-full py-3 text-center bg-transparent">{monthlyStat?.propertyhub_leads || 0}</div>
                 ) : (
                   <input 
                     type="number" min="0" value={monthlyStat?.propertyhub_leads || ''} 
