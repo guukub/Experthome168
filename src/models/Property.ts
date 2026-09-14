@@ -32,6 +32,7 @@ const propertySchema = new mongoose.Schema({
   negotiable_price: { type: Number },
   appraisal_price: { type: Number },
   listing_date: { type: String },
+  contract_date: { type: String },
   marketing_stats: {
     living_insider_views: { type: Number, default: 0 },
     living_insider_leads: { type: Number, default: 0 },
@@ -46,6 +47,14 @@ const propertySchema = new mongoose.Schema({
     line_id: { type: String },
     image_url: { type: String },
   },
+  documents: [{
+    id: String,
+    url: String,
+    name: String,
+    note: String,
+    type: { type: String }, // 'image', 'pdf', etc. Mongoose requires { type: String } for fields named 'type'
+    created_at: String
+  }],
   price_changes: [{
     date: String,
     price: String

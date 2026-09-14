@@ -1,6 +1,15 @@
 export type PropertyStatus = 'พร้อมขาย' | 'จองแล้ว' | 'ขายแล้ว'
 export type PropertyType = string
 
+export interface PropertyDocument {
+  id: string;
+  url: string;
+  name: string; // File name
+  note?: string; // Additional user note
+  type: string; // 'image' or 'pdf' or 'auto'
+  created_at: string;
+}
+
 export interface Property {
   id: string
   title: string
@@ -34,6 +43,7 @@ export interface Property {
   negotiable_price?: number
   appraisal_price?: number
   listing_date?: string
+  contract_date?: string
   marketing_stats?: {
     living_insider_views?: number
     living_insider_leads?: number
@@ -48,6 +58,7 @@ export interface Property {
     line_id?: string
     image_url?: string
   }
+  documents?: PropertyDocument[]
   price_changes?: {
     date: string
     price: string

@@ -3,10 +3,10 @@
 import { useState, useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { ArrowLeft, Save, Plus } from 'lucide-react'
-import { Trash2 } from 'lucide-react'
-import { Property, PropertyMonthlyStat, PropertyLead } from '@/types/property'
-import { getPropertyByIdAction, getAllMonthlyStatsAction, saveMonthlyStatAction, getPropertyLeadsAction, savePropertyLeadAction, deletePropertyLeadAction, savePropertyPriceChangesAction } from '@/app/actions'
+import { ArrowLeft, Save, Plus, FileText, Image as ImageIcon, Upload } from 'lucide-react'
+import { Trash2, ExternalLink, Download } from 'lucide-react'
+import { Property, PropertyMonthlyStat, PropertyLead, PropertyDocument } from '@/types/property'
+import { getPropertyByIdAction, getAllMonthlyStatsAction, saveMonthlyStatAction, getPropertyLeadsAction, savePropertyLeadAction, deletePropertyLeadAction, savePropertyPriceChangesAction, updatePropertyContractDateAction, savePropertyDocumentsAction } from '@/app/actions'
 
 const MONTHS = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.']
 
@@ -21,6 +21,8 @@ export default function HistoryStatsPage() {
   const [loading, setLoading] = useState(true)
   const [savingStatus, setSavingStatus] = useState<string>('')
   const [priceChanges, setPriceChanges] = useState<{ date: string, price: string }[]>([])
+  const [documents, setDocuments] = useState<PropertyDocument[]>([])
+  const [uploadingDoc, setUploadingDoc] = useState(false)
 
   useEffect(() => {
     const loadData = async () => {
@@ -33,6 +35,9 @@ export default function HistoryStatsPage() {
         setProperty(propData)
         if (propData.price_changes) {
           setPriceChanges(propData.price_changes)
+        }
+        if (propData.documents) {
+          setDocuments(propData.documents)
         }
         
         const statsData = await getAllMonthlyStatsAction(propertyId)
@@ -81,6 +86,21 @@ export default function HistoryStatsPage() {
     try {
       const statToSave = updatedStats.find(s => s.month === month)
       await saveMonthlyStatAction(propertyId, month, statToSave)
+      setSavingStatus('บันทึกสำเร็จ')
+      setTimeout(() => setSavingStatus(''), 2000)
+    } catch (err) {
+      console.error(err)
+      setSavingStatus('บันทึกล้มเหลว')
+    }
+  }
+
+  const handleContractDateChange = async (date: string) => {
+    if (!property) return
+    setProperty({ ...property, contract_date: date })
+    
+    setSavingStatus('กำลังบันทึก...')
+    try {
+      await updatePropertyContractDateAction(propertyId, date)
       setSavingStatus('บันทึกสำเร็จ')
       setTimeout(() => setSavingStatus(''), 2000)
     } catch (err) {
@@ -224,6 +244,91 @@ export default function HistoryStatsPage() {
     }
   }
 
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files
+    if (!files || files.length === 0) return
+
+    setUploadingDoc(true)
+    setSavingStatus('กำลังอัปโหลดเอกสาร...')
+
+    try {
+      const newDocs: PropertyDocument[] = []
+      
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i]
+        
+        const formData = new FormData()
+        formData.append('file', file)
+        
+        const res = await fetch('/api/upload', {
+          method: 'POST',
+          body: formData
+        })
+        
+        if (res.ok) {
+          const data = await res.json()
+          newDocs.push({
+            id: Math.random().toString(36).substring(7),
+            url: data.url,
+            name: file.name,
+            type: file.type.startsWith('image/') ? 'image' : 'pdf',
+            created_at: new Date().toISOString()
+          })
+        }
+      }
+
+      if (newDocs.length > 0) {
+        const updatedDocs = [...documents, ...newDocs]
+        setDocuments(updatedDocs)
+        
+        setSavingStatus('กำลังบันทึก...')
+        await savePropertyDocumentsAction(propertyId, updatedDocs)
+        setSavingStatus('บันทึกสำเร็จ')
+        setTimeout(() => setSavingStatus(''), 2000)
+      } else {
+        setSavingStatus('อัปโหลดไม่สำเร็จ')
+      }
+    } catch (error) {
+      console.error('Upload failed', error)
+      setSavingStatus('อัปโหลดล้มเหลว')
+    } finally {
+      setUploadingDoc(false)
+      if (e.target) e.target.value = ''
+    }
+  }
+
+  const handleDocumentChange = async (index: number, field: 'name' | 'note', value: string) => {
+    const updated = [...documents]
+    updated[index] = { ...updated[index], [field]: value }
+    setDocuments(updated)
+    
+    setSavingStatus('กำลังบันทึก...')
+    try {
+      await savePropertyDocumentsAction(propertyId, updated)
+      setSavingStatus('บันทึกสำเร็จ')
+      setTimeout(() => setSavingStatus(''), 2000)
+    } catch (err) {
+      console.error(err)
+      setSavingStatus('บันทึกล้มเหลว')
+    }
+  }
+
+  const handleDeleteDocument = async (index: number) => {
+    if (!confirm('ยืนยันการลบเอกสารนี้?')) return
+    const updated = documents.filter((_, i) => i !== index)
+    setDocuments(updated)
+    
+    setSavingStatus('กำลังลบ...')
+    try {
+      await savePropertyDocumentsAction(propertyId, updated)
+      setSavingStatus('ลบสำเร็จ')
+      setTimeout(() => setSavingStatus(''), 2000)
+    } catch (err) {
+      console.error(err)
+      setSavingStatus('ลบล้มเหลว')
+    }
+  }
+
   if (loading || !property) {
     return <div className="p-8 text-center">กำลังโหลดข้อมูล...</div>
   }
@@ -237,7 +342,16 @@ export default function HistoryStatsPage() {
           </Link>
           <div>
             <h1 className="text-2xl font-bold text-gray-800">ประวัติสถิติเว็บย้อนหลัง</h1>
-            <p className="text-gray-500">{property.title}</p>
+            <p className="text-gray-500 mb-3">{property.title}</p>
+            <div className="flex items-center gap-2 bg-gray-50 border px-3 py-2 rounded-lg">
+              <span className="text-sm font-semibold text-gray-700">วันที่รับสัญญา:</span>
+              <input 
+                type="date"
+                value={property.contract_date || ''}
+                onChange={e => handleContractDateChange(e.target.value)}
+                className="text-sm px-2 py-1 border rounded bg-white focus:outline-none focus:ring-1 focus:ring-blue-400"
+              />
+            </div>
           </div>
         </div>
         <div className="flex items-center gap-4">
@@ -470,6 +584,88 @@ export default function HistoryStatsPage() {
                 <td className="border-b p-0 text-center">
                   <button 
                     onClick={() => handleDeletePriceChange(idx)}
+                    className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded transition-colors"
+                  >
+                    <Trash2 size={16} />
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <div className="flex items-center justify-between mt-12 mb-4">
+        <h2 className="text-xl font-bold text-gray-800">เอกสารที่เกี่ยวข้อง (ภาพ/PDF)</h2>
+        <div className="relative">
+          <input
+            type="file"
+            accept="image/*,.pdf"
+            multiple
+            onChange={handleFileUpload}
+            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+            disabled={uploadingDoc}
+          />
+          <button className={`flex items-center gap-2 px-4 py-2 text-white rounded-lg font-bold shadow-sm ${uploadingDoc ? 'bg-gray-400' : 'bg-blue-600 hover:bg-blue-700'}`}>
+            {uploadingDoc ? (
+              <span className="flex items-center gap-2">กำลังอัปโหลด...</span>
+            ) : (
+              <span className="flex items-center gap-2"><Upload size={18} /> อัปโหลดเอกสาร</span>
+            )}
+          </button>
+        </div>
+      </div>
+
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-x-auto mb-8">
+        <table className="w-full text-sm text-center">
+          <thead>
+            <tr>
+              <th className="border-b border-r bg-gray-100 py-3 px-4 font-bold w-16">ประเภท</th>
+              <th className="border-b border-r bg-gray-100 py-3 px-4 font-bold text-left w-1/3">ชื่อเอกสาร</th>
+              <th className="border-b border-r bg-gray-100 py-3 px-4 font-bold text-left">หมายเหตุ</th>
+              <th className="border-b border-r bg-gray-100 py-3 px-4 font-bold w-32">จัดการไฟล์</th>
+              <th className="border-b bg-gray-100 py-3 px-4 font-bold w-16">ลบ</th>
+            </tr>
+          </thead>
+          <tbody>
+            {documents.length === 0 ? (
+              <tr>
+                <td colSpan={5} className="py-8 text-gray-500">ยังไม่มีเอกสารแนบ กรุณากดปุ่ม "อัปโหลดเอกสาร"</td>
+              </tr>
+            ) : documents.map((doc, idx) => (
+              <tr key={doc.id || idx} className="hover:bg-gray-50 transition-colors">
+                <td className="border-b border-r py-2 px-4 text-gray-500 h-full min-h-[50px]">
+                  <div className="flex justify-center items-center h-full">
+                    {doc.type === 'pdf' ? <FileText size={24} className="text-red-500" /> : <ImageIcon size={24} className="text-blue-500" />}
+                  </div>
+                </td>
+                <td className="border-b border-r p-0">
+                  <input 
+                    type="text" value={doc.name || ''} placeholder="ระบุชื่อเอกสาร..."
+                    onChange={e => handleDocumentChange(idx, 'name', e.target.value)}
+                    className="w-full h-full py-3 px-3 text-left bg-transparent focus:bg-blue-50 focus:outline-none focus:ring-1 focus:ring-blue-400"
+                  />
+                </td>
+                <td className="border-b border-r p-0">
+                  <input 
+                    type="text" value={doc.note || ''} placeholder="จดหมายเหตุ..."
+                    onChange={e => handleDocumentChange(idx, 'note', e.target.value)}
+                    className="w-full h-full py-3 px-3 text-left bg-transparent focus:bg-blue-50 focus:outline-none focus:ring-1 focus:ring-blue-400"
+                  />
+                </td>
+                <td className="border-b border-r py-2 px-4">
+                  <div className="flex items-center justify-center gap-4">
+                    <a href={doc.url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 flex flex-col items-center gap-1 text-xs font-semibold">
+                      <ExternalLink size={18} /> ดูไฟล์
+                    </a>
+                    <a href={doc.url ? `/api/download?url=${encodeURIComponent(doc.url)}&filename=${encodeURIComponent(doc.name || 'document')}` : '#'} download className="text-emerald-600 hover:text-emerald-800 flex flex-col items-center gap-1 text-xs font-semibold">
+                      <Download size={18} /> โหลด
+                    </a>
+                  </div>
+                </td>
+                <td className="border-b p-0 text-center">
+                  <button 
+                    onClick={() => handleDeleteDocument(idx)}
                     className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded transition-colors"
                   >
                     <Trash2 size={16} />

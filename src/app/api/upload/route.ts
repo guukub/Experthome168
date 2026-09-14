@@ -37,7 +37,7 @@ export async function POST(request: Request) {
     formData.append('signature', signature)
     formData.append('folder', folder)
 
-    const uploadResponse = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+    const uploadResponse = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/auto/upload`, {
       method: 'POST',
       body: formData
     })

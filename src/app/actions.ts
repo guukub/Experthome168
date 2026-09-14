@@ -71,6 +71,20 @@ export async function updatePropertyStatusAction(id: string, status: PropertyTyp
   revalidatePath('/', 'layout')
 }
 
+export async function updatePropertyContractDateAction(id: string, contractDate: string) {
+  await connectToDatabase()
+  await PropertyModel.findByIdAndUpdate(id, { contract_date: contractDate })
+  
+  revalidatePath('/', 'layout')
+}
+
+export async function savePropertyDocumentsAction(id: string, documents: any[]) {
+  await connectToDatabase()
+  await PropertyModel.findByIdAndUpdate(id, { documents })
+  
+  revalidatePath('/', 'layout')
+}
+
 export async function savePropertyPriceChangesAction(id: string, priceChanges: any[]) {
   await connectToDatabase()
   await PropertyModel.findByIdAndUpdate(id, { price_changes: priceChanges })
