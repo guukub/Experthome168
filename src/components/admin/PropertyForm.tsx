@@ -10,6 +10,7 @@ import Link from 'next/link'
 import { compressImageToWebp } from '@/lib/imageUtils'
 import AutocompleteSelect from './AutocompleteSelect'
 import PostcodeAutocomplete from './PostcodeAutocomplete'
+import { formatLandSize, parseLandSize, LandSizeInput } from '@/lib/land-size'
 
 interface PropertyFormProps {
   initialData?: Partial<Property>
@@ -50,6 +51,13 @@ const EMPTY_FORM = {
 
 export default function PropertyForm({ initialData, isEdit = false, propertyTypes = PROPERTY_TYPES }: PropertyFormProps) {
   const router = useRouter()
+  const [landSize, setLandSize] = useState<LandSizeInput>(() => parseLandSize(initialData?.land_size) || { rai: '', ngan: '', squareWah: '' })
+  const [landSizeChanged, setLandSizeChanged] = useState(false)
+  const legacyLandSize = !!initialData?.land_size && parseLandSize(initialData.land_size) === null
+  const updateLandSize = (key: keyof LandSizeInput, value: string) => {
+    setLandSize(current => ({ ...current, [key]: value }))
+    setLandSizeChanged(true)
+  }
   const [form, setForm] = useState({
     ...EMPTY_FORM,
     ...initialData,
@@ -223,7 +231,9 @@ export default function PropertyForm({ initialData, isEdit = false, propertyType
 
     // Use server action to save demo data
     try {
-      await import('@/app/actions').then(m => m.savePropertyAction(payload as unknown as Property, isEdit))
+      const size = legacyLandSize && !landSizeChanged ? undefined : landSize
+      if (size) payload.land_size = formatLandSize(size)
+      await import('@/app/actions').then(m => m.savePropertyAction(payload as unknown as Property, isEdit, size))
       
       await new Promise(r => setTimeout(r, 800)) // Simulate save
       setSaved(true)
@@ -450,10 +460,25 @@ export default function PropertyForm({ initialData, isEdit = false, propertyType
         <div className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
           <h2 className="font-bold text-gray-900 mb-5 text-lg">รายละเอียดทรัพย์</h2>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-            <div>
-              <label className="label" htmlFor="prop-land">ขนาดที่ดิน</label>
-              <input id="prop-land" type="text" value={form.land_size} onChange={e => set('land_size', e.target.value)} placeholder="เช่น 50 ตร.ว." className="input" />
-            </div>
+            <fieldset className="col-span-2 md:col-span-3">
+              <legend className="label">ขนาดที่ดิน</legend>
+              <div className="grid grid-cols-3 gap-4">
+                <div>
+                  <label className="label" htmlFor="prop-land-rai">ไร่</label>
+                  <input id="prop-land-rai" type="number" min="0" step="1" value={landSize.rai} onChange={e => updateLandSize('rai', e.target.value)} placeholder="0" className="input" />
+                </div>
+                <div>
+                  <label className="label" htmlFor="prop-land-ngan">งาน</label>
+                  <input id="prop-land-ngan" type="number" min="0" max="3" step="1" value={landSize.ngan} onChange={e => updateLandSize('ngan', e.target.value)} placeholder="0" className="input" />
+                </div>
+                <div>
+                  <label className="label" htmlFor="prop-land">ตร.วา</label>
+                  <input id="prop-land" type="number" min="0" max="99.9" step="any" value={landSize.squareWah} onChange={e => updateLandSize('squareWah', e.target.value)} placeholder="0" className="input" />
+                </div>
+              </div>
+              <p className="text-xs text-gray-500 mt-2">ไร่ไม่จำกัดค่าสูงสุด · งาน 0–3 · ตร.วา 0–99.9</p>
+              {legacyLandSize && !landSizeChanged && <p className="text-sm text-amber-700 mt-2">ขนาดที่ดินเดิม: {initialData?.land_size} (จะเก็บค่าเดิมไว้จนกว่าจะกรอกขนาดใหม่)</p>}
+            </fieldset>
             <div>
               <label className="label" htmlFor="prop-area">พื้นที่ใช้สอย</label>
               <input id="prop-area" type="text" value={form.usable_area} onChange={e => set('usable_area', e.target.value)} placeholder="เช่น 130 ตร.ม." className="input" />

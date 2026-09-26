@@ -1,6 +1,7 @@
 'use server'
 
 import { Property as PropertyType } from '@/types/property'
+import { formatLandSize, LandSizeInput } from '@/lib/land-size'
 import { revalidatePath } from 'next/cache'
 import connectToDatabase from '@/lib/mongodb'
 import PropertyModel from '@/models/Property'
@@ -23,7 +24,8 @@ const toPlainObject = (doc: any) => {
   return JSON.parse(JSON.stringify(obj));
 }
 
-export async function savePropertyAction(data: PropertyType, isEdit: boolean) {
+export async function savePropertyAction(data: PropertyType, isEdit: boolean, landSize?: LandSizeInput) {
+  if (landSize) data = { ...data, land_size: formatLandSize(landSize) }
   await connectToDatabase()
   
   if (isEdit && data.id) {
