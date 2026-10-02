@@ -66,7 +66,7 @@ export default function PropertyInfoSummary({ property }: PropertyInfoSummaryPro
         <div className="space-y-4 text-sm">
           <div className="grid grid-cols-3 items-center">
             <span className="font-bold text-gray-600">ราคาขายเสนอ</span>
-            <span className="col-span-2 text-gray-800 font-extrabold text-base">: {formatPrice(property.price)} บาท</span>
+            <span className="col-span-2 text-gray-800 font-extrabold text-base">: {formatPrice(property.price)}</span>
           </div>
         </div>
       </div>

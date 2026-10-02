@@ -1,6 +1,7 @@
 import React from 'react'
 import { Trash2 } from 'lucide-react'
 import { PropertyLead } from '@/types/property'
+import { formatDateToDDMMYYYY } from '@/lib/utils'
 
 interface LeadsTableProps {
   currentMonthLeads: PropertyLead[]
@@ -20,7 +21,7 @@ export default function LeadsTable({ currentMonthLeads, isSavingImage, handleLea
           <tr className="bg-forest-700 text-white text-center">
             <th className="py-2 border-r border-forest-600 font-medium">ลำดับ</th>
             <th className="py-2 border-r border-forest-600 font-medium">วันที่ติดต่อ</th>
-            <th className="py-2 border-r border-forest-600 font-medium w-1/3">ชื่อลูกค้า / ช่องทาง</th>
+            <th className="py-2 border-r border-forest-600 font-medium w-1/5">ชื่อลูกค้า / ช่องทาง</th>
             <th className="py-2 border-r border-forest-600 font-medium">ความสนใจ</th>
             <th className="py-2 border-r border-forest-600 font-medium">สถานะ</th>
             <th className="py-2 font-medium">หมายเหตุ</th>
@@ -41,16 +42,19 @@ export default function LeadsTable({ currentMonthLeads, isSavingImage, handleLea
                     </div>
                   )}
                 </td>
-                <td className="py-0 border-r print:border-r-gray-300 h-10">
+                <td className="py-0 border-r print:border-r-gray-300 h-10 relative">
                   {lead ? (
                     isSavingImage ? (
-                      <div className="w-full h-10 leading-[40px] px-1 text-center text-sm">{lead.contact_date}</div>
+                      <div className="w-full h-10 leading-[40px] px-1 text-center text-sm">{formatDateToDDMMYYYY(lead.contact_date)}</div>
                     ) : (
-                      <input 
-                        type="date" value={lead.contact_date} 
-                        onChange={e => handleLeadChange(lead.id, 'contact_date', e.target.value)}
-                        className="w-full h-full py-2.5 px-1 text-center bg-transparent focus:bg-blue-50 focus:outline-none print:appearance-none"
-                      />
+                      <div className="relative w-full h-full flex items-center justify-center px-1 cursor-pointer hover:bg-blue-50/50 transition-colors">
+                        <span className="text-sm text-gray-800 font-normal">{formatDateToDDMMYYYY(lead.contact_date)}</span>
+                        <input 
+                          type="date" value={lead.contact_date} 
+                          onChange={e => handleLeadChange(lead.id, 'contact_date', e.target.value)}
+                          className="absolute inset-0 opacity-0 w-full h-full cursor-pointer"
+                        />
+                      </div>
                     )
                   ) : ''}
                 </td>
@@ -112,15 +116,22 @@ export default function LeadsTable({ currentMonthLeads, isSavingImage, handleLea
                     )
                   ) : ''}
                 </td>
-                <td className="py-0 h-10">
+                <td className="py-0 min-h-[40px] align-middle">
                   {lead ? (
                     isSavingImage ? (
-                      <div className="w-full h-10 leading-[40px] px-2 text-center text-xs text-gray-700 truncate">{lead.notes || '-'}</div>
+                      <div className="w-full min-h-[40px] max-h-[58px] py-1 px-2 flex items-center justify-center text-center text-xs text-gray-700 whitespace-pre-wrap break-words leading-tight line-clamp-3 overflow-hidden">
+                        {lead.notes || '-'}
+                      </div>
                     ) : (
-                      <input 
-                        type="text" value={lead.notes || ''} placeholder="-"
-                        onChange={e => handleLeadChange(lead.id, 'notes', e.target.value)}
-                        className="w-full h-full py-2.5 px-2 text-center bg-transparent focus:bg-blue-50 focus:outline-none placeholder:text-gray-300 text-xs"
+                      <textarea 
+                        value={lead.notes || ''} placeholder="-"
+                        rows={3}
+                        onChange={e => {
+                          const lines = e.target.value.split('\n')
+                          const val = lines.length > 3 ? lines.slice(0, 3).join('\n') : e.target.value
+                          handleLeadChange(lead.id, 'notes', val)
+                        }}
+                        className="w-full py-1 px-2 text-center bg-transparent focus:bg-blue-50 focus:outline-none placeholder:text-gray-300 text-xs resize-none leading-tight block max-h-[58px] overflow-hidden"
                       />
                     )
                   ) : ''}

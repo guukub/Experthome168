@@ -39,6 +39,7 @@ export interface Property {
   highlights?: string[]
   is_featured: boolean
   is_visible: boolean
+  is_report?: boolean
   images: string[]
   negotiable_price?: number
   appraisal_price?: number

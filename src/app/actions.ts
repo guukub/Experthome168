@@ -116,6 +116,17 @@ export async function togglePropertyFeaturedAction(id: string) {
   revalidatePath('/', 'layout')
 }
 
+export async function togglePropertyReportAction(id: string) {
+  await connectToDatabase()
+  const prop = await PropertyModel.findById(id)
+  if (prop) {
+    prop.is_report = prop.is_report === undefined ? false : !prop.is_report
+    await prop.save()
+  }
+  
+  revalidatePath('/', 'layout')
+}
+
 export async function getPropertiesAction() {
   await connectToDatabase()
   

@@ -28,6 +28,7 @@ const propertySchema = new mongoose.Schema({
   highlights: [{ type: String }],
   is_featured: { type: Boolean, default: false },
   is_visible: { type: Boolean, default: true },
+  is_report: { type: Boolean, default: true },
   images: [{ type: String }],
   negotiable_price: { type: Number },
   appraisal_price: { type: Number },

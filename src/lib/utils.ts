@@ -6,19 +6,19 @@ import { Property } from '@/types/property'
 export function formatPrice(price: number): string {
   if (price >= 1_000_000) {
     const millions = price / 1_000_000
-    return `${millions % 1 === 0 ? millions.toFixed(0) : millions.toFixed(1)} ล้านบาท`
+    return `${millions.toFixed(2)} ล้านบาท`
   }
   if (price >= 10_000) {
-    return `${(price / 1000).toFixed(0)}K บาท`
+    return `${(price / 1000).toFixed(2)}K บาท`
   }
-  return price.toLocaleString('th-TH') + ' บาท'
+  return price.toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' บาท'
 }
 
 /**
- * Format raw price number with comma separator
+ * Format raw price number with comma separator and 2 decimal places
  */
 export function formatPriceRaw(price: number): string {
-  return price.toLocaleString('th-TH') + ' บาท'
+  return price.toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' บาท'
 }
 
 /**
@@ -83,6 +83,22 @@ export function formatDate(dateStr: string): string {
     month: 'long',
     day: 'numeric',
   })
+}
+
+/**
+ * Format date string (YYYY-MM-DD or ISO) to DD/MM/YYYY
+ */
+export function formatDateToDDMMYYYY(dateStr: string): string {
+  if (!dateStr) return ''
+  const cleanDate = dateStr.split('T')[0]
+  const parts = cleanDate.split('-')
+  if (parts.length === 3) {
+    const [year, month, day] = parts
+    if (year.length === 4) {
+      return `${day.padStart(2, '0')}/${month.padStart(2, '0')}/${year}`
+    }
+  }
+  return dateStr
 }
 
 /**

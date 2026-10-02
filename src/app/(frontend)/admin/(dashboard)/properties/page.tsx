@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react'
 import { Plus, Edit, Trash2, Eye, EyeOff, Star, StarOff, Search, MapPin, ExternalLink, FileText, History } from 'lucide-react'
 import { Property } from '@/types/property'
 import { formatPrice } from '@/lib/utils'
-import { getPropertiesAction, deletePropertyAction, updatePropertyStatusAction, togglePropertyVisibleAction, togglePropertyFeaturedAction } from '@/app/actions'
+import { getPropertiesAction, deletePropertyAction, updatePropertyStatusAction, togglePropertyVisibleAction, togglePropertyFeaturedAction, togglePropertyReportAction } from '@/app/actions'
 
 const STATUS_OPTIONS = ['พร้อมขาย', 'จองแล้ว', 'ขายแล้ว']
 
@@ -39,6 +39,11 @@ export default function AdminPropertiesPage() {
   const toggleFeatured = async (id: string) => {
     setProperties(prev => prev.map(p => p.id === id ? { ...p, is_featured: !p.is_featured } : p))
     await togglePropertyFeaturedAction(id)
+  }
+
+  const toggleReport = async (id: string) => {
+    setProperties(prev => prev.map(p => p.id === id ? { ...p, is_report: p.is_report === undefined ? false : !p.is_report } : p))
+    await togglePropertyReportAction(id)
   }
 
   const deleteProperty = async (id: string) => {
@@ -84,10 +89,12 @@ export default function AdminPropertiesPage() {
             <thead>
               <tr className="text-left text-xs text-gray-500 font-bold uppercase tracking-wider border-b border-gray-100 bg-gray-50/80">
                 <th className="px-6 py-4">ข้อมูลทรัพย์</th>
-                <th className="px-6 py-4">ราคา</th>
+                <th className="px-6 py-4">ราคาขาย</th>
+                <th className="px-6 py-4">ราคาเช่า</th>
                 <th className="px-6 py-4">สถานะ</th>
                 <th className="px-6 py-4 text-center">การแสดงผล</th>
                 <th className="px-6 py-4 text-center">แนะนำ</th>
+                <th className="px-6 py-4 text-center">รายงาน</th>
                 <th className="px-6 py-4 text-right">จัดการ</th>
               </tr>
             </thead>
@@ -125,7 +132,12 @@ export default function AdminPropertiesPage() {
                   </td>
                   <td className="px-6 py-4">
                     <div className="text-sm font-extrabold text-[#0a192f] whitespace-nowrap">
-                      {formatPrice(property.price)}
+                      {property.price && property.price > 0 ? formatPrice(property.price) : '-'}
+                    </div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="text-sm font-extrabold text-forest-700 whitespace-nowrap">
+                      {property.rent_price && property.rent_price > 0 ? formatPrice(property.rent_price) : '-'}
                     </div>
                   </td>
                   <td className="px-6 py-4">
@@ -163,6 +175,22 @@ export default function AdminPropertiesPage() {
                       }`}
                     >
                       {property.is_featured ? <Star size={18} className="fill-gold-400" /> : <StarOff size={18} />}
+                    </button>
+                  </td>
+                  <td className="px-6 py-4 text-center">
+                    <button
+                      type="button"
+                      onClick={() => toggleReport(property.id)}
+                      title={property.is_report !== false ? 'เปิดใช้งานรายงาน' : 'ปิดใช้งานรายงาน'}
+                      className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                        property.is_report !== false ? 'bg-emerald-600' : 'bg-gray-300'
+                      }`}
+                    >
+                      <span
+                        className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                          property.is_report !== false ? 'translate-x-5' : 'translate-x-0'
+                        }`}
+                      />
                     </button>
                   </td>
                   <td className="px-6 py-4 text-right">

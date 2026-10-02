@@ -7,6 +7,7 @@ import { ArrowLeft, Save, Plus, FileText, Image as ImageIcon, Upload } from 'luc
 import { Trash2, ExternalLink, Download } from 'lucide-react'
 import { Property, PropertyMonthlyStat, PropertyLead, PropertyDocument } from '@/types/property'
 import { getPropertyByIdAction, getAllMonthlyStatsAction, saveMonthlyStatAction, getPropertyLeadsAction, savePropertyLeadAction, deletePropertyLeadAction, savePropertyPriceChangesAction, updatePropertyContractDateAction, savePropertyDocumentsAction } from '@/app/actions'
+import { formatDateToDDMMYYYY } from '@/lib/utils'
 
 const MONTHS = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.']
 
@@ -458,7 +459,7 @@ export default function HistoryStatsPage() {
           <thead>
             <tr>
               <th className="border-b border-r bg-gray-100 py-3 px-4 font-bold w-40">วันที่ติดต่อ</th>
-              <th className="border-b border-r bg-gray-100 py-3 px-4 font-bold w-1/4">ชื่อลูกค้า / ช่องทาง</th>
+              <th className="border-b border-r bg-gray-100 py-3 px-4 font-bold w-[15%]">ชื่อลูกค้า / ช่องทาง</th>
               <th className="border-b border-r bg-gray-100 py-3 px-4 font-bold w-1/4">เบอร์โทรศัพท์</th>
               <th className="border-b border-r bg-gray-100 py-3 px-4 font-bold w-32">ความสนใจ</th>
               <th className="border-b border-r bg-gray-100 py-3 px-4 font-bold w-48">สถานะ</th>
@@ -473,12 +474,15 @@ export default function HistoryStatsPage() {
               </tr>
             ) : leads.map((lead) => (
               <tr key={lead.id} className="hover:bg-gray-50 transition-colors">
-                <td className="border-b border-r p-0">
-                  <input 
-                    type="date" value={lead.contact_date} 
-                    onChange={e => handleLeadChange(lead.id, 'contact_date', e.target.value)}
-                    className="w-full h-full py-3 px-2 text-center bg-transparent focus:bg-blue-50 focus:outline-none focus:ring-1 focus:ring-blue-400"
-                  />
+                <td className="border-b border-r p-0 relative h-12">
+                  <div className="relative w-full h-full flex items-center justify-center px-2 cursor-pointer hover:bg-blue-50/50 transition-colors">
+                    <span className="text-sm text-gray-800 font-normal">{formatDateToDDMMYYYY(lead.contact_date)}</span>
+                    <input 
+                      type="date" value={lead.contact_date} 
+                      onChange={e => handleLeadChange(lead.id, 'contact_date', e.target.value)}
+                      className="absolute inset-0 opacity-0 w-full h-full cursor-pointer"
+                    />
+                  </div>
                 </td>
                 <td className="border-b border-r p-0">
                   <input 
@@ -523,11 +527,16 @@ export default function HistoryStatsPage() {
                     <option value="อื่นๆ">อื่นๆ</option>
                   </select>
                 </td>
-                <td className="border-b border-r p-0">
-                  <input 
-                    type="text" value={lead.notes || ''} placeholder="-"
-                    onChange={e => handleLeadChange(lead.id, 'notes', e.target.value)}
-                    className="w-full h-full py-3 px-3 text-left bg-transparent focus:bg-blue-50 focus:outline-none focus:ring-1 focus:ring-blue-400"
+                <td className="border-b border-r p-0 align-middle">
+                  <textarea 
+                    value={lead.notes || ''} placeholder="-"
+                    rows={3}
+                    onChange={e => {
+                      const lines = e.target.value.split('\n')
+                      const val = lines.length > 3 ? lines.slice(0, 3).join('\n') : e.target.value
+                      handleLeadChange(lead.id, 'notes', val)
+                    }}
+                    className="w-full py-1 px-3 text-left bg-transparent focus:bg-blue-50 focus:outline-none focus:ring-1 focus:ring-blue-400 text-xs resize-none leading-tight block max-h-[58px] overflow-hidden"
                   />
                 </td>
                 <td className="border-b p-0 text-center">
