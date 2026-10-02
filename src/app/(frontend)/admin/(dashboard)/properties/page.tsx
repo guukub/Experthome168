@@ -26,6 +26,28 @@ export default function AdminPropertiesPage() {
     (p.property_code?.toLowerCase() || '').includes(searchLower)
   )
 
+  const getSortPriority = (p: Property): number => {
+    const isAvailable = p.status === 'พร้อมขาย'
+    const isBooked = p.status === 'จองแล้ว'
+    const isSold = p.status === 'ขายแล้ว'
+    const isReportOpen = p.is_report !== false
+    const hasSalePrice = typeof p.price === 'number' && p.price > 0
+    const hasRentPrice = typeof p.rent_price === 'number' && p.rent_price > 0
+    const hasPrice = hasSalePrice || hasRentPrice
+
+    if (isAvailable) {
+      if (isReportOpen && hasPrice) return 1
+      if (!isReportOpen && hasPrice) return 2
+      if (hasRentPrice) return 3
+      return 4
+    }
+    if (isBooked) return 5
+    if (isSold) return 6
+    return 7
+  }
+
+  const sortedProperties = [...filtered].sort((a, b) => getSortPriority(a) - getSortPriority(b))
+
   const updateStatus = async (id: string, status: Property['status']) => {
     setProperties(prev => prev.map(p => p.id === id ? { ...p, status } : p))
     await updatePropertyStatusAction(id, status)
@@ -99,7 +121,7 @@ export default function AdminPropertiesPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
-              {filtered.map(property => (
+              {sortedProperties.map(property => (
                 <tr key={property.id} className="hover:bg-blue-50/30 transition-colors group">
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-4">
