@@ -127,6 +127,28 @@ export async function togglePropertyReportAction(id: string) {
   revalidatePath('/', 'layout')
 }
 
+export async function updatePropertyCustomerCodeAction(id: string, customerCode: string) {
+  await connectToDatabase()
+  await PropertyModel.findByIdAndUpdate(id, { customer_code: customerCode.trim() })
+  revalidatePath('/admin/reports', 'page')
+}
+
+export async function saveReportOrderAction(ids: string[]) {
+  await connectToDatabase()
+  const updates = ids
+    .filter(id => typeof id === 'string' && id.length > 0)
+    .map((id, index) => ({
+      updateOne: {
+        filter: { _id: id },
+        update: { $set: { report_order: index } },
+      },
+    }))
+  if (updates.length > 0) {
+    await PropertyModel.bulkWrite(updates, { ordered: false })
+  }
+  revalidatePath('/admin/reports', 'page')
+}
+
 export async function getPropertiesAction() {
   await connectToDatabase()
   
@@ -166,16 +188,44 @@ export async function getPropertyByIdAction(id: string) {
 export async function getReportOverviewAction(month: string) {
   await connectToDatabase()
 
-  const properties = await PropertyModel.find({ is_report: { $ne: false } }).sort({ created_at: -1 })
+  const loadedProperties = await PropertyModel.find({ is_report: { $ne: false } })
+    .select('_id title property_code customer_code property_type images price rent_price report_order created_at')
+    .sort({ created_at: 1 })
+    .lean()
+  const properties = loadedProperties.filter(property => property && property._id)
+  const currentOrders = properties.map(property => property.report_order).filter((order): order is number => typeof order === 'number')
+  let nextOrder = currentOrders.length > 0 ? Math.max(...currentOrders) + 1 : 0
+  const missingOrderUpdates: Array<{ updateOne: { filter: { _id: unknown }, update: { $set: { report_order: number } } } }> = []
+  for (const property of properties) {
+    if (typeof property.report_order !== 'number') {
+      property.report_order = nextOrder++
+      missingOrderUpdates.push({
+        updateOne: {
+          filter: { _id: property._id },
+          update: { $set: { report_order: property.report_order } },
+        },
+      })
+    }
+  }
+  if (missingOrderUpdates.length > 0) {
+    await PropertyModel.bulkWrite(missingOrderUpdates, { ordered: false })
+  }
+  properties.sort((a, b) => (a.report_order ?? Number.MAX_SAFE_INTEGER) - (b.report_order ?? Number.MAX_SAFE_INTEGER))
   const propertyIds = properties.map(property => property._id)
   const stats = await PropertyMonthlyStatModel.find({ property_id: { $in: propertyIds }, month })
-  const statsByProperty = new Map(stats.map(stat => [stat.property_id.toString(), toPlainObject(stat)]))
+    .select('property_id month living_insider_views living_insider_leads ddproperty_views ddproperty_leads propertyhub_views propertyhub_leads')
+    .lean()
+  const statsByProperty = new Map(
+    stats
+      .filter(stat => stat && stat.property_id)
+      .map(stat => [stat.property_id.toString(), toPlainObject(stat)])
+  )
 
   return properties.map(property => {
     const plain = toPlainObject(property)
     return {
       ...plain,
-      monthlyStat: statsByProperty.get(property._id.toString()) || null,
+      monthlyStat: property._id ? statsByProperty.get(property._id.toString()) || null : null,
     }
   })
 }

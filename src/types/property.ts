@@ -16,6 +16,7 @@ export interface Property {
   slug: string
   property_type: PropertyType
   property_code?: string
+  customer_code?: string
   project_name?: string
   location: string
   province?: string
@@ -40,6 +41,7 @@ export interface Property {
   is_featured: boolean
   is_visible: boolean
   is_report?: boolean
+  report_order?: number
   images: string[]
   negotiable_price?: number
   appraisal_price?: number
