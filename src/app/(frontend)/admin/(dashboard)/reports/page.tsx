@@ -2,7 +2,6 @@
 
 import Link from 'next/link'
 import { useEffect, useRef, useState } from 'react'
-import { useSearchParams } from 'next/navigation'
 import { Check, Download, FileText, Search, X } from 'lucide-react'
 import html2canvas from 'html2canvas'
 import { getReportOverviewAction } from '@/app/actions'
@@ -38,13 +37,20 @@ function hasPlatformData(row: ReportRow, views: keyof NonNullable<ReportRow['mon
 }
 
 export default function ReportsPage() {
-  const searchParams = useSearchParams()
-  const [month, setMonth] = useState(searchParams.get('month') || new Date().toISOString().slice(0, 7))
-  const [search, setSearch] = useState(searchParams.get('search') || '')
+  const [month, setMonth] = useState(new Date().toISOString().slice(0, 7))
+  const [search, setSearch] = useState('')
   const [rows, setRows] = useState<ReportRow[]>([])
   const [loading, setLoading] = useState(true)
   const [savingImage, setSavingImage] = useState(false)
   const reportRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    const monthParam = params.get('month')
+    const searchParam = params.get('search')
+    if (monthParam) setMonth(monthParam)
+    if (searchParam !== null) setSearch(searchParam)
+  }, [])
 
   useEffect(() => {
     let active = true
