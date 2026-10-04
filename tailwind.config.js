@@ -62,7 +62,7 @@ module.exports = {
         'fade-in': 'fadeIn 0.5s ease-in-out',
         'slide-up': 'slideUp 0.6s ease-out',
         'pulse-soft': 'pulseSoft 2s infinite',
-        'marquee': 'marquee 30s linear infinite',
+        'marquee': 'marquee 10s linear infinite',
       },
       keyframes: {
         fadeIn: {

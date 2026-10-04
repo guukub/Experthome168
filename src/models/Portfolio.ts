@@ -6,6 +6,7 @@ const portfolioSchema = new mongoose.Schema({
   date: { type: String, required: true },
   category: { type: String, required: true },
   imageUrl: { type: String, required: true },
+  images: { type: [String], default: [] },
   is_visible: { type: Boolean, default: true },
 }, {
   timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' }

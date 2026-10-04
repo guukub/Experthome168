@@ -23,17 +23,20 @@ export type PortfolioItemData = {
   date: string
   category: string
   imageUrl: string
+  images?: string[]
   is_visible?: boolean
 }
 
 export async function savePortfolioAction(data: PortfolioItemData, isEdit: boolean) {
   await connectToDatabase()
+  const images = data.images?.length ? data.images : (data.imageUrl ? [data.imageUrl] : [])
+  const payload = { ...data, images, imageUrl: images[0] || data.imageUrl }
   
   if (isEdit && data.id) {
-    await PortfolioModel.findByIdAndUpdate(data.id, data, { returnDocument: 'after' })
+    await PortfolioModel.findByIdAndUpdate(data.id, payload, { returnDocument: 'after' })
   } else {
     const newItem = new PortfolioModel({
-      ...data,
+      ...payload,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString()
     })

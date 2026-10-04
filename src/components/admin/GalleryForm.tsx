@@ -34,10 +34,64 @@ export default function GalleryForm({ initialData, isEdit = false }: GalleryForm
       is_visible: true
     }
   )
+  const [images, setImages] = useState<string[]>(() => initialData?.images?.length ? initialData.images : (initialData?.imageUrl ? [initialData.imageUrl] : []))
   const [saving, setSaving] = useState(false)
   const [uploading, setUploading] = useState(false)
+  const [draggedIdx, setDraggedIdx] = useState<number | null>(null)
 
   const set = (key: keyof PortfolioItemData, value: any) => setForm(f => ({ ...f, [key]: value }))
+
+  const handleMultiUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files
+    if (!files || files.length === 0) return
+
+    setUploading(true)
+    try {
+      const uploadedUrls = await Promise.all(Array.from(files).map(async (originalFile) => {
+        const file = await compressImageToWebp(originalFile)
+        const formData = new FormData()
+        formData.append('file', file)
+        const res = await fetch('/api/upload', { method: 'POST', body: formData })
+        if (!res.ok) return null
+        const data = await res.json()
+        return data.url as string
+      }))
+
+      const validUrls = uploadedUrls.filter((url): url is string => Boolean(url))
+      if (validUrls.length > 0) {
+        const nextImages = [...images, ...validUrls]
+        setImages(nextImages)
+        set('images', nextImages)
+        set('imageUrl', nextImages[0])
+      }
+      if (validUrls.length !== files.length) alert('บางรูปอัปโหลดไม่สำเร็จ')
+    } catch (error) {
+      console.error('Upload failed', error)
+      alert('เกิดข้อผิดพลาดในการอัปโหลด')
+    } finally {
+      setUploading(false)
+      e.target.value = ''
+    }
+  }
+
+  const removeImage = (index: number) => {
+    const nextImages = images.filter((_, i) => i !== index)
+    setImages(nextImages)
+    set('images', nextImages)
+    set('imageUrl', nextImages[0] || '')
+  }
+
+  const handleDrop = (event: React.DragEvent, targetIndex: number) => {
+    event.preventDefault()
+    if (draggedIdx === null || draggedIdx === targetIndex) return
+    const nextImages = [...images]
+    const [draggedImage] = nextImages.splice(draggedIdx, 1)
+    nextImages.splice(targetIndex, 0, draggedImage)
+    setImages(nextImages)
+    set('images', nextImages)
+    set('imageUrl', nextImages[0] || '')
+    setDraggedIdx(null)
+  }
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const originalFile = e.target.files?.[0]
@@ -65,14 +119,14 @@ export default function GalleryForm({ initialData, isEdit = false }: GalleryForm
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!form.imageUrl) {
+    if (images.length === 0) {
       alert('กรุณาอัพโหลดรูปภาพ')
       return
     }
     
     setSaving(true)
     try {
-      await savePortfolioAction(form, isEdit)
+      await savePortfolioAction({ ...form, images, imageUrl: images[0] || '' }, isEdit)
       router.push('/admin/gallery')
       router.refresh()
     } catch (error) {
@@ -167,7 +221,8 @@ export default function GalleryForm({ initialData, isEdit = false }: GalleryForm
             <input
               type="file"
               accept="image/*"
-              onChange={handleUpload}
+              multiple
+              onChange={handleMultiUpload}
               className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
               disabled={uploading}
             />
@@ -192,11 +247,46 @@ export default function GalleryForm({ initialData, isEdit = false }: GalleryForm
                 <img src={form.imageUrl} alt="preview" className="w-full h-full object-cover" />
                 <button
                   type="button"
-                  onClick={() => set('imageUrl', '')}
+                  onClick={() => removeImage(0)}
                   className="absolute top-2 right-2 w-8 h-8 bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
                 >
                   <X size={16} />
                 </button>
+              </div>
+            </div>
+          )}
+
+          {images.length > 0 && (
+            <div className="mt-6">
+              <p className="text-sm text-gray-500 mb-3">ลากรูปเพื่อจัดลำดับ รูปแรกจะเป็นรูปปก</p>
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                {images.map((img, i) => (
+                  <div
+                    key={`${img}-${i}`}
+                    draggable
+                    onDragStart={(event) => {
+                      setDraggedIdx(i)
+                      event.dataTransfer.effectAllowed = 'move'
+                    }}
+                    onDragOver={(event) => event.preventDefault()}
+                    onDrop={(event) => handleDrop(event, i)}
+                    onDragEnd={() => setDraggedIdx(null)}
+                    className={`relative group aspect-video rounded-xl overflow-hidden bg-gray-100 border-2 cursor-move ${draggedIdx === i ? 'opacity-50 border-forest-500' : 'border-transparent'}`}
+                  >
+                    <img src={img} alt={`รูปผลงาน ${i + 1}`} className="w-full h-full object-contain pointer-events-none" />
+                    <button
+                      type="button"
+                      onClick={() => removeImage(i)}
+                      className="absolute top-2 right-2 w-7 h-7 bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                      aria-label="ลบรูปภาพ"
+                    >
+                      <X size={14} />
+                    </button>
+                    {i === 0 && (
+                      <span className="absolute bottom-2 left-2 bg-forest-600 text-white text-xs px-2 py-1 rounded-md">รูปปก</span>
+                    )}
+                  </div>
+                ))}
               </div>
             </div>
           )}

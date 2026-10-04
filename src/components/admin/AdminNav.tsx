@@ -5,11 +5,12 @@ import { usePathname } from 'next/navigation'
 import { useState } from 'react'
 import {
   LayoutDashboard, Building2, MessageSquare, LogOut,
-  Menu, X, ExternalLink, ChevronRight, Settings, Home, Users, Image as ImageIcon, FileText
+  Menu, X, ExternalLink, ChevronRight, Settings, Home, Users, Image as ImageIcon, FileText, ClipboardList
 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
 const navItems = [
+  { href: '/admin/reports', label: 'Property Reports', icon: ClipboardList },
   { href: '/admin/dashboard', label: 'ภาพรวม', icon: LayoutDashboard },
   { href: '/admin/properties', label: 'จัดการทรัพย์', icon: Home },
   { href: '/admin/gallery', label: 'แกลลอรีผลงาน', icon: ImageIcon },

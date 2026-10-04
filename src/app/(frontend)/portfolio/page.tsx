@@ -6,6 +6,7 @@ import { MapPin, Calendar, Home, CheckCircle, ChevronDown, ArrowRight, Building2
 import Navbar from '@/components/public/Navbar';
 import Footer from '@/components/public/Footer';
 import { getPortfoliosAction } from '@/app/portfolioActions';
+import PortfolioGrid from '@/components/public/PortfolioGrid';
 
 export const dynamic = 'force-dynamic';
 
@@ -116,51 +117,9 @@ export default async function PortfolioPage({ searchParams }: { searchParams: { 
         </div>
 
         {/* Grid Section */}
-        <div className="container-main mx-auto px-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {displayItems.length > 0 ? (
-              displayItems.map((item) => (
-                <div
-                  key={item.id}
-                  className="group relative rounded-xl overflow-hidden bg-[#1a232b] border border-white/5 shadow-xl hover:border-gold-500/50 transition-all duration-300 flex flex-col cursor-pointer"
-                >
-                  {/* Image */}
-                  <div className="relative h-56 w-full overflow-hidden">
-                    <Image
-                      src={item.imageUrl}
-                      alt={item.title}
-                      fill
-                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
-                      className="object-cover group-hover:scale-110 transition-transform duration-700"
-                    />
-                    {/* Overlay gradient */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#1a232b] via-transparent to-transparent opacity-60"></div>
-                  </div>
-
-                  {/* Content */}
-                  <div className="p-5 flex flex-col flex-grow relative z-10 -mt-2">
-                    <h3 className="text-white font-bold text-base mb-1.5 flex items-start gap-2">
-                      <span className="text-gold-500 mt-1 shrink-0">{getCategoryIcon(item.category)}</span>
-                      <span className="leading-tight">{item.title}</span>
-                    </h3>
-                    <div className="text-gray-400 text-sm mb-4 flex-grow flex items-center gap-1.5">
-                      <MapPin size={14} className="shrink-0" />
-                      <span className="truncate">{item.location}</span>
-                    </div>
-                    <div className="text-gray-500 text-xs font-medium pt-3 border-t border-white/10 flex justify-between items-center">
-                      <span>{item.date}</span>
-                      <span className="bg-white/5 px-2 py-1 rounded text-[10px]">{item.category}</span>
-                    </div>
-                  </div>
-                </div>
-              ))
-            ) : (
-              <div className="col-span-full py-20 flex flex-col items-center justify-center text-gray-500">
-                <Image src="/portfolio_placeholder.png" alt="No data" width={120} height={120} className="opacity-20 grayscale mb-4" />
+        <div className="container-main mx-auto px-4 [&>p]:hidden">
+          <PortfolioGrid items={displayItems} />
                 <p>ยังไม่มีผลงานในหมวดหมู่นี้</p>
-              </div>
-            )}
-          </div>
         </div>
       </div>
       <Footer />

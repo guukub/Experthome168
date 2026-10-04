@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { useParams, useRouter } from 'next/navigation'
+import { useParams, useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { ArrowLeft, Plus, Download, Printer } from 'lucide-react'
 import { Property, PropertyLead, PropertyMonthlyStat } from '@/types/property'
@@ -21,15 +21,24 @@ const MONTHS = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.'
 export default function PropertyReportPage() {
   const params = useParams()
   const router = useRouter()
+  const searchParams = useSearchParams()
   const propertyId = params.id as string
+  const autoDownload = searchParams.get('download') === '1'
+  const returnMonth = searchParams.get('returnMonth') || searchParams.get('month') || new Date().toISOString().slice(0, 7)
+  const returnSearch = searchParams.get('returnSearch') || ''
+
+  const handleBackToReports = () => {
+    router.push(`/admin/reports?month=${returnMonth}&search=${encodeURIComponent(returnSearch)}`)
+  }
   
   const [property, setProperty] = useState<Property | null>(null)
   const [leads, setLeads] = useState<PropertyLead[]>([])
   const [settings, setSettings] = useState<any>(null)
   
   // Monthly Stat states
-  const [selectedMonth, setSelectedMonth] = useState(new Date().toISOString().slice(0, 7))
+  const [selectedMonth, setSelectedMonth] = useState(searchParams.get('month') || new Date().toISOString().slice(0, 7))
   const [monthlyStat, setMonthlyStat] = useState<PropertyMonthlyStat | null>(null)
+  const [monthlyStatLoaded, setMonthlyStatLoaded] = useState(false)
   const [allMonthlyStats, setAllMonthlyStats] = useState<PropertyMonthlyStat[]>([])
 
   const [loading, setLoading] = useState(true)
@@ -94,7 +103,9 @@ export default function PropertyReportPage() {
     const loadMonthlyStat = async () => {
       const stat = await getMonthlyStatAction(propertyId, selectedMonth)
       setMonthlyStat(stat)
+      setMonthlyStatLoaded(true)
     }
+    setMonthlyStatLoaded(false)
     loadMonthlyStat()
   }, [propertyId, selectedMonth])
 
@@ -190,6 +201,14 @@ export default function PropertyReportPage() {
     }
   }
 
+  useEffect(() => {
+    if (!autoDownload || loading || !property || !monthlyStatLoaded) return
+    const timer = window.setTimeout(() => {
+      handleSaveAsImage()
+    }, 700)
+    return () => window.clearTimeout(timer)
+  }, [autoDownload, loading, property, monthlyStatLoaded])
+
   if (loading || !property) return <div className="p-8 text-center text-gray-500">กำลังโหลด...</div>
 
   const [year, month] = selectedMonth.split('-')
@@ -201,9 +220,9 @@ export default function PropertyReportPage() {
       <div className="bg-white border-b sticky top-0 z-50 print:hidden">
         <div className="max-w-[1200px] mx-auto px-4 md:px-6 py-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div className="flex items-center gap-4 w-full md:w-auto">
-            <Link href="/admin/properties" className="p-2 hover:bg-gray-100 rounded-full transition-colors shrink-0">
+            <button type="button" onClick={handleBackToReports} className="p-2 hover:bg-gray-100 rounded-full transition-colors shrink-0" title="ย้อนกลับ">
               <ArrowLeft size={24} className="text-gray-600" />
-            </Link>
+            </button>
             <div className="overflow-hidden">
               <h1 className="text-xl md:text-2xl font-bold text-gray-900 truncate">รายงานผลการทำงาน</h1>
               <p className="text-xs md:text-sm text-gray-500 truncate">{property.title}</p>
@@ -229,9 +248,11 @@ export default function PropertyReportPage() {
             <button
               onClick={handleSaveAsImage}
               disabled={isSavingImage}
+              title="บันทึกเป็นรูปภาพ"
               className="flex items-center gap-1 md:gap-2 bg-blue-600 hover:bg-blue-700 text-white px-3 md:px-4 py-2 rounded-lg text-sm md:text-base font-bold transition-colors shadow-sm disabled:opacity-50"
             >
               <Download size={18} />
+              <span className="sm:hidden">บันทึกรูป</span>
               <span className="hidden sm:inline">{isSavingImage ? 'กำลังบันทึก...' : 'บันทึกรูปภาพ'}</span>
             </button>
 

@@ -6,7 +6,6 @@ import Footer from '@/components/public/Footer'
 import PropertyCard from '@/components/public/PropertyCard'
 
 import { getPropertiesAction, getSettingsAction } from '@/app/actions'
-import { getPortfoliosAction } from '@/app/portfolioActions'
 import { ArrowRight, Search, MapPin, Home, Wallet, ChevronDown, Calendar, Building, Landmark, CheckCircle2, Megaphone, CheckCircle, Shield, Users, TrendingUp, Clock } from 'lucide-react'
 import HeroSearch from '@/components/public/HeroSearch'
 
@@ -35,8 +34,7 @@ interface HomePageProps {
 export default async function HomePage({ searchParams }: HomePageProps) {
   const allProps = await getPropertiesAction()
   const settings = await getSettingsAction()
-  const portfolios = await getPortfoliosAction()
-  const portfolioImages = portfolios.filter(p => p.is_visible).map(p => p.imageUrl)
+  const portfolioImages = settings?.portfolioImages || []
   let filtered = allProps.filter(p => p.is_visible)
 
   // Extract unique project names and titles for search suggestions
@@ -314,7 +312,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
 
         {/* ─── PORTFOLIO / TRUSTED BY ─── */}
         {portfolioImages.length > 0 && (
-          <section className="py-8 bg-warm-50/50">
+           <section className="py-10 bg-warm-50/50">
             <div className="container-main">
               <div className="flex items-center justify-center gap-4 mb-5">
                 <div className="h-px bg-gray-300 w-10 sm:w-16"></div>
@@ -329,10 +327,10 @@ export default async function HomePage({ searchParams }: HomePageProps) {
 
                 <div className="flex w-max animate-marquee hover:[animation-play-state:paused]">
                   {[1, 2].map((groupIdx) => (
-                    <div key={groupIdx} className="flex gap-5 md:gap-8 pr-5 md:pr-8">
+                    <div key={groupIdx} className="flex gap-6 md:gap-10 pr-6 md:pr-10">
                       {portfolioImages.map((img: string, i: number) => (
-                        <div key={`${groupIdx}-${i}`} className="relative w-32 h-18 md:w-48 md:h-28 flex items-center justify-center shrink-0">
-                          <Image src={img} alt={`portfolio ${i+1}`} fill className="object-contain mix-blend-multiply" sizes="(max-width: 768px) 128px, 192px" />
+                        <div key={`${groupIdx}-${i}`} className="relative w-40 h-24 md:w-64 md:h-36 flex items-center justify-center shrink-0">
+                          <Image src={img} alt={`portfolio ${i+1}`} fill className="object-contain mix-blend-multiply" sizes="(max-width: 768px) 160px, 256px" />
                         </div>
                       ))}
                     </div>

@@ -163,6 +163,23 @@ export async function getPropertyByIdAction(id: string) {
   return toPlainObject(property) as PropertyType | null
 }
 
+export async function getReportOverviewAction(month: string) {
+  await connectToDatabase()
+
+  const properties = await PropertyModel.find({ is_report: { $ne: false } }).sort({ created_at: -1 })
+  const propertyIds = properties.map(property => property._id)
+  const stats = await PropertyMonthlyStatModel.find({ property_id: { $in: propertyIds }, month })
+  const statsByProperty = new Map(stats.map(stat => [stat.property_id.toString(), toPlainObject(stat)]))
+
+  return properties.map(property => {
+    const plain = toPlainObject(property)
+    return {
+      ...plain,
+      monthlyStat: statsByProperty.get(property._id.toString()) || null,
+    }
+  })
+}
+
 export async function getSettingsAction() {
   await connectToDatabase()
   const { default: Settings } = await import('@/models/Settings')
